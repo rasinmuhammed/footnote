@@ -1,0 +1,453 @@
+{
+ "results": "20261011-135840.json",
+ "model": "openai/gpt-oss-20b",
+ "seed": 20261011,
+ "labeller": "human",
+ "rule": "A claim counts as backed only if the cited title, snippet and date together state everything it says. A result's date shows when something was reported, not when it happened.",
+ "verdicts": [
+  {
+   "n": 1,
+   "question_id": "q19",
+   "question": "What are the newest open-weight language models released recently?",
+   "claim": "GLM-5.2 was released as the strongest all‑round open‑weight LLM in July 2026.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S1",
+     "engine": "google",
+     "title": "Best Open-Source LLMs (Updated July 2026): Top Models",
+     "url": "https://acecloud.ai/blog/best-open-source-llms/",
+     "date": null,
+     "text": "As of July 2026, GLM-5.2 is the strongest all-round open-weight LLM , while Kimi K2.7 Code stands out for coding agents, Gemma 4 12B is a practical laptop ..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 2,
+   "question_id": "q14",
+   "question": "What was announced about the Artemis programme this year?",
+   "claim": "NASA announced a major overhaul of the Artemis program, adding a new mission and updating its architecture.",
+   "checker": "weak",
+   "cited": [
+    {
+     "id": "S7",
+     "engine": "google_news",
+     "title": "NASA Adds Mission to Artemis Lunar Program, Updates Architecture",
+     "url": "https://www.nasa.gov/news-release/nasa-adds-mission-to-artemis-lunar-program-updates-architecture/",
+     "date": "2026-02-27",
+     "text": "NASA Adds Mission to Artemis Lunar Program, Updates Architecture (NASA (.gov))"
+    },
+    {
+     "id": "S9",
+     "engine": "google_news",
+     "title": "NASA announces major overhaul of Artemis moon program amid safety concerns, delays: \"We've got to get back to basics\"",
+     "url": "https://www.cbsnews.com/news/nasa-artemis-moon-program-overhaul/",
+     "date": "2026-02-27",
+     "text": "NASA announces major overhaul of Artemis moon program amid safety concerns, delays: \"We've got to get back to basics\" (CBS News)"
+    },
+    {
+     "id": "S10",
+     "engine": "google_news",
+     "title": "NASA announces a big shake-up of the Artemis Moon program",
+     "url": "https://theconversation.com/nasa-announces-a-big-shake-up-of-the-artemis-moon-program-275025",
+     "date": "2026-03-02",
+     "text": "NASA announces a big shake-up of the Artemis Moon program (The Conversation)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 3,
+   "question_id": "q19",
+   "question": "What are the newest open-weight language models released recently?",
+   "claim": "Kimi K2.7 Code was released in July 2026 as a leading coding‑agent model.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S1",
+     "engine": "google",
+     "title": "Best Open-Source LLMs (Updated July 2026): Top Models",
+     "url": "https://acecloud.ai/blog/best-open-source-llms/",
+     "date": null,
+     "text": "As of July 2026, GLM-5.2 is the strongest all-round open-weight LLM , while Kimi K2.7 Code stands out for coding agents, Gemma 4 12B is a practical laptop ..."
+    }
+   ],
+   "label": "not_backed",
+   "reason": ""
+  },
+  {
+   "n": 4,
+   "question_id": "q14",
+   "question": "What was announced about the Artemis programme this year?",
+   "claim": "NASA announced that the program's first crewed lunar landing will come on Artemis 4, not Artemis 3.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "title": "NASA announcing update to Artemis moon plans today",
+     "url": "https://www.space.com/space-exploration/artemis/nasa-announcing-update-to-artemis-moon-plans-today-watch-it-live",
+     "date": "Mar 24, 2026",
+     "text": "NASA Administrator Jared Isaacman announced that the program's first crewed lunar landing will come on the Artemis 4 mission, not Artemis 3 as ..."
+    },
+    {
+     "id": "S12",
+     "engine": "google_news",
+     "title": "Nasa announces change to its Moon landing plans",
+     "url": "https://www.bbc.com/news/articles/c6270030neyo",
+     "date": "2026-02-27",
+     "text": "Nasa announces change to its Moon landing plans (BBC)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 5,
+   "question_id": "q11",
+   "question": "What are the latest studies on microplastics in human blood?",
+   "claim": "A 2026 Independent article challenged the claim that microplastics are present in the human body.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S12",
+     "engine": "google_news",
+     "title": "New study challenges claim about microplastics in the human body",
+     "url": "https://www.independent.co.uk/news/science/microplastics-human-health-brain-study-b2906455.html",
+     "date": "2026-01-23",
+     "text": "New study challenges claim about microplastics in the human body (The Independent)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 6,
+   "question_id": "q04",
+   "question": "What is the latest stable release of Python and when was it released?",
+   "claim": "It was released on 2026-10-10.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S7",
+     "engine": "google_news",
+     "title": "Python 3.15 Released with Faster JIT, Lazy Imports, and UTF-8 by Default",
+     "url": "https://linuxiac.com/python-3-15-released-with-faster-jit-lazy-imports-and-utf-8-by-default/",
+     "date": "2026-10-10",
+     "text": "Python 3.15 Released with Faster JIT, Lazy Imports, and UTF-8 by Default (Linuxiac)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 7,
+   "question_id": "q03",
+   "question": "What is the current population of India?",
+   "claim": "A YouTube short reports the population as 146.39 crore (1,463,900,000).",
+   "checker": "number_not_found",
+   "cited": [
+    {
+     "id": "S6",
+     "engine": "google",
+     "title": "India's Population hits 146.39 crore",
+     "url": "https://www.youtube.com/shorts/sSaGZdBHX68",
+     "date": null,
+     "text": "India's Population hits 146.39 crore."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 8,
+   "question_id": "q14",
+   "question": "What was announced about the Artemis programme this year?",
+   "claim": "NASA announced that Artemis III would test the docking of the Orion spacecraft with lunar landers.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S5",
+     "engine": "google",
+     "title": "Artemis III | Mission, Date, Crew, & Spacecraft",
+     "url": "https://www.britannica.com/event/Artemis-III",
+     "date": "2 days ago",
+     "text": "in February 2026 NASA announced that the mission would test the docking of the Orion spacecraft with the lunar landers"
+    }
+   ],
+   "label": "close_call",
+   "reason": ""
+  },
+  {
+   "n": 9,
+   "question_id": "q18",
+   "question": "What is the boiling point of water at the top of Mount Everest?",
+   "claim": "S6 provides a table of boiling points versus altitude, but the specific value for Mount Everest is not shown in the snippet.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S6",
+     "engine": "google",
+     "title": "Water - Boiling Points vs. Altitude",
+     "url": "https://www.engineeringtoolbox.com/boiling-points-water-altitude-d_1344.html",
+     "date": null,
+     "text": "Boiling Point of Water at the top of Mount Everest The height of Mount Everest in Nepal is 8848 m. According the table above the boiling point of water is ..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 10,
+   "question_id": "q03",
+   "question": "What is the current population of India?",
+   "claim": "The current population of India is 1,480,243,044 as of Thursday, October 8, 2026, according to Worldometer.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S1",
+     "engine": "google",
+     "title": "India Population (2026) - Worldometer",
+     "url": "https://www.worldometers.info/world-population/india-population/",
+     "date": null,
+     "text": "Yearly Growth Rate The current population of India is 1,480,243,044 as of Thursday, October 8, 2026, based on Worldometer's elaboration of the latest United Nation..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 11,
+   "question_id": "q01",
+   "question": "What did the latest US Federal Reserve meeting decide about interest rates?",
+   "claim": "The Fed approved an interest rate hike.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S7",
+     "engine": "google_news",
+     "title": "Fed approves interest rate hike, signals one more to come this year",
+     "url": "https://www.cnbc.com/2026/09/16/fed-rate-decision-september-2026.html",
+     "date": "2026-09-16",
+     "text": "Fed approves interest rate hike, signals one more to come this year (CNBC)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 12,
+   "question_id": "q20",
+   "question": "How many people live in Tokyo?",
+   "claim": "Sources disagree on Tokyo city proper population: S3 reports 14,270,748 (2026) while S6 reports 10,316,210 (2026).",
+   "checker": "weak",
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "title": "Demographics of Tokyo - Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/Demographics_of_Tokyo",
+     "date": null,
+     "text": "Population: 14,270,748 (2026); total 14,195,730 (2025). Fertility rate: 0.96 (2024); 0.99 (2023). Foreign residents: 783,701 (2026), concentrated in 23 Special War..."
+    },
+    {
+     "id": "S6",
+     "engine": "google",
+     "title": "Tokyo Population 2026",
+     "url": "https://worldpopulationreview.com/cities/japan/tokyo",
+     "date": null,
+     "text": "Overview: Tokyo is the capital of Japan, holding an estimated 2026 population of 10,316,210 (0.97% growth). The greater metropolitan area exceeds 36 million reside..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 13,
+   "question_id": "q09",
+   "question": "What is the current repo rate set by the Reserve Bank of India?",
+   "claim": "The current repo rate set by the Reserve Bank of India is 5.5%.",
+   "checker": "weak",
+   "cited": [
+    {
+     "id": "S8",
+     "engine": "google_news",
+     "title": "RBI raises the Repo Rate by 25 bps to 5.5% in October, as expected",
+     "url": "https://www.fxstreet.com/news/rbi-looks-set-to-step-up-repo-rate-by-25-bps-to-55-202610070030",
+     "date": "2026-10-07",
+     "text": "RBI raises the Repo Rate by 25 bps to 5.5% in October, as expected (FXStreet)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 14,
+   "question_id": "q06",
+   "question": "Which company has the largest market capitalisation right now?",
+   "claim": "Apple's market cap passed Nvidia for the biggest company in the world according to a July 2026 report.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S11",
+     "engine": "google_news",
+     "title": "Apple market cap passes Nvidia for biggest company in the world",
+     "url": "https://finance.yahoo.com/markets/stocks/articles/apple-surpasses-nvidia-worlds-most-140205283.html",
+     "date": "2026-07-17",
+     "text": "Apple market cap passes Nvidia for biggest company in the world (Yahoo Finance)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 15,
+   "question_id": "q10",
+   "question": "Who is the current CEO of OpenAI?",
+   "claim": "Sam Altman is the current CEO of OpenAI.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S4",
+     "engine": "google",
+     "title": "Sam Altman reinstated as OpenAI's CEO, Microsoft joins ...",
+     "url": "https://indianexpress.com/article/technology/artificial-intelligence/sam-altman-reinstated-as-openais-ceo-microsft-joins-the-board-9048086/",
+     "date": "Nov 30, 2023",
+     "text": "Sam Altman has returned to the company as CEO. Murati, who was an interim CEO of OpenAI. Greg Brockman, the co-founder of the company again ..."
+    },
+    {
+     "id": "S3",
+     "engine": "google",
+     "title": "Sam Altman — Chief Executive Officer, OpenAI",
+     "url": "https://siliconvalleyinvestclub.com/companies/openai/team/sam-altman/",
+     "date": null,
+     "text": "Sam Altman: CEO of OpenAI. yrsSan Francisco CEO of OpenAI. Co-founded the lab in 2015 and has been CEO since 2019. headquarters San Francisco, California, ..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 16,
+   "question_id": "q18",
+   "question": "What is the boiling point of water at the top of Mount Everest?",
+   "claim": "According to S1, the boiling point at the top of Mount Everest is about 68 °C (154 °F).",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S1",
+     "engine": "google",
+     "title": "All About Water and Ice Background - Lunar and Planetary Institute",
+     "url": "https://www.lpi.usra.edu/education/explore/ice/background/allAboutWater/",
+     "date": null,
+     "text": "At sea level, pure water boils at 212 °F (100°C). At the lower atmospheric pressure on the top of Mount Everest, pure water boils at about 154 °F (68°C). In the de..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 17,
+   "question_id": "q19",
+   "question": "What are the newest open-weight language models released recently?",
+   "claim": "Moonshot AI’s model 3 was released in July 2026.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "title": "12britz/awesome-free-models: A curated list of free AI ...",
+     "url": "https://github.com/12britz/awesome-free-models",
+     "date": "15 hours ago",
+     "text": "New standard for open-weight. Inkling (Thinking Machines Lab) — Jul 2026. 3 (Moonshot AI) — Jul 2026. Weights released Jul 27. Kimi K2.6. ..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 18,
+   "question_id": "q01",
+   "question": "What did the latest US Federal Reserve meeting decide about interest rates?",
+   "claim": "The meeting took place on September 16, 2026.",
+   "checker": "unsupported",
+   "cited": [
+    {
+     "id": "S7",
+     "engine": "google_news",
+     "title": "Fed approves interest rate hike, signals one more to come this year",
+     "url": "https://www.cnbc.com/2026/09/16/fed-rate-decision-september-2026.html",
+     "date": "2026-09-16",
+     "text": "Fed approves interest rate hike, signals one more to come this year (CNBC)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 19,
+   "question_id": "q05",
+   "question": "What does recent research say about the effect of remote work on productivity?",
+   "claim": "Some studies find remote work increases productivity, while others find it decreases productivity.",
+   "checker": "weak",
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "title": "The Evolution of Working from Home",
+     "url": "https://siepr.stanford.edu/publications/working-paper/evolution-working-home",
+     "date": null,
+     "text": "The productivity of remote work depends critically on the mode. Fully remote work is associated with about 10% lower productivity than fully in-person work."
+    },
+    {
+     "id": "S5",
+     "engine": "google",
+     "title": "Every study proves remote workers are more productive, so ...",
+     "url": "https://www.reddit.com/r/remotework/comments/1nxurdd/every_study_proves_remote_workers_are_more/",
+     "date": null,
+     "text": "I was reading a 2023 survey from Stanford and a Microsoft report: remote workers average 10% higher productivity, companies save millions on overhead, ..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 20,
+   "question_id": "q17",
+   "question": "What is the current inflation rate in the United Kingdom?",
+   "claim": "The UK CPI inflation rate for the year to August 2026 is 3.1%.",
+   "checker": "supported",
+   "cited": [
+    {
+     "id": "S2",
+     "engine": "google",
+     "title": "Inflation international comparisons: Economic indicators",
+     "url": "https://commonslibrary.parliament.uk/research-briefings/sn02794/",
+     "date": "Oct 2, 2026",
+     "text": "UK inflation was 3.1% in the year to August, up from 2.9% in the year to July. UK inflation was 3.8% in the year to August 2025. EU inflation ..."
+    },
+    {
+     "id": "S3",
+     "engine": "google",
+     "title": "UK inflation: What is the rate and why are prices still rising?",
+     "url": "https://www.bbc.com/news/articles/c17rgd8e9gjo",
+     "date": null,
+     "text": "* UK CPI inflation: 3.1% in year to Aug 2026 (above 2% target, highest in 5 mos). Driven by motor fuel (+23% vs Aug prior yr). Food inflation: 1.3%. Core CPI: 2.6%"
+    },
+    {
+     "id": "S5",
+     "engine": "google",
+     "title": "Inflation in the UK: Economic indicators - House of Commons Library",
+     "url": "https://commonslibrary.parliament.uk/research-briefings/sn02792/",
+     "date": null,
+     "text": "- UK CPI annual inflation: 3.1% in August 2026 (up from 2.9% in July). - Goods price rise: 2.7% in August 2026 (highest since September 2025). - Food price inflati..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  }
+ ]
+}
