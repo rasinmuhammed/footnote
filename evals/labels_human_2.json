@@ -1,0 +1,422 @@
+{
+ "batch": 2,
+ "results": [
+  "20261011-133041.json",
+  "20261011-134538.json",
+  "20261011-135840.json"
+ ],
+ "seed": 20261012,
+ "checker_shown": false,
+ "labeller": "human",
+ "rule": "A claim counts as backed only if the cited title, snippet and date together state everything it says. A result's date shows when something was reported, not when it happened.",
+ "verdicts": [
+  {
+   "n": 1,
+   "question_id": "q06",
+   "question": "Which company has the largest market capitalisation right now?",
+   "claim": "Yahoo Finance's screener lists NVIDIA Corporation (NVDA) as the largest market cap, followed by Apple Inc. (AAPL) and Alphabet Inc. (GOOGL/GOOG).",
+   "model": "qwen/qwen3.8-27b",
+   "results": "20261011-134538.json",
+   "cited": [
+    {
+     "id": "S6",
+     "engine": "google",
+     "title": "Top Largest Market Cap List | Screener",
+     "url": "https://finance.yahoo.com/research-hub/screener/largest_market_cap/",
+     "date": null,
+     "text": "Largest Market Cap ; 1. NVDA. NVIDIA Corporation ; 2. AAPL. Apple Inc. ; 3. G · GOOGL. Alphabet Inc. ; 4. GOOG. Alphabet Inc."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 2,
+   "question_id": "q02",
+   "question": "Who won the most recent Formula 1 Grand Prix?",
+   "claim": "The most recent Formula 1 Grand Prix event, the Singapore GP sprint on 11 October 2026, was won by Max Verstappen.",
+   "model": "openai/gpt-oss-120b",
+   "results": "20261011-133041.json",
+   "cited": [
+    {
+     "id": "S11",
+     "engine": "google_news",
+     "title": "Singapore GP Sprint: Max Verstappen beats Lewis Hamilton after George Russell crashes out from lead",
+     "url": "https://www.skysports.com/f1/news/13597101/singapore-gp-sprint-max-verstappen-beats-lewis-hamilton-after-george-russell-crashes-out-from-lead",
+     "date": "2026-10-11",
+     "text": "Singapore GP Sprint: Max Verstappen beats Lewis Hamilton after George Russell crashes out from lead (Sky Sports)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 3,
+   "question_id": "q06",
+   "question": "Which company has the largest market capitalisation right now?",
+   "claim": "Nvidia is the world's largest company by market cap according to the October 2026 list.",
+   "model": "openai/gpt-oss-20b",
+   "results": "20261011-135840.json",
+   "cited": [
+    {
+     "id": "S2",
+     "engine": "google",
+     "title": "The Largest Companies by Market Cap in October 2026",
+     "url": "https://www.fool.com/research/largest-companies-by-market-cap/",
+     "date": "6 days ago",
+     "text": "Nvidia (NVDA -0.52%) is the world's largest company by market cap, followed by Apple (AAPL -1.11%) and Alphabet (GOOG +0.87%)(GOOGL +0.97%)."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 4,
+   "question_id": "q05",
+   "question": "What does recent research say about the effect of remote work on productivity?",
+   "claim": "A 2022 study in Organizational Dynamics found that respondents rated productivity at an average of 3.57 on a scale, indicating a positive but modest impact.",
+   "model": "openai/gpt-oss-120b",
+   "results": "20261011-133041.json",
+   "cited": [
+    {
+     "id": "S15",
+     "engine": "google_scholar",
+     "title": "Supporting the productivity and wellbeing of remote workers: Lessons from COVID-19",
+     "url": "https://www.sciencedirect.com/science/article/pii/S0090261621000449",
+     "date": "2022",
+     "text": "Supporting the productivity and wellbeing of remote workers: Lessons from COVID-19 … The average from our survey responses is 3.57, which is … positive impact on the aspects of work that the Productivity … that managing remote workers created new challenges for her … TJ George, LE Atwater, D Maneethai… - Organizational Dynamics, 2022 - Elsevier Cited by 297."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 5,
+   "question_id": "q01",
+   "question": "What did the latest US Federal Reserve meeting decide about interest rates?",
+   "claim": "The most recent Federal Open Market Committee meeting, held in September 2026, approved an increase in the federal funds rate.",
+   "model": "openai/gpt-oss-120b",
+   "results": "20261011-133041.json",
+   "cited": [
+    {
+     "id": "S7",
+     "engine": "google_news",
+     "title": "Fed approves interest rate hike, signals one more to come this year",
+     "url": "https://www.cnbc.com/2026/09/16/fed-rate-decision-september-2026.html",
+     "date": "2026-09-16",
+     "text": "Fed approves interest rate hike, signals one more to come this year (CNBC)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 6,
+   "question_id": "q20",
+   "question": "How many people live in Tokyo?",
+   "claim": "Tokyo metropolitan area has a population exceeding 36 million according to World Population Review.",
+   "model": "openai/gpt-oss-20b",
+   "results": "20261011-135840.json",
+   "cited": [
+    {
+     "id": "S6",
+     "engine": "google",
+     "title": "Tokyo Population 2026",
+     "url": "https://worldpopulationreview.com/cities/japan/tokyo",
+     "date": null,
+     "text": "Overview: Tokyo is the capital of Japan, holding an estimated 2026 population of 10,316,210 (0.97% growth). The greater metropolitan area exceeds 36 million reside..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 7,
+   "question_id": "q05",
+   "question": "What does recent research say about the effect of remote work on productivity?",
+   "claim": "The U.S. Bureau of Labor Statistics notes that remote work can lead to productivity gains that may substantially reduce firms’ hiring costs.",
+   "model": "openai/gpt-oss-120b",
+   "results": "20261011-133041.json",
+   "cited": [
+    {
+     "id": "S1",
+     "engine": "google",
+     "title": "The rise in remote work since the pandemic and its impact ...",
+     "url": "https://www.bls.gov/opub/btn/volume-13/remote-work-productivity.htm",
+     "date": "Oct 31, 2024",
+     "text": "remote work led to lower job turnover as job satisfaction rose, which could substantially reduce firms' hiring costs. Productivity gains can ..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 8,
+   "question_id": "q12",
+   "question": "How tall is the Burj Khalifa?",
+   "claim": "The Burj Khalifa is 320 metres taller than Taipei 101, which is 508 metres (1,667 ft) tall.",
+   "model": "qwen/qwen3.8-27b",
+   "results": "20261011-134538.json",
+   "cited": [
+    {
+     "id": "S4",
+     "engine": "google",
+     "title": "World's Tallest Tower Burj Khalifa is 2716.5 ft High",
+     "url": "https://www.luxurytravelmagazine.com/news-articles/worlds-tallest-tower-burj-khalifa-is-27165-ft-high",
+     "date": "Jan 5, 2010",
+     "text": "Burj Khalifa is 2,716.5 ft. At 828 metres (2,716.5ft), Burj Khalifa is 320 metres taller than Taipei 101, which at 508 metres (1,667 ft)"
+    }
+   ],
+   "label": "not_backed",
+   "reason": ""
+  },
+  {
+   "n": 9,
+   "question_id": "q08",
+   "question": "What is the evidence from clinical trials on intermittent fasting and weight loss?",
+   "claim": "A randomized clinical trial demonstrated that intermittent fasting significantly reduced body weight and BMI in overweight obese middle-aged adults without metabolic disease compared to a regular diet.",
+   "model": "openai/gpt-oss-20b",
+   "results": "20261011-135840.json",
+   "cited": [
+    {
+     "id": "S1",
+     "engine": "google",
+     "title": "Effectiveness of an intermittent fasting diet versus regular ...",
+     "url": "https://www.sciencedirect.com/science/article/pii/S1279770724002392",
+     "date": null,
+     "text": "IF was effective in significantly reducing body weight and BMI in overweight obese middle-aged people without metabolic disease compared to the regular diet."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 10,
+   "question_id": "q02",
+   "question": "Who won the most recent Formula 1 Grand Prix?",
+   "claim": "Max Verstappen won the most recent Formula 1 Grand Prix, the Singapore GP Sprint.",
+   "model": "openai/gpt-oss-20b",
+   "results": "20261011-135840.json",
+   "cited": [
+    {
+     "id": "S11",
+     "engine": "google_news",
+     "title": "Singapore GP Sprint: Max Verstappen beats Lewis Hamilton after George Russell crashes out from lead",
+     "url": "https://www.skysports.com/f1/news/13597101/singapore-gp-sprint-max-verstappen-beats-lewis-hamilton-after-george-russell-crashes-out-from-lead",
+     "date": "2026-10-11",
+     "text": "Singapore GP Sprint: Max Verstappen beats Lewis Hamilton after George Russell crashes out from lead (Sky Sports)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 11,
+   "question_id": "q11",
+   "question": "What are the latest studies on microplastics in human blood?",
+   "claim": "A 2025 critical review covered more than a dozen studies on the presence of microplastics in humans, including detection in blood and plasma of healthy blood donors, and examined immune–metabolic associations.",
+   "model": "qwen/qwen3.8-27b",
+   "results": "20261011-134538.json",
+   "cited": [
+    {
+     "id": "S15",
+     "engine": "google_scholar",
+     "title": "Microplastics in humans: A critical review of biomonitoring evidence and immune–metabolic associations",
+     "url": "https://www.mdpi.com/2076-3417/15/22/12289",
+     "date": "2025",
+     "text": "Microplastics in humans: A critical review of biomonitoring evidence and immune–metabolic associations … The review covers more than a dozen studies on the presence of microplastics in human … a group of healthy blood donors, in whom microplastics were detected in blood and plasma, … D Kusyk, I Górna, M Kowalówka, M Banaszak… - Applied Sciences, 2025 - mdpi.com Cited by 16."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 12,
+   "question_id": "q17",
+   "question": "What is the current inflation rate in the United Kingdom?",
+   "claim": "UK core CPI inflation was 2.6% in August 2026, unchanged since May 2026.",
+   "model": "qwen/qwen3.8-27b",
+   "results": "20261011-134538.json",
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "title": "UK inflation: What is the rate and why are prices still rising?",
+     "url": "https://www.bbc.com/news/articles/c17rgd8e9gjo",
+     "date": null,
+     "text": "* UK CPI inflation: 3.1% in year to Aug 2026 (above 2% target, highest in 5 mos). Driven by motor fuel (+23% vs Aug prior yr). Food inflation: 1.3%. Core CPI: 2.6%"
+    },
+    {
+     "id": "S6",
+     "engine": "google",
+     "title": "UK core inflation rate 2026",
+     "url": "https://www.statista.com/statistics/1317058/uk-core-inflation-rate/?srsltid=AU7gw4WsgSLnjgPRe8ZTEINUhU8P8hlFNn9TMpt3zhoXcK9F86e7vrOa",
+     "date": "Sep 16, 2026",
+     "text": "The core inflation rate for the UK was 2.6 percent in August 2026, unchanged since May. Core inflation measures inflation without food and ..."
+    }
+   ],
+   "label": "close_call",
+   "reason": ""
+  },
+  {
+   "n": 13,
+   "question_id": "q06",
+   "question": "Which company has the largest market capitalisation right now?",
+   "claim": "Apple’s market capitalisation is reported to have passed Nvidia’s, making Apple the biggest company in the world.",
+   "model": "openai/gpt-oss-120b",
+   "results": "20261011-133041.json",
+   "cited": [
+    {
+     "id": "S11",
+     "engine": "google_news",
+     "title": "Apple market cap passes Nvidia for biggest company in the world",
+     "url": "https://finance.yahoo.com/markets/stocks/articles/apple-surpasses-nvidia-worlds-most-140205283.html",
+     "date": "2026-07-17",
+     "text": "Apple market cap passes Nvidia for biggest company in the world (Yahoo Finance)"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 14,
+   "question_id": "q19",
+   "question": "What are the newest open-weight language models released recently?",
+   "claim": "Kimi K2.6 was released in July 2026.",
+   "model": "openai/gpt-oss-20b",
+   "results": "20261011-135840.json",
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "title": "12britz/awesome-free-models: A curated list of free AI ...",
+     "url": "https://github.com/12britz/awesome-free-models",
+     "date": "15 hours ago",
+     "text": "New standard for open-weight. Inkling (Thinking Machines Lab) — Jul 2026. 3 (Moonshot AI) — Jul 2026. Weights released Jul 27. Kimi K2.6. ..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 15,
+   "question_id": "q16",
+   "question": "Which country won the most recent ICC Cricket World Cup?",
+   "claim": "Australia won the most recent ICC Cricket World Cup, the 2023 edition held in India.",
+   "model": "openai/gpt-oss-120b",
+   "results": "20261011-133041.json",
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "title": "ICC Men's Cricket World Cup",
+     "url": "https://simple.wikipedia.org/wiki/ICC_Men%27s_Cricket_World_Cup",
+     "date": null,
+     "text": "Australia are the titleholders, having won the 2023 edition in India. That was Australia's sixth title, and they are the most successful team in the ..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 16,
+   "question_id": "q05",
+   "question": "What does recent research say about the effect of remote work on productivity?",
+   "claim": "A 2023 UK study suggests that some aspects of productivity are situated in everyday encounters which cannot easily be reproduced remotely.",
+   "model": "qwen/qwen3.8-27b",
+   "results": "20261011-134538.json",
+   "cited": [
+    {
+     "id": "S17",
+     "engine": "google_scholar",
+     "title": "A flash in the pan or a permanent change? The growth of homeworking during the pandemic and its effect on employee productivity in the UK",
+     "url": "https://www.emerald.com/itp/article-abstract/36/5/1960/183873",
+     "date": "2023",
+     "text": "A flash in the pan or a permanent change? The growth of homeworking during the pandemic and its effect on employee productivity in the UK … situated in everyday encounters which cannot easily be reproduced remotely. On this basis, … The new findings presented in this paper, along with those produced by others, suggest that … A Felstead, D Reuschke - Information technology & people, 2023 - emerald.com Cited by 126."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 17,
+   "question_id": "q14",
+   "question": "What was announced about the Artemis programme this year?",
+   "claim": "In March 2026, NASA announced that the program's first crewed lunar landing will be on Artemis 4 rather than Artemis 3.",
+   "model": "openai/gpt-oss-120b",
+   "results": "20261011-133041.json",
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "title": "NASA announcing update to Artemis moon plans today",
+     "url": "https://www.space.com/space-exploration/artemis/nasa-announcing-update-to-artemis-moon-plans-today-watch-it-live",
+     "date": "Mar 24, 2026",
+     "text": "NASA Administrator Jared Isaacman announced that the program's first crewed lunar landing will come on the Artemis 4 mission, not Artemis 3 as ..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 18,
+   "question_id": "q17",
+   "question": "What is the current inflation rate in the United Kingdom?",
+   "claim": "UK CPI inflation was 3.1% in the year to August 2026, above the 2% target.",
+   "model": "openai/gpt-oss-120b",
+   "results": "20261011-133041.json",
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "title": "UK inflation: What is the rate and why are prices still rising?",
+     "url": "https://www.bbc.com/news/articles/c17rgd8e9gjo",
+     "date": null,
+     "text": "* UK CPI inflation: 3.1% in year to Aug 2026 (above 2% target, highest in 5 mos). Driven by motor fuel (+23% vs Aug prior yr). Food inflation: 1.3%. Core CPI: 2.6%"
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 19,
+   "question_id": "q12",
+   "question": "How tall is the Burj Khalifa?",
+   "claim": "The Burj Khalifa stands 828 metres (2,717 ft) tall with 163 floors.",
+   "model": "qwen/qwen3.8-27b",
+   "results": "20261011-134538.json",
+   "cited": [
+    {
+     "id": "S6",
+     "engine": "google",
+     "title": "How Tall Is The Burj Khalifa",
+     "url": "https://webdev.jacksonms.gov/virtual-library/rtPBDF/4OK076/HowTallIsTheBurjKhalifa.pdf",
+     "date": "Mar 13, 2026",
+     "text": "Burj Khalifa stands 828 metres 2 717 ft tall with 163 floors. Standing at a staggering height of 828 meters (2,717 feet), it is the tallest ..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  },
+  {
+   "n": 20,
+   "question_id": "q14",
+   "question": "What was announced about the Artemis programme this year?",
+   "claim": "NASA announced that it would announce the Artemis III crew and provide a mission progress update.",
+   "model": "openai/gpt-oss-20b",
+   "results": "20261011-135840.json",
+   "cited": [
+    {
+     "id": "S4",
+     "engine": "google",
+     "title": "NASA to Announce Artemis III Crew, Provide Mission ...",
+     "url": "https://www.nasa.gov/news-release/nasa-to-announce-artemis-iii-crew-provide-mission-progress-update/",
+     "date": "May 26, 2026",
+     "text": "Artemis III will launch four astronauts from NASA's Kennedy Space Center in Florida aboard the Orion spacecraft on the SLS (Space Launch System) ..."
+    }
+   ],
+   "label": "backed",
+   "reason": ""
+  }
+ ]
+}
