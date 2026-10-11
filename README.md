@@ -133,6 +133,12 @@ from the saved claims with `--rescore` after the two fixes described under
 | Numeric claims with a number not in their sources | 2 of 53 (4%) | 36 of 46 (78%) |
 | Bad citations | 0 of 77 (0%) | n/a |
 
+The "Weak or unsupported" and "number not in their sources" rows overstate how many grounded claims lack support.
+Of 20 grounded gpt-oss-20b verdicts labelled by hand, the current checker flags 4: 2 weak, 1 unsupported and 1
+number not found, the same crore conversion as [below](#a-correct-claim-flagged-on-purpose). All 4 were backed by
+their cited results. Of the 16 it marks supported, 14 were backed, 1 was not and 1 was a close call. Those 20 also
+picked the checker's fixes, so read the counts as a direction; only grounded claims were labelled.
+
 Latency per question, grounded answers:
 
 | | Median | p90 |
@@ -207,12 +213,11 @@ Bank of India" claim. Four remain, all on backed claims: the crore conversion, t
 describing disagreement between sources ("Sources disagree…", "Some studies find… while others find…"), whose
 framing words are in no snippet.
 
+So in this sample `supported` was nearly always right and every flag was a false alarm.
+
 The independent check is a second batch: 20 new verdicts drawn after the fixes (seed 20261012) from all three runs
 above, none from the first 20, labelled the same way with `python evals/label.py --batch 2` into
 `evals/labels_human_2.json`.
-
-So in this sample `supported` was nearly always right and every flag was a false alarm. The weak and unsupported
-counts in the tables above likely overstate how many claims lack support.
 
 For comparison, an earlier set of labels made by Claude, the AI assistant that ran this evaluation, is in
 [`evals/labels_ai.json`](evals/labels_ai.json). It agreed with the human labels on 13 of the 19 clear ones, and in
