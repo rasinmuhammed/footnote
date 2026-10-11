@@ -92,6 +92,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int)
     ap.add_argument("--rescore", type=Path, help="re-check a saved results file with the current checker")
+    ap.add_argument("--resume", type=Path, help="continue an interrupted run, skipping questions it finished")
     args = ap.parse_args()
     if args.rescore:
         summary = rescore(args.rescore)
@@ -104,33 +105,43 @@ def main() -> None:
     searcher, answerer = SerpApiSearcher(), GroqAnswerer()
     fn = Footnote(searcher, answerer)
 
-    rows, grounded_all, closed_all = [], [], []
+    out = args.resume or HERE / "results" / f"{time.strftime('%Y%m%d-%H%M%S')}.json"
+    prev = json.loads(out.read_text()) if args.resume else {"summary": {}, "rows": []}
+    if prev["summary"].get("model", answerer.model) != answerer.model:
+        raise SystemExit(f"{out} was run with {prev['summary']['model']}, not {answerer.model}")
+    rows, done = prev["rows"], {r["id"] for r in prev["rows"]}
+    before = prev["summary"].get("tokens", {"input_tokens": 0, "output_tokens": 0})
+
+    def save() -> dict:  # after every question, so an interrupted run loses at most one
+        summary = {
+            "questions": len(rows),
+            "model": answerer.model,
+            "grounded": summarise([Verdict(**v) for r in rows for v in r["grounded"]["claims"]]),
+            "closed_book": summarise([Verdict(**v) for r in rows for v in r["closed_book"]]),
+            "latency_s": latency(rows),
+            "serpapi_searches": prev["summary"].get("serpapi_searches", 0) + searcher.calls,
+            "serpapi_cache_hits": prev["summary"].get("serpapi_cache_hits", 0) + searcher.hits,
+            "tokens": {k: before[k] + answerer.usage[k] for k in before},
+        }
+        out.parent.mkdir(exist_ok=True)
+        out.write_text(json.dumps({"summary": summary, "rows": rows}, indent=2))
+        return summary
+
     for item in questions:
+        if item["id"] in done:
+            continue
         report = fn.ask(item["q"])
         baseline = fn.closed_book(item["q"], report.sources)
-        grounded_all += report.verdicts
-        closed_all += baseline
         rows.append({"id": item["id"], "question": item["q"], "grounded": report.to_dict(),
                      "closed_book": [v.to_dict() for v in baseline]})
+        save()
         g, b = summarise(report.verdicts), summarise(baseline)
         print(f"{item['id']}: grounded {g['supported']}/{g['claims']} supported, "
               f"closed-book {b['supported']}/{b['claims']}", flush=True)
 
-    summary = {
-        "questions": len(questions),
-        "model": answerer.model,
-        "grounded": summarise(grounded_all),
-        "closed_book": summarise(closed_all),
-        "latency_s": latency(rows),
-        "serpapi_searches": searcher.calls,
-        "serpapi_cache_hits": searcher.hits,
-        "tokens": answerer.usage,
-    }
-    out = HERE / "results" / f"{time.strftime('%Y%m%d-%H%M%S')}.json"
-    out.parent.mkdir(exist_ok=True)
-    out.write_text(json.dumps({"summary": summary, "rows": rows}, indent=2))
-    print(f"\n{table(summary)}\n\n{answerer.model}, {len(questions)} questions, SerpApi searches {searcher.calls} "
-          f"(cache hits {searcher.hits}). Saved {out}")
+    summary = save()
+    print(f"\n{table(summary)}\n\n{answerer.model}, {summary['questions']} questions, SerpApi searches "
+          f"{summary['serpapi_searches']} (cache hits {summary['serpapi_cache_hits']}). Saved {out}")
 
 
 if __name__ == "__main__":

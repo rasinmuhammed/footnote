@@ -70,7 +70,7 @@ class GroqAnswerer:
 
             if not os.environ.get("GROQ_API_KEY"):
                 raise RuntimeError("Set GROQ_API_KEY (create one at https://console.groq.com/keys).")
-            client = Groq()
+            client = Groq(max_retries=10)  # free keys get 8k tokens/min; the SDK waits out each 429 as told
         self.client = client
         self.model = model or os.environ.get("FOOTNOTE_MODEL", DEFAULT_MODEL)
         self.max_tokens, self.retries = max_tokens, retries
