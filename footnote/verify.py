@@ -21,11 +21,13 @@ NUMBER = re.compile(r"(?<![\w.])[$€£₹]?\d[\d,]*(?:\.\d+)?%?")
 WORD = re.compile(r"[a-z0-9]+")
 
 MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
-# "7 October 2026", "Oct. 7, 2026", "October 2026", "Jun 25, 2026", or a bare year
+# "7 October 2026", "Oct. 7, 2026", "October 2026", "Jun 25, 2026", "2026-10-07" (models use non-ASCII hyphens too),
+# or a bare year
 DATE = re.compile(r"\b(?:(\d{1,2})\s+)?(january|february|march|april|may|june|july|august|september|october|november|"
                   r"december|jan|feb|mar|apr|jun|jul|aug|sept?|oct|nov|dec)\b\.?(?:\s+(\d{1,2})(?:st|nd|rd|th)?\b)?"
-                  r"(?:,?\s+((?:19|20)\d\d)\b)?|\b((?:19|20)\d\d)\b", re.I)
-ISO_DATE = re.compile(r"((?:19|20)\d\d)-(\d\d)-(\d\d)")
+                  r"(?:,?\s+((?:19|20)\d\d)\b)?"
+                  r"|\b((?:19|20)\d\d)[-‐‑–](\d\d)[-‐‑–](\d\d)\b"
+                  r"|\b((?:19|20)\d\d)\b", re.I)
 
 SUPPORTED, WEAK = 0.5, 0.25
 
@@ -45,7 +47,9 @@ def numbers(text: str) -> set[str]:
 def _parts(m: re.Match) -> tuple[int | None, int | None, int | None]:
     """(year, month, day) of a DATE match, None where the text doesn't say."""
     if m.group(5):
-        return int(m.group(5)), None, None
+        return int(m.group(5)), int(m.group(6)), int(m.group(7))
+    if m.group(8):
+        return int(m.group(8)), None, None
     day = m.group(1) or m.group(3)
     return (int(m.group(4)) if m.group(4) else None, MONTHS.index(m.group(2)[:3].lower()) + 1,
             int(day) if day else None)
@@ -54,8 +58,6 @@ def _parts(m: re.Match) -> tuple[int | None, int | None, int | None]:
 def source_date(date: str | None) -> tuple[int | None, int | None, int | None] | None:
     if not date:
         return None
-    if iso := ISO_DATE.fullmatch(date):
-        return tuple(map(int, iso.groups()))
     m = DATE.search(date)
     return _parts(m) if m else None
 

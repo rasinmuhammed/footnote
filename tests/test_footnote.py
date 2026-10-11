@@ -77,7 +77,8 @@ def test_dates_count_when_they_match_the_cited_source_date():
     hike = next(x.id for x in s if x.date == "2026-10-07" and "5.5%" in x.text)
     for claim in ("On 7 October 2026, the RBI raised the repo rate by 25 bps to 5.5%.",
                   "On Oct. 7, 2026, the RBI raised the repo rate by 25 bps to 5.5%.",
-                  "In October 2026 the RBI raised the repo rate to 5.5%."):
+                  "In October 2026 the RBI raised the repo rate to 5.5%.",
+                  "On 2026‑10‑07 the RBI raised the repo rate by 25 bps to 5.5%."):  # non-breaking hyphens
         assert check(claim, [hike], s).status == "supported", claim
     wrong_day = check("On 8 October 2026, the RBI raised the repo rate to 5.5%.", [hike], s)
     assert wrong_day.missing_numbers == ["2026", "8"]  # the date disagrees as a whole
