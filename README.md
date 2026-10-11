@@ -272,9 +272,10 @@ both disagreements it was the stricter of the two.
 ## Comparing models
 
 Because the checker is model-free, it doubles as a judge between models: the tables above differ only in
-`FOOTNOTE_MODEL`. Groq's catalogue changes (`llama-3.3-70b-versatile` was gone by October 2026), so check
-`footnote --list-models` first. On a free key, gpt-oss-120b gets 8k tokens a minute and 200k a day, and one eval
-run of it used about 58k.
+`FOOTNOTE_MODEL`. Groq's catalogue changes (`llama-3.3-70b-versatile` was
+[shut down](https://console.groq.com/docs/deprecations) in August 2026), so check `footnote --list-models` first.
+On Groq's free plan, gpt-oss-120b gets 8K tokens a minute and 200K a day (Free Plan tab of Groq's
+[rate limits](https://console.groq.com/docs/rate-limits)); one eval run of it used about 58k.
 
 ## Limitations
 
@@ -309,14 +310,14 @@ run of it used about 58k.
 - The closed-book comparison favours grounded answers, because grounded claims are written from the same
   snippets they're checked against. The number check is the fairer signal of the two.
 - Real Google responses look different from the fixtures. None of the 20 in the eval had an answer box or
-  knowledge graph. All 20 had an AI Overview, but only 7 carried it inline; the other 13 need a second, paid
+  knowledge graph. All 20 had an AI Overview, but only 7 carried it inline; the other 13 need a second
   request, which Footnote doesn't make. Google News returned 1,214 results over 15 searches with no snippets and no
   story clusters. So the answer box, knowledge graph and story cluster code has only been tested on fixtures.
 - Some Google results are dated relatively ("2 days ago", "15 hours ago"), which the date rule can't match.
 - SerpApi's Google engine is sometimes slow: 6 of the 20 eval questions waited over 15s and one 81s. The client
-  waits up to 120s, because a search that times out is still charged.
+  waits up to 120s.
 - gpt-oss models sometimes call a browsing tool they were trained with (`open`) or spend their whole token budget
-  reasoning. Both are retried, which costs extra calls, and on a free Groq key (8k tokens a minute) that is slow.
+  reasoning. Both are retried, which costs extra calls, and on Groq's free plan (8K tokens a minute) that is slow.
 - Router keywords and the abstention patterns are English-only.
 
 ## Tests
