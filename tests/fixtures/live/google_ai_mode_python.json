@@ -1,0 +1,163 @@
+{
+ "search_metadata": {
+  "status": "Success"
+ },
+ "search_parameters": {
+  "engine": "google_ai_mode",
+  "q": "What is the latest stable release of Python and when was it released?",
+  "hl": "en",
+  "gl": "us",
+  "device": "desktop"
+ },
+ "text_blocks": [
+  {
+   "type": "paragraph",
+   "snippet": "The latest stable release of Python is Python 3.15.0, which was released on October 9, 2026.",
+   "snippet_highlighted_words": [
+    "October 9, 2026"
+   ],
+   "reference_indexes": [
+    0
+   ]
+  },
+  {
+   "type": "table",
+   "table": [
+    [
+     "Version",
+     "Release Date",
+     "Support Status"
+    ],
+    [
+     "Python 3.15.0",
+     "Oct 9, 2026",
+     "Latest major bugfix release"
+    ],
+    [
+     "Python 3.14.0",
+     "Late 2025 / Updated Sept 30, 2026",
+     "Bugfix maintenance phase"
+    ],
+    [
+     "Python 3.13.0",
+     "Oct 2024",
+     "Bugfix/Security transition"
+    ]
+   ],
+   "detailed": [
+    [
+     {
+      "snippet": "Version"
+     },
+     {
+      "snippet": "Release Date"
+     },
+     {
+      "snippet": "Support Status"
+     }
+    ],
+    [
+     {
+      "snippet": "Python 3.15.0"
+     },
+     {
+      "snippet": "Oct 9, 2026"
+     },
+     {
+      "snippet": "Latest major bugfix release"
+     }
+    ],
+    [
+     {
+      "snippet": "Python 3.14.0"
+     },
+     {
+      "snippet": "Late 2025 / Updated Sept 30, 2026"
+     },
+     {
+      "snippet": "Bugfix maintenance phase"
+     }
+    ],
+    [
+     {
+      "snippet": "Python 3.13.0"
+     },
+     {
+      "snippet": "Oct 2024"
+     },
+     {
+      "snippet": "Bugfix/Security transition"
+     }
+    ]
+   ],
+   "formatted": [
+    {
+     "version": "Python 3.15.0",
+     "release_date": "Oct 9, 2026",
+     "support_status": "Latest major bugfix release"
+    },
+    {
+     "version": "Python 3.14.0",
+     "release_date": "Late 2025 / Updated Sept 30, 2026",
+     "support_status": "Bugfix maintenance phase"
+    },
+    {
+     "version": "Python 3.13.0",
+     "release_date": "Oct 2024",
+     "support_status": "Bugfix/Security transition"
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "snippet": "You can download the newest files and check release details directly from the Python Downloads Page.",
+   "snippet_links": [
+    {
+     "text": "Python Downloads Page",
+     "link": "https://www.python.org/downloads/source/"
+    }
+   ],
+   "reference_indexes": [
+    1
+   ]
+  },
+  {
+   "type": "paragraph",
+   "snippet": "If you would like, I can provide:"
+  },
+  {
+   "type": "list",
+   "list": [
+    {
+     "snippet": "A summary of new features and optimizations in Python 3.15"
+    },
+    {
+     "snippet": "Guidance on upgrading your current Python environment"
+    }
+   ]
+  }
+ ],
+ "references": [
+  {
+   "index": 0,
+   "title": "Python Release Python 3.15.0",
+   "link": "https://www.python.org/downloads/release/python-3150/",
+   "snippet": "Release date: Oct. 9, 2026. This is the stable release of Python 3.15.0. Python 3.15.0 is the newest major release of the Python programming language, and it conta...",
+   "source": "Python.org"
+  },
+  {
+   "index": 1,
+   "title": "Python Source Releases",
+   "link": "https://www.python.org/downloads/source/",
+   "snippet": "Python 3.15.0 - Oct. 9, 2026. Download Gzipped source tarball; Download XZ compressed source tarball · Python 3.11.17 - Oct. 1, 2026 - Sept. 30, 2026.",
+   "source": "Python.org"
+  },
+  {
+   "index": 2,
+   "title": "History of Python",
+   "link": "https://en.wikipedia.org/wiki/History_of_Python",
+   "snippet": "History of Python Releases of Python 3 up through 3.12 include the 2to3 utility, which automates the translation of Python 2 code to Python 3. As of October 2026 ,",
+   "source": "Wikipedia"
+  }
+ ]
+}

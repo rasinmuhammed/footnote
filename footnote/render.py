@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from urllib.parse import urlparse
 
+from .aimode import Audit, Mention
 from .pipeline import Report
 
 FLAG = {"supported": "", "weak": " (weak support)", "unsupported": " (not supported by its source)",
@@ -56,3 +57,45 @@ def markdown(report: Report) -> str:
         s = by_id[sid]
         out.append(f"[^{n}]: [{s.title}]({s.url}){', ' + s.date if s.date else ''}")
     return "\n".join(out)
+
+
+MARKS = {"literal": "✓", "same_value": "✓", "in_text": "✓", "converted": "≈", "metadata_only": "◷",
+         "not_found": "✗", "uncited": "·"}
+
+
+def _mark(m: Mention) -> str:
+    where = f" (in {''.join(f'[{i + 1}]' for i in m.elsewhere)})" if m.elsewhere else ""
+    if m.status == "converted":
+        return f"≈ {m.written} ({m.matched})"
+    if m.status == "metadata_only":
+        return f"◷ {m.written} ({m.matched}){where}"
+    if m.status == "uncited":
+        return f"· {m.written}{where or ' (in no reference)'}"
+    return f"{MARKS[m.status]} {m.written}{where}"
+
+
+def audit_text(a: Audit) -> str:
+    lines = [a.question, ""]
+    for s in a.statements:
+        if s.kind == "offer":
+            continue
+        refs = "".join(f"[{i + 1}]" for i in s.refs) or ("(no citation)" if s.mentions else "")
+        lines.append(f"{'' if s.kind == 'paragraph' else '- '}{s.text} {refs}".rstrip())
+        if s.mentions:
+            lines.append("    " + "   ".join(map(_mark, s.mentions)))
+    lines += ["", "References"]
+    for r in a.references:
+        p = a.pages.get(r.url)
+        note = ("" if p is None else f", not read: {p.error}" if not p.ok
+                else f", dated {p.date}" if p.date else "")
+        lines.append(f"[{r.index + 1}] {r.title} ({_domain(r.url)}{note})\n    {r.url}")
+    n = a.summary()
+    f = n["figures"]
+    pages = f" | cited pages read: {n['pages_read']}/{n['pages']}" if n["pages"] else " | snippets only"
+    found = f.get("literal", 0) + f.get("same_value", 0) + f.get("in_text", 0)
+    lines += ["", f"{sum(f.values())} figures: {found} in a cited page, {f.get('converted', 0)} converted, "
+              f"{f.get('metadata_only', 0)} only as a page's own date, {f.get('not_found', 0)} not in the cited "
+              f"pages, {f.get('uncited', 0)} in statements with no citation{pages}",
+              "✓ in a cited page  ≈ converted  ◷ only a page's own date  ✗ not in the cited pages  "
+              "· no citation  (in [n]) found in that reference instead"]
+    return "\n".join(lines)

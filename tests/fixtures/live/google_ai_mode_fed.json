@@ -1,0 +1,78 @@
+{
+ "search_metadata": {
+  "status": "Success"
+ },
+ "search_parameters": {
+  "engine": "google_ai_mode",
+  "q": "What did the latest US Federal Reserve meeting decide about interest rates?",
+  "hl": "en",
+  "gl": "us",
+  "device": "desktop"
+ },
+ "text_blocks": [
+  {
+   "type": "paragraph",
+   "snippet": "At its latest meeting on September 16, 2026, the Federal Open Market Committee (FOMC) decided to raise the target range for the federal funds rate by 1/4 percentage point to 3-3/4 to 4 percent.",
+   "snippet_highlighted_words": [
+    "raise the target range for the federal funds rate by 1/4 percentage point to 3-3/4 to 4 percent"
+   ],
+   "reference_indexes": [
+    0
+   ]
+  },
+  {
+   "type": "list",
+   "list": [
+    {
+     "snippet": "Target Range: Increased by 25 basis points (1/4 percentage point) to 3.75% – 4.00%."
+    },
+    {
+     "snippet": "Vote Tally: Approved by a unanimous 12–0 vote."
+    },
+    {
+     "snippet": "Reserve Balances: The Board of Governors voted unanimously to raise the interest rate paid on reserve balances to 3.90%, effective September 17, 2026."
+    },
+    {
+     "snippet": "Primary Credit Rate: Approved a 1/4 percentage point increase to 4.0%, effective September 17, 2026.",
+     "reference_indexes": [
+      0,
+      1
+     ]
+    },
+    {
+     "snippet": "Economic Activity: Expanding at a solid pace with resilient domestic spending and robust capital investment."
+    },
+    {
+     "snippet": "Labor Market: Job gains have kept pace with the growing workforce."
+    },
+    {
+     "snippet": "Next Meeting: Scheduled for October 27–28, 2026.",
+     "reference_indexes": [
+      0,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "snippet": "If you'd like, I can set up a task to notify you as soon as the results of the upcoming October 27–28 FOMC meeting are announced."
+  }
+ ],
+ "references": [
+  {
+   "index": 0,
+   "title": "Federal Reserve issues FOMC statement",
+   "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
+   "snippet": "The Committee decided to raise the target range for the federal funds rate by 1/4 percentage point to 3-3/4 to 4 percent, in support of the Federal Reserve's dual...",
+   "source": "Federal Reserve (.gov)"
+  },
+  {
+   "index": 1,
+   "title": "The Fed - Monetary Policy: - Federal Reserve",
+   "link": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260916.htm",
+   "snippet": "the Board of Governors of the Federal Reserve System voted unanimously to raise the interest rate paid on reserve balances to 3.90 percent, effective September 17,",
+   "source": "Federal Reserve (.gov)"
+  }
+ ]
+}
