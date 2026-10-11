@@ -114,6 +114,9 @@ def test_audit_text_marks_every_figure():
     assert "◷ September 16, 2026 (date in URL)" in out and "✗ October 27–28, 2026" in out
     assert "· 3.75% (in [1])" in out and "· 12 (in no reference)" in out
     assert "Economic Activity" in out and "If you'd like" not in out
+    assert "16 figures: 6 in a cited page, 1 only a page's date or the search date, 1 not in the cited pages, " \
+           "8 with no citation | snippets only" in out and "\033[" not in out
+    assert "\033[31m✗\033[0m October 27–28, 2026" in audit_text(a, color=True)
     assert a.summary() == {"statements": 8, "with_figures": 6, "uncited_with_figures": 3, "pages": 0,
                            "pages_read": 0, "figures": {"metadata_only": 1, "literal": 4, "uncited": 8,
                                                         "same_value": 1, "in_text": 1, "not_found": 1}}

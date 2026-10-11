@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 
 from dotenv import find_dotenv, load_dotenv
@@ -62,7 +63,8 @@ def audit(argv: list[str]) -> int:
     fetcher = PageFetcher(cache_dir=None if args.no_cache else ".footnote_cache/pages")
     result = aimode.audit(searcher.search(aimode.params(args.question)), fetcher.fetch)
 
-    print(json.dumps(result.to_dict(), indent=2) if args.format == "json" else audit_text(result))
+    color = sys.stdout.isatty() and not os.environ.get("NO_COLOR")
+    print(json.dumps(result.to_dict(), indent=2) if args.format == "json" else audit_text(result, color))
     print(f"\nSerpApi searches used: {searcher.calls} (cache hits: {searcher.hits}) | pages fetched: "
           f"{fetcher.fetched}", file=sys.stderr)
     return 0

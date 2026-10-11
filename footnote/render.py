@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from urllib.parse import urlparse
 
 from .aimode import Audit, Mention
@@ -61,20 +62,23 @@ def markdown(report: Report) -> str:
 
 MARKS = {"literal": "✓", "same_value": "✓", "in_text": "✓", "converted": "≈", "rounded": "≈",
          "metadata_only": "◷", "search_date": "◷", "not_found": "✗", "uncited": "·"}
+MEANING = {"✓": "in a cited page", "≈": "converted or rounded", "◷": "only a page's date or the search date",
+           "✗": "not in the cited pages", "·": "with no citation"}
+COLOR = {"✓": 32, "≈": 33, "◷": 33, "✗": 31, "·": 36}  # green, yellow, yellow, red, cyan
 
 
-def _mark(m: Mention) -> str:
+def _paint(mark: str, color: bool) -> str:
+    return f"\033[{COLOR[mark]}m{mark}\033[0m" if color else mark
+
+
+def _mark(m: Mention, color: bool) -> str:
+    mark = MARKS[m.status]
     where = f" (in {''.join(f'[{i + 1}]' for i in m.elsewhere)})" if m.elsewhere else ""
-    if m.status in ("converted", "rounded"):
-        return f"≈ {m.written} ({m.matched})"
-    if m.status in ("metadata_only", "search_date"):
-        return f"◷ {m.written} ({m.matched}){where}"
-    if m.status == "uncited":
-        return f"· {m.written}{where or ' (in no reference)'}"
-    return f"{MARKS[m.status]} {m.written}{where}"
+    note = (f" ({m.matched})" if mark in "≈◷" else "") + (where or (" (in no reference)" if mark == "·" else ""))
+    return f"{_paint(mark, color)} {m.written}{note}"
 
 
-def audit_text(a: Audit) -> str:
+def audit_text(a: Audit, color: bool = False) -> str:
     lines = [a.question, ""]
     for s in a.statements:
         if s.kind == "offer":
@@ -82,7 +86,7 @@ def audit_text(a: Audit) -> str:
         refs = "".join(f"[{i + 1}]" for i in s.refs) or ("(no citation)" if s.mentions else "")
         lines.append(f"{'' if s.kind == 'paragraph' else '- '}{s.text} {refs}".rstrip())
         if s.mentions:
-            lines.append("    " + "   ".join(map(_mark, s.mentions)))
+            lines.append("    " + "   ".join(_mark(m, color) for m in s.mentions))
     lines += ["", "References"]
     for r in a.references:
         p = a.pages.get(r.url)
@@ -90,13 +94,12 @@ def audit_text(a: Audit) -> str:
                 else f", dated {p.date}" if p.date else "")
         lines.append(f"[{r.index + 1}] {r.title} ({_domain(r.url)}{note})\n    {r.url}")
     n = a.summary()
-    f = n["figures"]
+    by_mark = Counter()
+    for status, k in n["figures"].items():
+        by_mark[MARKS[status]] += k
+    parts = ", ".join(f"{by_mark[m]} {meaning}" for m, meaning in MEANING.items() if by_mark[m])
     pages = f" | cited pages read: {n['pages_read']}/{n['pages']}" if n["pages"] else " | snippets only"
-    found = f.get("literal", 0) + f.get("same_value", 0) + f.get("in_text", 0)
-    lines += ["", f"{sum(f.values())} figures: {found} in a cited page, "
-              f"{f.get('converted', 0) + f.get('rounded', 0)} converted or rounded, "
-              f"{f.get('metadata_only', 0) + f.get('search_date', 0)} only a page's date or the search date, "
-              f"{f.get('not_found', 0)} not in the cited pages, {f.get('uncited', 0)} with no citation{pages}",
-              "✓ in a cited page  ≈ converted or rounded  ◷ only a page's date or the search date  "
-              "✗ not in the cited pages  · no citation  (in [n]) found in that reference instead"]
+    lines += ["", f"{sum(by_mark.values())} figures{': ' + parts if parts else ''}{pages}",
+              "  ".join(f"{_paint(m, color)} {meaning.removeprefix('with ')}" for m, meaning in MEANING.items())
+              + "  (in [n]) found there"]
     return "\n".join(lines)

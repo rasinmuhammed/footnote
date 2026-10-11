@@ -91,26 +91,13 @@ Each question uses 1 to 3 SerpApi searches, printed after every run.
 with the citations each one carries, reads every cited page, and looks for each number, and each date precise to a
 month, in the pages its statement cites.
 
-```
-$ footnote audit "What is the latest stable release of Rust?"
-What is the latest stable release of Rust?
+![footnote audit on Google AI Mode's answer about the latest Rust release: 1.99.0 and its date are found in a cited
+page, the beta's 1.100.0 has no citation but is in reference 4, and the nightly "Rust 1.01.0" is marked as not in
+the cited pages](docs/audit.gif)
 
-The latest stable release of Rust is Rust 1.99.0, which was released on October 1, 2026. [1]
-    ✓ 1.99.0   ✓ October 1, 2026
-- Beta: Rust 1.100.0 is currently in beta. (no citation)
-    · 1.100.0 (in [4])
-- Nightly: Rust 1.01.0 represents the active nightly development channel. [4]
-    ✗ 1.01.0
-
-References
-[1] Announcing Rust 1.99.0 | Rust Blog (blog.rust-lang.org, dated 2026-10-01)
-[4] Rust Changelogs: Rust Versions (releases.rs, dated 2026-10-11)
-
-4 figures: 2 in a cited page, 0 converted or rounded, 0 only a page's date or the search date, 1 not in the cited pages, 1 with no citation | cited pages read: 4/4
-```
-
-<sub>A real run on 11 October 2026, trimmed: three list items with no figures, a closing line, references [2] and [3]
-and the URLs are cut. There is no Rust 1.01.0, and releases.rs doesn't mention one.</sub>
+<sub>A real answer from 11 October 2026, replayed from the cache, which is why it used no SerpApi searches. There is
+no Rust 1.01.0, and releases.rs doesn't mention one. Recorded with [vhs](https://github.com/charmbracelet/vhs) from
+[`docs/audit.tape`](docs/audit.tape).</sub>
 
 A number counts as found if a cited page states it as written, as the same value ("4.0%" for "4 percent"),
 converted ("3.75%" for "3-3/4 percent", "25 basis points" for "1/4 percentage point") or rounded ("1.48 billion"
