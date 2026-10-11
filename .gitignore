@@ -4,3 +4,4 @@ __pycache__/
 evals/results/
 .env
 .venv/
+drafts/
