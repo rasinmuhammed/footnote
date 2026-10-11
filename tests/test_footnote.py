@@ -203,6 +203,30 @@ def test_groq_answerer_request_shape_and_retry(raw):
     assert a.usage == {"input_tokens": 20, "output_tokens": 10}
 
 
+def test_groq_answerer_gives_more_room_when_reasoning_ran_out():
+    from types import SimpleNamespace as NS
+
+    from footnote.llm import GroqAnswerer
+
+    class Exhausted(Exception):  # what Groq returns when the cap ran out before the tool call
+        body = {"error": {"code": "tool_use_failed", "failed_generation": "",
+                          "message": "Tool choice is required, but model did not call a tool"}}
+
+    sent, replies = [], [Exhausted("Error code: 400 - tool_use_failed"), _resp(json.dumps({"claims": [{"text": "y"}]}))]
+
+    def create(**kw):
+        sent.append(kw)
+        r = replies.pop(0)
+        if isinstance(r, Exception):
+            raise r
+        return r
+
+    a = GroqAnswerer(model="m", client=NS(chat=NS(completions=NS(create=create))))
+    assert a.answer("q?", None)["claims"] == [{"text": "y"}]
+    assert [kw["max_completion_tokens"] for kw in sent] == [2000, 6000]
+    assert sent[0]["messages"] == sent[1]["messages"]  # same request, more room; nothing to correct
+
+
 def test_groq_answerer_closed_book_and_hard_errors():
     from types import SimpleNamespace as NS
 

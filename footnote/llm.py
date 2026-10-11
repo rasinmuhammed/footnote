@@ -64,9 +64,11 @@ class Answerer(Protocol):
 
 
 class GroqAnswerer:
-    # Reasoning counts against the budget: gpt-oss-20b has spent 5.4k tokens deliberating before its tool call.
-    # Groq bills tokens generated, not this cap.
-    def __init__(self, model: str | None = None, client=None, max_tokens: int = 8000, retries: int = 2):
+    # Reasoning counts against the completion cap, and Groq's rate limiter reserves the whole cap per request (a free
+    # key gets 8k tokens/min). So calls start at max_tokens, and only one that spent it all reasoning without calling
+    # the tool (gpt-oss-20b once needed 5.4k) is retried with roomy_max_tokens.
+    def __init__(self, model: str | None = None, client=None, max_tokens: int = 2000, roomy_max_tokens: int = 6000,
+                 retries: int = 2):
         if client is None:
             from groq import Groq
 
@@ -75,7 +77,7 @@ class GroqAnswerer:
             client = Groq(max_retries=10)  # free keys get 8k tokens/min; the SDK waits out each 429 as told
         self.client = client
         self.model = model or os.environ.get("FOOTNOTE_MODEL", DEFAULT_MODEL)
-        self.max_tokens, self.retries = max_tokens, retries
+        self.max_tokens, self.roomy_max_tokens, self.retries = max_tokens, roomy_max_tokens, retries
         self.usage = {"input_tokens": 0, "output_tokens": 0}
 
     def answer(self, question: str, sources: list[Source] | None) -> dict:
@@ -87,6 +89,7 @@ class GroqAnswerer:
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
         last_error: Exception | None = None
+        cap = self.max_tokens
         for _ in range(self.retries + 1):
             try:
                 resp = self.client.chat.completions.create(
@@ -95,16 +98,19 @@ class GroqAnswerer:
                     tools=[tool_schema(cited)],
                     tool_choice={"type": "function", "function": {"name": "submit_answer"}},
                     temperature=0,
-                    max_completion_tokens=self.max_tokens,
+                    max_completion_tokens=cap,
                 )
             except Exception as e:  # Groq returns 400 "tool_use_failed" when a model emits malformed arguments
                 if "tool_use_failed" not in str(e):
                     raise
                 last_error = e
-                # The identical request tends to fail identically (gpt-oss calls its built-in browser's "open"),
-                # so the retry shows the model its rejected call and why.
                 body = getattr(e, "body", None)
                 err = (body.get("error") or {}) if isinstance(body, dict) else {}
+                if not err.get("failed_generation") and "did not call a tool" in err.get("message", ""):
+                    cap = self.roomy_max_tokens  # nothing came out: the cap ran out mid-reasoning
+                    continue
+                # The identical request tends to fail identically (gpt-oss calls its built-in browser's "open"),
+                # so the retry shows the model its rejected call and why.
                 messages = messages[:2] + [
                     {"role": "assistant", "content": err.get("failed_generation") or "(invalid tool call)"},
                     {"role": "user", "content": f"That call was rejected: {err.get('message') or e}. "
