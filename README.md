@@ -137,8 +137,9 @@ The "Weak or unsupported" and "number not in their sources" rows overstate how m
 Of 20 grounded gpt-oss-20b verdicts labelled by hand, the current checker flags 4: 2 weak, 1 unsupported and 1
 number not found, the same crore conversion as [below](#a-correct-claim-flagged-on-purpose). 3 of the 4 were backed
 by their cited results; the unsupported one took a meeting's date from the date of the result reporting it, and
-wasn't. Of the 16 it marks supported, 14 were backed, 1 was not and 1 was a close call. Those 20 also picked the
-checker's fixes, so read the counts as a direction; only grounded claims were labelled.
+wasn't. "Backed by a source" errs the other way: of the 16 it marks supported, 12 were backed, 3 were not and 1 was
+a close call. Those 20 also picked the checker's fixes, so read the counts as a direction; only grounded claims were
+labelled.
 
 Latency per question, grounded answers:
 
@@ -193,15 +194,16 @@ was the same conversion, and the claim was backed.
 `evals/label.py`, which shows each claim with exactly what the checker saw: the cited results' titles, snippets,
 dates and URLs. The rule: a claim counts as backed only if the cited title, snippet and date together state
 everything it says, and a result's date shows when something was reported, not when it happened. The labels are in
-[`evals/labels_human.json`](evals/labels_human.json): 17 backed, 2 not backed, 1 close call. One label was corrected
-after review to match the stated rule: a claim that took a Fed meeting's date from the date of the result reporting
-it was first labelled backed, then not backed.
+[`evals/labels_human.json`](evals/labels_human.json): 15 backed, 4 not backed, 1 close call. Three labels were
+corrected after review, from backed to not backed, to apply the stated rule consistently: two took a date only from
+the cited result's date (a Fed meeting, a Python release), and one gave a release month the source doesn't state.
 
-With the checker as it was when they were labelled, its call (backed means `supported`) agreed with 13 of the 19
+With the checker as it was when they were labelled, its call (backed means `supported`) agreed with 11 of the 19
 clear labels. The close call was one the checker marked `supported`.
 
-- Of 13 claims the checker marked `supported`, 12 were backed. The one it over-credited gave a release month for a
-  model the source only ranked "as of July 2026".
+- Of 13 claims the checker marked `supported`, 10 were backed. The 3 it over-credited added something the source
+  doesn't say: two gave a release month for models the source only ranked "as of July 2026", and one, "It was
+  released on 2026-10-10", took the release date from the date of the headline reporting it.
 - Of 6 claims it flagged as weak, unsupported or number_not_found, 5 were backed. Three drew on more than one
   cited source, and coverage was then scored against the best single source. One said "Reserve Bank of India" where
   the headline said "RBI". One restated "146.39 crore" as "1,463,900,000": a correct conversion, but the checker
@@ -209,23 +211,24 @@ clear labels. The close call was one the checker marked `supported`.
   the date of a Fed meeting from the date of the result reporting it.
 
 Those flags picked the two fixes now in the checker: coverage across all cited sources together, and the
-abbreviation table. Re-scored with them, the same 20 verdicts agree with 15 of the 19 clear labels: **same sample
+abbreviation table. Re-scored with them, the same 20 verdicts agree with 13 of the 19 clear labels: **same sample
 used to pick the fixes, not independent**. It shows the fixes work on the cases that prompted them, not how often
 the checker is right. Two flags cleared, both on backed claims: a NASA claim combining three results, and the
 "Reserve Bank of India" claim. Four remain. The Fed meeting date is a correct flag. The other three are on backed
 claims: the crore conversion, and two claims describing disagreement between sources ("Sources disagree…", "Some
-studies find… while others find…"), whose framing words are in no snippet.
+studies find… while others find…"), whose framing words are in no snippet. Both fixes only loosen the checker, so
+the three over-credited claims are still marked supported.
 
-So in this sample `supported` was nearly always right: of the 15 clearly labelled claims it marks supported, 14
-were backed. 3 of its 4 current flags were false alarms.
+So in this sample the checker erred both ways: of the 15 clearly labelled claims it marks supported, 12 were backed,
+and 3 of its 4 current flags were false alarms.
 
 The independent check is a second batch: 20 new verdicts drawn after the fixes (seed 20261012) from all three runs
 above, none from the first 20, labelled the same way but blind, without the checker's verdict, using
 `python evals/label.py --batch 2`; the labels go in `evals/labels_human_2.json`.
 
 For comparison, an earlier set of labels made by Claude, the AI assistant that ran this evaluation, is in
-[`evals/labels_ai.json`](evals/labels_ai.json). It agreed with the human labels on 14 of the 19 clear ones, and in
-all 5 disagreements it was the stricter of the two.
+[`evals/labels_ai.json`](evals/labels_ai.json). It agreed with the human labels on 16 of the 19 clear ones, and in
+all 3 disagreements it was the stricter of the two.
 
 ## Comparing models
 
@@ -238,9 +241,9 @@ run of it used about 58k.
 
 - The verifier is lexical. It catches invented numbers and citations to the wrong result well, and paraphrases
   poorly: a correct sentence worded differently from its snippet can score `weak`. On 19 hand-labelled verdicts it
-  agreed 13 times before the two fixes and 15 after, on the same sample, so the second figure isn't independent.
-  3 of the 4 remaining misses are flags on claims that were backed (above). A sample of 50 or more would pin that
-  down.
+  agreed 11 times before the two fixes and 13 after, on the same sample, so the second figure isn't independent.
+  Of the 6 remaining misses, 3 are flags on claims that were backed and 3 are claims marked `supported` that add
+  something their source doesn't say (above). A sample of 50 or more would pin that down.
 - Coverage pools all cited sources, so a claim citing several results can collect its words from unrelated ones.
   And it can't see an added fact if the claim's other words match: "released in July 2026" passed against a page
   that only ranked the model "as of July 2026".
