@@ -8,7 +8,8 @@
  "seed": 20261012,
  "checker_shown": false,
  "labeller": "human",
- "rule": "A claim counts as backed only if the cited title, snippet and date together state everything it says. A result's date shows when something was reported, not when it happened.",
+ "rule": "A claim counts as backed only if the cited title, snippet and date together state everything it says. A result's date shows when something was reported, not when it happened. A result's domain may be used to name its publisher; URL paths and slugs are not evidence.",
+ "note": "Reviewed after the first agreement figure had been computed: 7 labels were corrected to apply the written rule (#2, #5, #7, #9, #14 and #20 from backed to not backed, #8 from not backed to backed). The original labels are kept in corrected_from. The rule's last sentence, on URLs, was added during this review.",
  "verdicts": [
   {
    "n": 1,
@@ -47,8 +48,9 @@
      "text": "Singapore GP Sprint: Max Verstappen beats Lewis Hamilton after George Russell crashes out from lead (Sky Sports)"
     }
    ],
-   "label": "backed",
-   "reason": ""
+   "label": "not_backed",
+   "reason": "the date comes only from the headline's date, which shows when it was reported",
+   "corrected_from": "backed"
   },
   {
    "n": 3,
@@ -107,8 +109,9 @@
      "text": "Fed approves interest rate hike, signals one more to come this year (CNBC)"
     }
    ],
-   "label": "backed",
-   "reason": ""
+   "label": "not_backed",
+   "reason": "the meeting month comes only from the result's date; the URL slug doesn't count",
+   "corrected_from": "backed"
   },
   {
    "n": 6,
@@ -147,8 +150,9 @@
      "text": "remote work led to lower job turnover as job satisfaction rose, which could substantially reduce firms' hiring costs. Productivity gains can ..."
     }
    ],
-   "label": "backed",
-   "reason": ""
+   "label": "not_backed",
+   "reason": "the snippet credits lower hiring costs to lower job turnover, not to productivity gains",
+   "corrected_from": "backed"
   },
   {
    "n": 8,
@@ -167,8 +171,9 @@
      "text": "Burj Khalifa is 2,716.5 ft. At 828 metres (2,716.5ft), Burj Khalifa is 320 metres taller than Taipei 101, which at 508 metres (1,667 ft)"
     }
    ],
-   "label": "not_backed",
-   "reason": ""
+   "label": "backed",
+   "reason": "the snippet states it almost word for word",
+   "corrected_from": "not_backed"
   },
   {
    "n": 9,
@@ -187,8 +192,9 @@
      "text": "IF was effective in significantly reducing body weight and BMI in overweight obese middle-aged people without metabolic disease compared to the regular diet."
     }
    ],
-   "label": "backed",
-   "reason": ""
+   "label": "not_backed",
+   "reason": "the title and snippet don't say the study was a randomized clinical trial",
+   "corrected_from": "backed"
   },
   {
    "n": 10,
@@ -295,8 +301,9 @@
      "text": "New standard for open-weight. Inkling (Thinking Machines Lab) — Jul 2026. 3 (Moonshot AI) — Jul 2026. Weights released Jul 27. Kimi K2.6. ..."
     }
    ],
-   "label": "backed",
-   "reason": ""
+   "label": "not_backed",
+   "reason": "the snippet gives no release month for Kimi K2.6; the date shown belongs to the entry before it",
+   "corrected_from": "backed"
   },
   {
    "n": 15,
@@ -415,8 +422,9 @@
      "text": "Artemis III will launch four astronauts from NASA's Kennedy Space Center in Florida aboard the Orion spacecraft on the SLS (Space Launch System) ..."
     }
    ],
-   "label": "backed",
-   "reason": ""
+   "label": "not_backed",
+   "reason": "'mission progress update' is only in the URL slug; the title is cut off before it",
+   "corrected_from": "backed"
   }
  ]
 }
