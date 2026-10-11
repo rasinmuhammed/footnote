@@ -79,6 +79,19 @@ def test_cache_spends_one_search(tmp_path):
     assert (Client.calls, s.calls, s.hits) == (1, 1, 1)
 
 
+def test_search_errors_never_leak_api_key(tmp_path):
+    import pytest
+
+    class Client:
+        def search(self, params):
+            raise Exception("Max retries exceeded with url: /search?engine=google&q=x&api_key=SECRET123 (timeout)")
+
+    with pytest.raises(RuntimeError) as e:
+        SerpApiSearcher(cache_dir=tmp_path, client=Client()).search(params_for("google", "x"))
+    assert "SECRET123" not in str(e.value) and "api_key=***" in str(e.value)
+    assert e.value.__cause__ is None and e.value.__suppress_context__
+
+
 def _resp(args, prompt=10, completion=5):
     from types import SimpleNamespace as NS
 

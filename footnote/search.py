@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 from typing import Protocol
 
@@ -39,7 +40,11 @@ class SerpApiSearcher:
         if path and path.exists():
             self.hits += 1
             return json.loads(path.read_text())
-        results = self.client.search(dict(params))
+        try:
+            results = self.client.search(dict(params))
+        except Exception as e:  # serpapi errors embed the request URL, api_key included; keep it out of tracebacks
+            detail = getattr(e, "error", None) or re.sub(r"api_key=[^&\s]+", "api_key=***", str(e))
+            raise RuntimeError(f"SerpApi request failed for {params.get('engine')}: {detail}") from None
         data = results.as_dict() if hasattr(results, "as_dict") else dict(results)
         if "error" in data:
             raise RuntimeError(f"SerpApi error for {params.get('engine')}: {data['error']}")

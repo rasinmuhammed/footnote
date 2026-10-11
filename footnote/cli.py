@@ -4,6 +4,8 @@ import argparse
 import json
 import sys
 
+from dotenv import find_dotenv, load_dotenv
+
 from .llm import DEFAULT_MODEL, GroqAnswerer, list_models
 from .pipeline import Footnote
 from .render import markdown, text
@@ -11,6 +13,7 @@ from .search import SerpApiSearcher
 
 
 def main(argv: list[str] | None = None) -> int:
+    load_dotenv(find_dotenv(usecwd=True))  # variables already set in the environment win
     ap = argparse.ArgumentParser(prog="footnote", description="Answer a question from live search results, "
                                  "with every claim cited and every citation checked.")
     ap.add_argument("question", nargs="?")

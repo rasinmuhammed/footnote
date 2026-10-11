@@ -14,6 +14,8 @@ import statistics
 import time
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 from footnote.llm import GroqAnswerer
 from footnote.pipeline import Footnote
 from footnote.search import SerpApiSearcher
@@ -37,6 +39,7 @@ def summarise(verdicts: list) -> dict:
 
 
 def main() -> None:
+    load_dotenv(HERE.parent / ".env")
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int)
     args = ap.parse_args()
