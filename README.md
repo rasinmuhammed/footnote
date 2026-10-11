@@ -96,15 +96,17 @@ FOOTNOTE_MODEL=qwen/qwen3.8-27b python evals/run.py      # same questions, anoth
 
 Run on 11 October 2026. The 20 questions took 39 SerpApi searches (1 to 3 each). Every run reuses them from the
 cache, so the second and third models cost no searches and all three answered from identical sources. Counts come
-with shares because a few dozen claims can't support decimals.
+with shares because a few dozen claims can't support decimals. The verdicts are from the current checker, re-scored
+from the saved claims with `--rescore` after the two fixes described under
+[How often the checker is right](#how-often-the-checker-is-right).
 
 **openai/gpt-oss-120b** (the default)
 
 | | Grounded (Footnote) | Closed-book |
 |---|---|---|
 | Claims | 74 | 64 |
-| Backed by a source | 57 of 74 (77%) | 13 of 64 (20%) |
-| Weak or unsupported | 13 of 74 (18%) | 9 of 64 (14%) |
+| Backed by a source | 60 of 74 (81%) | 16 of 64 (25%) |
+| Weak or unsupported | 10 of 74 (14%) | 6 of 64 (9%) |
 | Abstained (refusal or placeholder) | 0 of 74 (0%) | 3 of 64 (5%) |
 | Numeric claims with a number not in their sources | 4 of 60 (7%) | 39 of 50 (78%) |
 | Bad citations | 0 of 74 (0%) | n/a |
@@ -114,8 +116,8 @@ with shares because a few dozen claims can't support decimals.
 | | Grounded (Footnote) | Closed-book |
 |---|---|---|
 | Claims | 120 | 61 |
-| Backed by a source | 114 of 120 (95%) | 15 of 61 (25%) |
-| Weak or unsupported | 3 of 120 (2%) | 19 of 61 (31%) |
+| Backed by a source | 114 of 120 (95%) | 20 of 61 (33%) |
+| Weak or unsupported | 3 of 120 (2%) | 14 of 61 (23%) |
 | Abstained (refusal or placeholder) | 0 of 120 (0%) | 1 of 61 (2%) |
 | Numeric claims with a number not in their sources | 3 of 107 (3%) | 26 of 37 (70%) |
 | Bad citations | 0 of 120 (0%) | n/a |
@@ -125,8 +127,8 @@ with shares because a few dozen claims can't support decimals.
 | | Grounded (Footnote) | Closed-book |
 |---|---|---|
 | Claims | 77 | 62 |
-| Backed by a source | 61 of 77 (79%) | 12 of 62 (19%) |
-| Weak or unsupported | 14 of 77 (18%) | 13 of 62 (21%) |
+| Backed by a source | 64 of 77 (83%) | 15 of 62 (24%) |
+| Weak or unsupported | 11 of 77 (14%) | 10 of 62 (16%) |
 | Abstained (refusal or placeholder) | 0 of 77 (0%) | 1 of 62 (2%) |
 | Numeric claims with a number not in their sources | 2 of 53 (4%) | 36 of 46 (78%) |
 | Bad citations | 0 of 77 (0%) | n/a |
@@ -149,8 +151,8 @@ How to read the tables:
 
 - Grounding cuts unverifiable numbers for every model: 4 of 60, 3 of 107 and 2 of 53 grounded numeric claims had a
   number their sources lack, against 39 of 50, 26 of 37 and 36 of 46 closed-book (gpt-oss-120b, qwen, gpt-oss-20b).
-- "Backed by a source" rewards copying. qwen writes more claims and more extractive ones: 40 of its 120 share at
-  least 90% of their content words with the cited snippet, against 12 of 77 for gpt-oss-20b and 4 of 74 for
+- "Backed by a source" rewards copying. qwen writes more claims and more extractive ones: 46 of its 120 share at
+  least 90% of their content words with their cited snippets, against 15 of 77 for gpt-oss-20b and 7 of 74 for
   gpt-oss-120b. It also tends to list what each source says instead of answering. Asked who won the most recent
   Grand Prix, it listed five F1 facts and put the answer itself under "gaps". Nothing here scores whether the
   question was answered.
@@ -186,16 +188,24 @@ dates and URLs. The rule: a claim counts as backed only if the cited title, snip
 everything it says, and a result's date shows when something was reported, not when it happened. The labels are in
 [`evals/labels_human.json`](evals/labels_human.json): 18 backed, 1 not backed, 1 close call.
 
-On the 19 clear labels, the checker's call (backed means `supported`) agreed **12 times**. The close call was one
-the checker marked `supported`. Twenty is a small sample, so read this as a direction rather than a rate.
+With the checker as it was when they were labelled, its call (backed means `supported`) agreed with 12 of the 19
+clear labels. The close call was one the checker marked `supported`.
 
 - Of 13 claims the checker marked `supported`, 12 were backed. The one it over-credited gave a release month for a
   model the source only ranked "as of July 2026".
 - All 6 claims it flagged as weak, unsupported or number_not_found were backed. Three drew on more than one cited
   source, and coverage was then scored against the best single source. One said "Reserve Bank of India" where the
-  headline said "RBI". One restated "146.39 crore" as "1,463,900,000": a correct conversion, but the checker matches numbers
-  literally, and converting is what the model is told not to do. One gave the date of a Fed meeting from the date of
-  the result reporting it.
+  headline said "RBI". One restated "146.39 crore" as "1,463,900,000": a correct conversion, but the checker
+  matches numbers literally, and converting is what the model is told not to do. One gave the date of a Fed meeting
+  from the date of the result reporting it.
+
+Those flags picked the two fixes now in the checker: coverage across all cited sources together, and the
+abbreviation table. Re-scored with them, the same 20 verdicts agree with 14 of the 19 clear labels: **same sample
+used to pick the fixes, not independent**. It shows the fixes work on the cases that prompted them, not how often
+the checker is right. Two flags cleared: a NASA claim combining three results, and the "Reserve
+Bank of India" claim. Four remain, all on backed claims: the crore conversion, the Fed meeting date, and two claims
+describing disagreement between sources ("Sources disagree…", "Some studies find… while others find…"), whose
+framing words are in no snippet.
 
 So in this sample `supported` was nearly always right and every flag was a false alarm. The weak and unsupported
 counts in the tables above likely overstate how many claims lack support.
@@ -215,8 +225,9 @@ run of it used about 58k.
 
 - The verifier is lexical. It catches invented numbers and citations to the wrong result well, and paraphrases
   poorly: a correct sentence worded differently from its snippet can score `weak`. On 19 hand-labelled verdicts it
-  agreed 12 times, and 6 of the 7 misses were flags on claims that were backed (above). A sample of 50 or more would
-  pin that down.
+  agreed 12 times before the two fixes and 14 after, on the same sample, so the second figure isn't independent.
+  4 of the 5 remaining misses are flags on claims that were backed (above). A sample of 50 or more would pin that
+  down.
 - Coverage pools all cited sources, so a claim citing several results can collect its words from unrelated ones.
   And it can't see an added fact if the claim's other words match: "released in July 2026" passed against a page
   that only ranked the model "as of July 2026".
