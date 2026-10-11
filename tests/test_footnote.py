@@ -121,6 +121,7 @@ def test_pipeline_end_to_end(searcher, make_answerer):
     assert r.engines == ["google", "google_news"]
     assert [v.status for v in r.verdicts] == ["supported", "supported", "number_not_found"]
     assert round(r.supported_share, 2) == 0.67
+    assert r.timings["serpapi_s"] == 2.5 and r.timings["model_s"] is None  # SerpApi's reported time; fake model
     baseline = fn.closed_book(r.question, r.sources)
     assert baseline[0].status == "number_not_found"
     out = text(r)
@@ -161,7 +162,8 @@ def _resp(args, prompt=10, completion=5):
     from types import SimpleNamespace as NS
 
     call = NS(function=NS(name="submit_answer", arguments=args))
-    return NS(choices=[NS(message=NS(tool_calls=[call]))], usage=NS(prompt_tokens=prompt, completion_tokens=completion))
+    return NS(choices=[NS(message=NS(tool_calls=[call]))],
+              usage=NS(prompt_tokens=prompt, completion_tokens=completion, queue_time=0.25, total_time=0.5))
 
 
 def test_groq_answerer_request_shape_and_retry(raw):
@@ -185,7 +187,7 @@ def test_groq_answerer_request_shape_and_retry(raw):
 
     a = GroqAnswerer(model="test-model", client=NS(chat=NS(completions=NS(create=create))))
     out = a.answer("q?", normalise(raw))
-    assert out == {"claims": [{"text": "x", "source_ids": ["S1"]}], "gaps": []}
+    assert out == {"claims": [{"text": "x", "source_ids": ["S1"]}], "gaps": [], "model_s": 0.75}  # Groq's own time
     assert len(sent) == 3  # one API error and one malformed reply were retried
     assert len(sent[0]["messages"]) == 2
     rejected, why = sent[1]["messages"][2:]  # the retry shows the model its rejected call and the reason

@@ -37,16 +37,19 @@ class Footnote:
     def __init__(self, searcher: Searcher, answerer: Answerer, per_engine: int = 6):
         self.searcher, self.answerer, self.per_engine = searcher, answerer, per_engine
 
-    def retrieve(self, question: str, engines: list[str] | None = None) -> tuple[list[str], list[str], list[Source]]:
+    def retrieve(self, question: str, engines: list[str] | None = None
+                 ) -> tuple[list[str], list[str], list[Source], float]:
         p = plan(question)
         chosen = engines or p.engines
         reasons = p.reasons if engines is None else ["engines set by caller"]
         responses = {e: self.searcher.search(params_for(e, question)) for e in chosen}
-        return chosen, reasons, normalise(responses, self.per_engine)
+        # SerpApi's own processing time: the real cost of these searches, even when they came from the cache
+        serpapi_s = sum((r.get("search_metadata") or {}).get("total_time_taken") or 0 for r in responses.values())
+        return chosen, reasons, normalise(responses, self.per_engine), round(serpapi_s, 3)
 
     def ask(self, question: str, engines: list[str] | None = None) -> Report:
         t0 = time.perf_counter()
-        chosen, reasons, sources = self.retrieve(question, engines)
+        chosen, reasons, sources, serpapi_s = self.retrieve(question, engines)
         t1 = time.perf_counter()
         out = self.answerer.answer(question, sources)
         t2 = time.perf_counter()
@@ -54,7 +57,8 @@ class Footnote:
         t3 = time.perf_counter()
         return Report(question, chosen, reasons, sources, verdicts, out.get("gaps", []),
                       {"search_s": round(t1 - t0, 3), "answer_s": round(t2 - t1, 3),
-                       "verify_s": round(t3 - t2, 3), "total_s": round(t3 - t0, 3)})
+                       "verify_s": round(t3 - t2, 3), "total_s": round(t3 - t0, 3),
+                       "serpapi_s": serpapi_s, "model_s": out.get("model_s")})
 
     def closed_book(self, question: str, sources: list[Source]) -> list[Verdict]:
         """Baseline: same model, no search. Its claims are then checked against what search found."""

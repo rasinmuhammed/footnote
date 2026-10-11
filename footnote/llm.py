@@ -120,6 +120,9 @@ class GroqAnswerer:
                 continue
             if data.get("claims"):
                 data.setdefault("gaps", [])
+                # Groq's own queue and processing time: excludes the network and any client-side rate-limit waits
+                server = [getattr(usage, k, None) for k in ("queue_time", "total_time")]
+                data["model_s"] = round(sum(server), 3) if None not in server else None
                 return data
             last_error = ValueError("model returned no claims")
         raise RuntimeError(f"{self.model} did not return a valid answer after {self.retries + 1} tries: {last_error}")

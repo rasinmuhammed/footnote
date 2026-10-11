@@ -25,7 +25,10 @@ from footnote.sources import Source
 from footnote.verify import Verdict, check, check_against_pool, numbers
 
 HERE = Path(__file__).parent
-STAGES = (("SerpApi search", "search_s"), ("Model", "answer_s"), ("Total", "total_s"))
+# Search and model time are what SerpApi and Groq report, so they stay real when searches come from the cache and
+# leave out free-tier rate-limit waits. Wall clock includes both effects.
+STAGES = (("SerpApi search, as SerpApi reports it", "serpapi_s"), ("Model, as Groq reports it", "model_s"),
+          ("Wall clock in this run", "total_s"))
 
 
 def summarise(verdicts: list[Verdict]) -> dict:
@@ -44,9 +47,10 @@ def summarise(verdicts: list[Verdict]) -> dict:
 def latency(rows: list[dict]) -> dict:
     """Median and nearest-rank p90 per stage of the grounded answer, so one slow search isn't hidden in a total."""
     out = {}
-    for stage, key in STAGES:
-        xs = sorted(r["grounded"]["timings"][key] for r in rows)
-        out[key] = {"median": round(statistics.median(xs), 1), "p90": round(xs[math.ceil(0.9 * len(xs)) - 1], 1)}
+    for _, key in STAGES:
+        xs = sorted(x for r in rows if (x := r["grounded"]["timings"].get(key)) is not None)
+        if xs:  # results from before a stage was recorded simply omit it
+            out[key] = {"median": round(statistics.median(xs), 1), "p90": round(xs[math.ceil(0.9 * len(xs)) - 1], 1)}
     return out
 
 
@@ -67,7 +71,8 @@ def table(summary: dict) -> str:
     return "\n".join(["| | Grounded (Footnote) | Closed-book |", "|---|---|---|",
                       *(f"| {label} | {grounded} | {closed} |" for label, grounded, closed in rows),
                       "", "| Grounded latency per question | Median | p90 |", "|---|---|---|",
-                      *(f"| {stage} | {lat[key]['median']}s | {lat[key]['p90']}s |" for stage, key in STAGES)])
+                      *(f"| {stage} | {lat[key]['median']}s | {lat[key]['p90']}s |" for stage, key in STAGES
+                        if key in lat)])
 
 
 def rescore(path: Path) -> dict:

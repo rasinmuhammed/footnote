@@ -1,4 +1,4 @@
-{"search_metadata": {"status": "Success"},
+{"search_metadata": {"status": "Success", "total_time_taken": 1.5},
  "answer_box": {"type": "organic_result", "title": "Mount Example - Wikipedia", "link": "https://en.wikipedia.org/wiki/Mount_Example",
                 "snippet": "Mount Example is 4,321 metres tall and was first climbed in 1911."},
  "knowledge_graph": {"title": "Mount Example", "type": "Mountain", "description": "Mount Example is a fictional peak used in tests.",
