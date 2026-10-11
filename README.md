@@ -119,8 +119,9 @@ posing as a browser, so some sites refuse it.
 `evals/aimode_audit.py` ran on 11 October 2026 over Footnote's 20 eval questions and 60 new ones
 ([`evals/aimode_questions.jsonl`](evals/aimode_questions.jsonl)), 10 each on central banks and the economy,
 software releases, sports, science and health, policy, and business. That took 80 SerpApi searches, 3 of them from
-an earlier pilot. Each answer's cited pages were fetched straight after its search: 171 of the 205 were read, and 21
-refused the script with HTTP 403 (bls.gov refused every request). Per-answer results are in
+an earlier pilot. Each answer's cited pages were fetched straight after its search, or about 45 minutes after for
+the 3 pilot answers: 171 of the 205 were read, and 21 refused the script with HTTP 403 (bls.gov refused every
+request). Per-answer results are in
 [`evals/aimode_results.json`](evals/aimode_results.json), totals in
 [`evals/aimode_summary.json`](evals/aimode_summary.json).
 
@@ -165,7 +166,7 @@ from what the script could read, not from how it matches
 ([`evals/flag_causes.json`](evals/flag_causes.json), from re-reading those pages afterwards):
 
 - 15 cite a page the script couldn't read: blocked (bls.gov, incometaxindia.gov.in, piie.com, jec.senate.gov,
-  reuters.com, sciencedirect.com) or a PDF (two Bank of Japan statements).
+  reuters.com, sciencedirect.com) or a PDF (a Bank of Japan statement, cited by two of them).
 - 5 were in the page's HTML but outside the main text the extractor kept, such as "Latest Release: 1.37.1" on
   kubernetes.io's releases page.
 - 6 weren't in the page's HTML at all: live quotes on Google Finance (3) and Worldometer (1), and figures from
