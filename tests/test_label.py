@@ -48,3 +48,26 @@ def test_second_batch_is_new_verdicts_from_every_run_labelled_blind(tmp_path, ca
     assert data["verdicts"][0]["label"] == "backed" and not data["checker_shown"]
     assert not any("checker" in v for v in data["verdicts"])  # neither saved
     assert "Checker" not in capsys.readouterr().out  # nor shown
+
+
+def test_flags_sample_only_cited_flags_and_never_save_their_kind(tmp_path):
+    spec = importlib.util.spec_from_file_location("label_flags", Path(__file__).parents[1] / "evals" / "label_flags.py")
+    flags = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(flags)
+    mention = lambda status: {"written": status, "status": status}  # noqa: E731
+    statements = [{"text": "cited", "refs": [0], "mentions": [mention(s) for s in ("not_found", "metadata_only",
+                                                                                    "literal", "converted")]},
+                  {"text": "uncited", "refs": [], "mentions": [mention("uncited")]}]
+    rows = [{"id": f"a{i}", "q": f"Q{i}?", "audit": {"statements": statements,
+                                                     "references": [{"index": 0, "title": "t", "url": "u"}]}}
+            for i in range(20)] + [{"id": "a99", "q": "Q?", "error": "SerpApi error"}]
+    results = tmp_path / "results.json"
+    results.write_text(json.dumps({"rows": rows}))
+    sample = flags.sample(results)
+    assert len(sample) == flags.N and sample == flags.sample(results)  # seeded
+    assert {f["figure"] for f in sample} == {"not_found", "metadata_only"}
+    replies = iter(["n", "gone", "q"])
+    flags.main(results, tmp_path / "labels.json", ask=lambda _: next(replies))
+    data = json.loads((tmp_path / "labels.json").read_text())
+    assert data["flags"][0]["label"] == "not_stated" and data["flags"][1]["label"] is None
+    assert not any("status" in f for f in data["flags"])
