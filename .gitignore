@@ -1,0 +1,6 @@
+__pycache__/
+*.egg-info/
+.footnote_cache/
+evals/results/
+.env
+.venv/

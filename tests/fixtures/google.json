@@ -1,0 +1,12 @@
+{"search_metadata": {"status": "Success"},
+ "answer_box": {"type": "organic_result", "title": "Mount Example - Wikipedia", "link": "https://en.wikipedia.org/wiki/Mount_Example",
+                "snippet": "Mount Example is 4,321 metres tall and was first climbed in 1911."},
+ "knowledge_graph": {"title": "Mount Example", "type": "Mountain", "description": "Mount Example is a fictional peak used in tests.",
+                     "source": {"name": "Wikipedia", "link": "https://en.wikipedia.org/wiki/Mount_Example"}},
+ "organic_results": [
+   {"position": 1, "title": "Mount Example - Wikipedia", "link": "https://en.wikipedia.org/wiki/Mount_Example",
+    "snippet": "Duplicate of the answer box link; should be dropped."},
+   {"position": 2, "title": "Climbing Mount Example | Example Alpine Club", "link": "https://alpine.example.org/mount-example",
+    "snippet": "The standard route takes three days. Around 1,200 climbers attempt the summit each season.", "date": "Mar 4, 2026"},
+   {"position": 3, "title": "Empty snippet page", "link": "https://empty.example.com", "snippet": ""}
+ ]}

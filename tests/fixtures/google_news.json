@@ -1,0 +1,9 @@
+{"search_metadata": {"status": "Success"},
+ "news_results": [
+   {"position": 1, "title": "Mount Example closes for the winter", "link": "https://news.example.com/closure",
+    "snippet": "Park authorities closed Mount Example on October 1 after early snowfall.", "date": "10/02/2026",
+    "source": {"name": "Example News"}},
+   {"position": 2, "title": "Climbing season roundup", "stories": [
+      {"position": 1, "title": "Record season on Mount Example", "link": "https://times.example.com/record",
+       "snippet": "Officials reported 1,450 summit attempts this year.", "date": "09/28/2026", "source": {"name": "Example Times"}}]}
+ ]}

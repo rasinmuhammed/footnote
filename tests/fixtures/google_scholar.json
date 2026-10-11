@@ -1,0 +1,7 @@
+{"search_metadata": {"status": "Success"},
+ "organic_results": [
+   {"position": 0, "title": "Glacier retreat on Mount Example, 1990-2020", "link": "https://journal.example.org/glacier",
+    "snippet": "We find the main glacier lost 18% of its area over three decades.",
+    "publication_info": {"summary": "A Researcher, B Author - Journal of Example Studies, 2021"},
+    "inline_links": {"cited_by": {"total": 42}}}
+ ]}
