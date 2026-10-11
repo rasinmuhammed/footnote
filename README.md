@@ -7,26 +7,26 @@ result for every sentence, then checks each citation without a model: does the c
 every number the sentence states, and how much of the sentence it actually covers. Anything that fails is flagged
 in the output instead of being presented as fact.
 
-Built on [SerpApi](https://serpapi.com) (Google, Google News and Google Scholar engines) and open-weight models served by [Groq](https://groq.com), so a full answer comes back in a couple of seconds.
+Built on [SerpApi](https://serpapi.com) (Google, Google News and Google Scholar engines) and open-weight models
+served by [Groq](https://groq.com). The model takes a second or two; search usually takes a couple more, and
+occasionally over a minute (see [Evaluation](#evaluation)).
 
 ```
-$ footnote "What is the latest news on Mount Example?"
+$ footnote "Who is the current CEO of OpenAI?"
+Who is the current CEO of OpenAI?
 
-- Mount Example is 4,321 metres tall and was first climbed in 1911. [1]
-- Park authorities closed it for the winter on October 1 after early snowfall. [2]
-- Officials reported 1,450 summit attempts this year. [3]
-- About 2,000 climbers reach the summit every season. [4] (number not in source)
+- Sam Altman has been the chief executive officer of OpenAI since 2019. [1]
+- As of February 28, 2026, Sam Altman is the CEO of OpenAI. [2]
 
 Sources
-[1] Mount Example - Wikipedia (en.wikipedia.org, via google)
-[2] Mount Example closes for the winter (news.example.com, 10/02/2026, via google_news)
-[3] Record season on Mount Example (times.example.com, 09/28/2026, via google_news)
-[4] Climbing Mount Example | Example Alpine Club (alpine.example.org, Mar 4, 2026, via google)
+[1] Sam Altman — Chief Executive Officer, OpenAI (siliconvalleyinvestclub.com, via google)
+[2] OpenAI CEO Sam Altman answers questions on new Pentagon deal: 'This technology is super important' (foxbusiness.com, 2026-02-28, via google_news)
 
-3/4 claims backed by their cited source | engines: google, google_news
+2/2 claims backed by their cited source | engines: google, google_news
 ```
 
-<sub>Output above comes from the offline test fixtures (a fictional mountain), so the repo runs without keys.</sub>
+<sub>A real run on 11 October 2026 with the default model, URLs and timing trimmed. A claim the checker can't back is flagged
+inline, e.g. `(number not in source)`; there's a worked example under [Evaluation](#the-checker-at-work).</sub>
 
 ## How it works
 
@@ -50,7 +50,9 @@ flowchart LR
    results, clustered news stories and Scholar results (with citation counts) become one numbered list, de-duplicated
    by URL.
 4. **Answer.** A Groq-hosted model (default `openai/gpt-oss-120b`) must return claims through a forced tool call
-   whose schema requires `source_ids` on every claim. Malformed tool calls are retried. It is told to copy numbers exactly and to list unanswered parts as gaps rather than guess.
+   whose schema requires `source_ids` on every claim. It is told today's date, to copy numbers exactly and to list
+   unanswered parts as gaps rather than guess. A rejected tool call is retried with the rejection shown to the
+   model, and one that spent its whole token budget reasoning is retried with a larger budget.
 5. **Verify.** Each claim gets one of: `supported`, `weak`, `unsupported`, `number_not_found`, `bad_citation`, or
    `abstain` for a refusal or placeholder ("I don't know", "[driver name]"), which is checked first. Numbers are
    compared after normalising (`1,200` = `1200`, `18%` = `18`), and a date counts if it agrees with the cited
@@ -62,13 +64,12 @@ The model writes sentences; it never decides whether they're true.
 
 ```bash
 pip install -e .
-export SERPAPI_API_KEY=...      # https://serpapi.com/manage-api-key
-export GROQ_API_KEY=...         # https://console.groq.com/keys
+cp .env.example .env           # add SERPAPI_API_KEY and GROQ_API_KEY; .env is git-ignored and loaded automatically
 footnote --list-models          # models your key can use; Groq's catalogue changes
 footnote "Who won the most recent Formula 1 Grand Prix?"
 footnote "What does research say about RAG reducing hallucinations?" --format md
 footnote "Brent crude price this week" --format json --engines google,google_news
-footnote "Who is the current CEO of OpenAI?" --model llama-3.3-70b-versatile
+footnote "Who is the current CEO of OpenAI?" --model qwen/qwen3.8-27b
 ```
 
 Each question uses 1 to 3 SerpApi searches, printed after every run.
@@ -211,7 +212,16 @@ run of it used about 58k.
   Fetching full pages would fix this at the cost of latency.
 - The closed-book comparison favours grounded answers, because grounded claims are written from the same
   snippets they're checked against. The number check is the fairer signal of the two.
-- Router keywords are English-only.
+- Real Google responses look different from the fixtures. None of the 20 in the eval had an answer box or
+  knowledge graph. All 20 had an AI Overview, but only 7 carried it inline; the other 13 need a second, paid
+  request, which Footnote doesn't make. Google News returned 1,214 results over 15 searches with no snippets and no
+  story clusters. So the answer box, knowledge graph and story cluster code has only been tested on fixtures.
+- Some Google results are dated relatively ("2 days ago", "15 hours ago"), which the date rule can't match.
+- SerpApi's Google engine is sometimes slow: 6 of the 20 eval questions waited over 15s and one 81s. The client
+  waits up to 120s, because a search that times out is still charged.
+- gpt-oss models sometimes call a browsing tool they were trained with (`open`) or spend their whole token budget
+  reasoning. Both are retried, which costs extra calls, and on a free Groq key (8k tokens a minute) that is slow.
+- Router keywords and the abstention patterns are English-only.
 
 ## Tests
 
@@ -219,6 +229,7 @@ run of it used about 58k.
 pip install -e ".[dev]" && pytest
 ```
 
-The suite runs fully offline against SerpApi-shaped fixtures and a fake model.
+The suite runs fully offline against SerpApi-shaped fixtures, trimmed real responses (`tests/fixtures/live/`) and
+a fake model.
 
 MIT licence.
