@@ -14,7 +14,7 @@ import statistics
 import time
 from pathlib import Path
 
-from footnote.llm import ClaudeAnswerer
+from footnote.llm import GroqAnswerer
 from footnote.pipeline import Footnote
 from footnote.search import SerpApiSearcher
 from footnote.verify import numbers
@@ -43,7 +43,7 @@ def main() -> None:
 
     questions = [json.loads(l) for l in (HERE / "questions.jsonl").read_text().splitlines() if l.strip()]
     questions = questions[: args.limit] if args.limit else questions
-    searcher, answerer = SerpApiSearcher(), ClaudeAnswerer()
+    searcher, answerer = SerpApiSearcher(), GroqAnswerer()
     fn = Footnote(searcher, answerer)
 
     rows, grounded_all, closed_all, latencies = [], [], [], []

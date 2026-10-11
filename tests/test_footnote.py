@@ -79,25 +79,56 @@ def test_cache_spends_one_search(tmp_path):
     assert (Client.calls, s.calls, s.hits) == (1, 1, 1)
 
 
-def test_claude_answerer_request_shape(raw):
-    from types import SimpleNamespace
+def _resp(args, prompt=10, completion=5):
+    from types import SimpleNamespace as NS
 
-    from footnote.llm import ClaudeAnswerer
+    call = NS(function=NS(name="submit_answer", arguments=args))
+    return NS(choices=[NS(message=NS(tool_calls=[call]))], usage=NS(prompt_tokens=prompt, completion_tokens=completion))
 
-    sent = {}
 
-    class Messages:
-        def create(self, **kw):
-            sent.update(kw)
-            block = SimpleNamespace(type="tool_use", input={"claims": [{"text": "x", "source_ids": ["S1"]}]})
-            return SimpleNamespace(content=[block], usage=SimpleNamespace(input_tokens=10, output_tokens=5))
+def test_groq_answerer_request_shape_and_retry(raw):
+    from types import SimpleNamespace as NS
 
-    a = ClaudeAnswerer(model="test-model", client=SimpleNamespace(messages=Messages()))
+    from footnote.llm import GroqAnswerer
+
+    sent, replies = [], [Exception("Error code: 400 - tool_use_failed"), _resp("not json"),
+                          _resp(json.dumps({"claims": [{"text": "x", "source_ids": ["S1"]}]}))]
+
+    def create(**kw):
+        sent.append(kw)
+        r = replies.pop(0)
+        if isinstance(r, Exception):
+            raise r
+        return r
+
+    a = GroqAnswerer(model="test-model", client=NS(chat=NS(completions=NS(create=create))))
     out = a.answer("q?", normalise(raw))
     assert out == {"claims": [{"text": "x", "source_ids": ["S1"]}], "gaps": []}
-    assert sent["tool_choice"] == {"type": "tool", "name": "submit_answer"}
-    assert "source_ids" in sent["tools"][0]["input_schema"]["properties"]["claims"]["items"]["required"]
-    assert sent["system"][0]["cache_control"] == {"type": "ephemeral"}
-    a.answer("q?", None)
-    assert "source_ids" not in sent["tools"][0]["input_schema"]["properties"]["claims"]["items"]["properties"]
+    assert len(sent) == 3  # one API error and one malformed reply were retried
+    kw = sent[-1]
+    assert kw["model"] == "test-model" and kw["temperature"] == 0
+    assert kw["tool_choice"] == {"type": "function", "function": {"name": "submit_answer"}}
+    item = kw["tools"][0]["function"]["parameters"]["properties"]["claims"]["items"]
+    assert "source_ids" in item["required"]
+    assert "[S1]" in kw["messages"][1]["content"]
     assert a.usage == {"input_tokens": 20, "output_tokens": 10}
+
+
+def test_groq_answerer_closed_book_and_hard_errors():
+    from types import SimpleNamespace as NS
+
+    import pytest
+
+    from footnote.llm import GroqAnswerer
+
+    sent = []
+    a = GroqAnswerer(model="m", client=NS(chat=NS(completions=NS(
+        create=lambda **kw: sent.append(kw) or _resp(json.dumps({"claims": [{"text": "y"}]}))))))
+    assert a.answer("q?", None)["claims"] == [{"text": "y"}]
+    assert "source_ids" not in sent[0]["tools"][0]["function"]["parameters"]["properties"]["claims"]["items"]["properties"]
+
+    def boom(**kw):
+        raise Exception("401 invalid api key")
+
+    with pytest.raises(Exception, match="invalid api key"):
+        GroqAnswerer(model="m", client=NS(chat=NS(completions=NS(create=boom)))).answer("q?", None)

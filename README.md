@@ -7,7 +7,7 @@ result for every sentence, then checks each citation without a model: does the c
 every number the sentence states, and how much of the sentence it actually covers. Anything that fails is flagged
 in the output instead of being presented as fact.
 
-Built on [SerpApi](https://serpapi.com) (Google, Google News and Google Scholar engines) and Claude.
+Built on [SerpApi](https://serpapi.com) (Google, Google News and Google Scholar engines) and open-weight models served by [Groq](https://groq.com), so a full answer comes back in a couple of seconds.
 
 ```
 $ footnote "What is the latest news on Mount Example?"
@@ -37,7 +37,7 @@ flowchart LR
   R -->|+ google_news if time-sensitive| S
   R -->|+ google_scholar if about research| S
   S --> N[Normalise to numbered sources S1..Sn]
-  N --> C[Claude: atomic claims, each citing source ids]
+  N --> C[LLM on Groq: atomic claims, each citing source ids]
   C --> V[Verifier: no model, plain rules]
   V --> O[Answer with footnotes and flags]
 ```
@@ -48,8 +48,8 @@ flowchart LR
    re-running a question or the eval costs no extra searches.
 3. **Normalise.** Answer boxes, knowledge graph, organic results, clustered news stories and Scholar results
    (with citation counts) become one numbered list, de-duplicated by URL.
-4. **Answer.** Claude must return claims through a forced tool call whose schema requires `source_ids` on every
-   claim. It is told to copy numbers exactly and to list unanswered parts as gaps rather than guess.
+4. **Answer.** A Groq-hosted model (default `openai/gpt-oss-120b`) must return claims through a forced tool call
+   whose schema requires `source_ids` on every claim. Malformed tool calls are retried. It is told to copy numbers exactly and to list unanswered parts as gaps rather than guess.
 5. **Verify.** Each claim gets one of: `supported`, `weak`, `unsupported`, `number_not_found`, `bad_citation`.
    Numbers are compared after normalising (`1,200` = `1200`, `18%` = `18`). Coverage is the share of the claim's
    content words found in its best cited source.
@@ -61,10 +61,12 @@ The model writes sentences; it never decides whether they're true.
 ```bash
 pip install -e .
 export SERPAPI_API_KEY=...      # https://serpapi.com/manage-api-key
-export ANTHROPIC_API_KEY=...
+export GROQ_API_KEY=...         # https://console.groq.com/keys
+footnote --list-models          # models your key can use; Groq's catalogue changes
 footnote "Who won the most recent Formula 1 Grand Prix?"
 footnote "What does research say about RAG reducing hallucinations?" --format md
 footnote "Brent crude price this week" --format json --engines google,google_news
+footnote "Who is the current CEO of OpenAI?" --model llama-3.3-70b-versatile
 ```
 
 Each question uses 1 to 3 SerpApi searches, printed after every run.
@@ -84,6 +86,12 @@ python evals/run.py            # writes evals/results/<timestamp>.json and print
 | Numeric claims whose numbers aren't in any source | _run to fill_ | _run to fill_ |
 | Bad citations | _run to fill_ | n/a |
 | Median latency / SerpApi searches | _run to fill_ | n/a |
+
+## Comparing models
+
+Because the checker is model-free, it doubles as a judge between models. Run the eval with
+`FOOTNOTE_MODEL=<id> python evals/run.py` for two or three Groq models and compare how often each one
+states numbers its own cited sources don't contain.
 
 ## Limitations
 
