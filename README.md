@@ -160,6 +160,24 @@ The cited YouTube result says only "India's Population hits 146.39 crore". The m
 number although it is told never to convert, and the checker flagged the claim `number_not_found`, missing
 `1463900000`. Every other number in the claim matched its source after normalising.
 
+### How often the checker is right
+
+20 grounded verdicts were drawn at random (seed 20261011) from the gpt-oss-20b run and labelled by Claude, the AI
+assistant that ran this evaluation, not by a person. Each claim was judged against exactly what the checker sees,
+the cited results' titles, snippets and dates, and counted as backed only if that text states everything the claim
+says. Labels and reasons are in [`evals/labels.json`](evals/labels.json).
+
+The checker's call (backed means `supported`) matched the label on **13 of 20**, with 3 close calls. Twenty is a
+small sample, so read it as a direction rather than a rate.
+
+- Of 14 claims marked `supported`, 10 were backed. The 4 misses added something the source doesn't say: two gave a
+  release month for models the source only ranked "as of July 2026", one narrowed what a study challenged, and one
+  said "It was released on 2026-10-10", where the date was only the article's and "released" was the one content
+  word left to check.
+- Of 6 claims marked weak, unsupported or number_not_found, 3 were backed after all. Two combined two cited sources,
+  and coverage is scored against the best single source. One said "Reserve Bank of India" where the headline said
+  "RBI".
+
 ## Comparing models
 
 Because the checker is model-free, it doubles as a judge between models: the tables above differ only in
@@ -170,8 +188,14 @@ run of it used about 58k.
 ## Limitations
 
 - The verifier is lexical. It catches invented numbers and citations to the wrong result well, and paraphrases
-  poorly: a correct sentence worded differently from its snippet can score `weak`. Before quoting the eval
-  numbers, hand-label about 50 verdicts from `evals/results/` and report how often you agree with the checker.
+  poorly: a correct sentence worded differently from its snippet can score `weak`. It agreed with an independent
+  label on 13 of 20 sampled verdicts (above); a human-labelled sample of 50 or more would pin that down.
+- Coverage is scored against the best single cited source, so a claim that correctly combines two cited results
+  scores `weak`. And it can't see an added fact if the claim's other words match: "released in July 2026" passed
+  against a page that only ranked the model "as of July 2026".
+- A result's date says when it was reported, but the date rule accepts it as the date of the event. A claim with
+  almost no other content words then passes on the date alone: "It was released on 2026-10-10" scored 1.0 against
+  a headline published that day.
 - Google News results carry a headline and no snippet, so a claim cited to news is checked against the headline
   alone, and correct paraphrases score `weak`. "The current repo rate set by the Reserve Bank of India is 5.5% as of
   October 2026" was weak against "RBI raises the Repo Rate by 25 bps to 5.5% in October, as expected": only 3 of its

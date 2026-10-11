@@ -1,0 +1,438 @@
+{
+ "results": "20261011-135840.json",
+ "model": "openai/gpt-oss-20b",
+ "seed": 20261011,
+ "pool": 77,
+ "labelled_by": "Claude (AI assistant), not a person",
+ "rule": "Backed means the cited result's title, snippet and date state everything the claim asserts; a result's date says when it was reported, not when the event happened. The checker counts as backed only for 'supported'.",
+ "verdicts": [
+  {
+   "n": 1,
+   "question_id": "q19",
+   "claim": "GLM-5.2 was released as the strongest all‑round open‑weight LLM in July 2026.",
+   "checker": "supported",
+   "support": 0.875,
+   "cited": [
+    {
+     "id": "S1",
+     "engine": "google",
+     "date": null,
+     "text": "As of July 2026, GLM-5.2 is the strongest all-round open-weight LLM , while Kimi K2.7 Code stands out for coding agents, Gemma 4 12B is a practical laptop ..."
+    }
+   ],
+   "label_backed": false,
+   "close_call": false,
+   "agrees": false,
+   "why": "Source says GLM-5.2 is the strongest 'as of July 2026', not that it was released then."
+  },
+  {
+   "n": 2,
+   "question_id": "q14",
+   "claim": "NASA announced a major overhaul of the Artemis program, adding a new mission and updating its architecture.",
+   "checker": "weak",
+   "support": 0.455,
+   "cited": [
+    {
+     "id": "S7",
+     "engine": "google_news",
+     "date": "2026-02-27",
+     "text": "NASA Adds Mission to Artemis Lunar Program, Updates Architecture (NASA (.gov))"
+    },
+    {
+     "id": "S9",
+     "engine": "google_news",
+     "date": "2026-02-27",
+     "text": "NASA announces major overhaul of Artemis moon program amid safety concerns, delays: \"We've got to get back to basics\" (CBS News)"
+    },
+    {
+     "id": "S10",
+     "engine": "google_news",
+     "date": "2026-03-02",
+     "text": "NASA announces a big shake-up of the Artemis Moon program (The Conversation)"
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": false,
+   "why": "S7 (adds a mission, updates architecture) and S9 (major overhaul) together state all of it."
+  },
+  {
+   "n": 3,
+   "question_id": "q19",
+   "claim": "Kimi K2.7 Code was released in July 2026 as a leading coding‑agent model.",
+   "checker": "supported",
+   "support": 0.75,
+   "cited": [
+    {
+     "id": "S1",
+     "engine": "google",
+     "date": null,
+     "text": "As of July 2026, GLM-5.2 is the strongest all-round open-weight LLM , while Kimi K2.7 Code stands out for coding agents, Gemma 4 12B is a practical laptop ..."
+    }
+   ],
+   "label_backed": false,
+   "close_call": false,
+   "agrees": false,
+   "why": "'Stands out for coding agents' as of July 2026 gives no release date."
+  },
+  {
+   "n": 4,
+   "question_id": "q14",
+   "claim": "NASA announced that the program's first crewed lunar landing will come on Artemis 4, not Artemis 3.",
+   "checker": "supported",
+   "support": 1.0,
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "date": "Mar 24, 2026",
+     "text": "NASA Administrator Jared Isaacman announced that the program's first crewed lunar landing will come on the Artemis 4 mission, not Artemis 3 as ..."
+    },
+    {
+     "id": "S12",
+     "engine": "google_news",
+     "date": "2026-02-27",
+     "text": "Nasa announces change to its Moon landing plans (BBC)"
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": true,
+   "why": "S3 states it nearly verbatim."
+  },
+  {
+   "n": 5,
+   "question_id": "q11",
+   "claim": "A 2026 Independent article challenged the claim that microplastics are present in the human body.",
+   "checker": "supported",
+   "support": 0.625,
+   "cited": [
+    {
+     "id": "S12",
+     "engine": "google_news",
+     "date": "2026-01-23",
+     "text": "New study challenges claim about microplastics in the human body (The Independent)"
+    }
+   ],
+   "label_backed": false,
+   "close_call": true,
+   "agrees": false,
+   "why": "Headline challenges a 'claim about microplastics in the human body'; the model narrowed it to presence."
+  },
+  {
+   "n": 6,
+   "question_id": "q04",
+   "claim": "It was released on 2026-10-10.",
+   "checker": "supported",
+   "support": 1.0,
+   "cited": [
+    {
+     "id": "S7",
+     "engine": "google_news",
+     "date": "2026-10-10",
+     "text": "Python 3.15 Released with Faster JIT, Lazy Imports, and UTF-8 by Default (Linuxiac)"
+    }
+   ],
+   "label_backed": false,
+   "close_call": false,
+   "agrees": false,
+   "why": "2026-10-10 is the article's date, not a stated release date."
+  },
+  {
+   "n": 7,
+   "question_id": "q03",
+   "claim": "A YouTube short reports the population as 146.39 crore (1,463,900,000).",
+   "checker": "number_not_found",
+   "support": 0.4,
+   "cited": [
+    {
+     "id": "S6",
+     "engine": "google",
+     "date": null,
+     "text": "India's Population hits 146.39 crore."
+    }
+   ],
+   "label_backed": false,
+   "close_call": false,
+   "agrees": true,
+   "why": "1,463,900,000 is a conversion of 146.39 crore that the source does not state."
+  },
+  {
+   "n": 8,
+   "question_id": "q14",
+   "claim": "NASA announced that Artemis III would test the docking of the Orion spacecraft with lunar landers.",
+   "checker": "supported",
+   "support": 1.0,
+   "cited": [
+    {
+     "id": "S5",
+     "engine": "google",
+     "date": "2 days ago",
+     "text": "in February 2026 NASA announced that the mission would test the docking of the Orion spacecraft with the lunar landers"
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": true,
+   "why": "Snippet states the docking test."
+  },
+  {
+   "n": 9,
+   "question_id": "q18",
+   "claim": "S6 provides a table of boiling points versus altitude, but the specific value for Mount Everest is not shown in the snippet.",
+   "checker": "supported",
+   "support": 0.5,
+   "cited": [
+    {
+     "id": "S6",
+     "engine": "google",
+     "date": null,
+     "text": "Boiling Point of Water at the top of Mount Everest The height of Mount Everest in Nepal is 8848 m. According the table above the boiling point of water is ..."
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": true,
+   "why": "Accurately describes the snippet: a table is referenced and the value is cut off."
+  },
+  {
+   "n": 10,
+   "question_id": "q03",
+   "claim": "The current population of India is 1,480,243,044 as of Thursday, October 8, 2026, according to Worldometer.",
+   "checker": "supported",
+   "support": 0.857,
+   "cited": [
+    {
+     "id": "S1",
+     "engine": "google",
+     "date": null,
+     "text": "Yearly Growth Rate The current population of India is 1,480,243,044 as of Thursday, October 8, 2026, based on Worldometer's elaboration of the latest United Nation..."
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": true,
+   "why": "Verbatim."
+  },
+  {
+   "n": 11,
+   "question_id": "q01",
+   "claim": "The Fed approved an interest rate hike.",
+   "checker": "supported",
+   "support": 0.8,
+   "cited": [
+    {
+     "id": "S7",
+     "engine": "google_news",
+     "date": "2026-09-16",
+     "text": "Fed approves interest rate hike, signals one more to come this year (CNBC)"
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": true,
+   "why": "Headline says it."
+  },
+  {
+   "n": 12,
+   "question_id": "q20",
+   "claim": "Sources disagree on Tokyo city proper population: S3 reports 14,270,748 (2026) while S6 reports 10,316,210 (2026).",
+   "checker": "weak",
+   "support": 0.25,
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "date": null,
+     "text": "Population: 14,270,748 (2026); total 14,195,730 (2025). Fertility rate: 0.96 (2024); 0.99 (2023). Foreign residents: 783,701 (2026), concentrated in 23 Special War..."
+    },
+    {
+     "id": "S6",
+     "engine": "google",
+     "date": null,
+     "text": "Overview: Tokyo is the capital of Japan, holding an estimated 2026 population of 10,316,210 (0.97% growth). The greater metropolitan area exceeds 36 million reside..."
+    }
+   ],
+   "label_backed": false,
+   "close_call": true,
+   "agrees": true,
+   "why": "Both figures are in the sources, but neither calls them 'city proper'."
+  },
+  {
+   "n": 13,
+   "question_id": "q09",
+   "claim": "The current repo rate set by the Reserve Bank of India is 5.5%.",
+   "checker": "weak",
+   "support": 0.286,
+   "cited": [
+    {
+     "id": "S8",
+     "engine": "google_news",
+     "date": "2026-10-07",
+     "text": "RBI raises the Repo Rate by 25 bps to 5.5% in October, as expected (FXStreet)"
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": false,
+   "why": "'RBI raises the Repo Rate by 25 bps to 5.5%', dated 2026-10-07, backs it."
+  },
+  {
+   "n": 14,
+   "question_id": "q06",
+   "claim": "Apple's market cap passed Nvidia for the biggest company in the world according to a July 2026 report.",
+   "checker": "supported",
+   "support": 0.636,
+   "cited": [
+    {
+     "id": "S11",
+     "engine": "google_news",
+     "date": "2026-07-17",
+     "text": "Apple market cap passes Nvidia for biggest company in the world (Yahoo Finance)"
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": true,
+   "why": "Headline, dated July 2026."
+  },
+  {
+   "n": 15,
+   "question_id": "q10",
+   "claim": "Sam Altman is the current CEO of OpenAI.",
+   "checker": "supported",
+   "support": 0.8,
+   "cited": [
+    {
+     "id": "S4",
+     "engine": "google",
+     "date": "Nov 30, 2023",
+     "text": "Sam Altman has returned to the company as CEO. Murati, who was an interim CEO of OpenAI. Greg Brockman, the co-founder of the company again ..."
+    },
+    {
+     "id": "S3",
+     "engine": "google",
+     "date": null,
+     "text": "Sam Altman: CEO of OpenAI. yrsSan Francisco CEO of OpenAI. Co-founded the lab in 2015 and has been CEO since 2019. headquarters San Francisco, California, ..."
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": true,
+   "why": "S3: 'CEO of OpenAI ... CEO since 2019'."
+  },
+  {
+   "n": 16,
+   "question_id": "q18",
+   "claim": "According to S1, the boiling point at the top of Mount Everest is about 68 °C (154 °F).",
+   "checker": "supported",
+   "support": 0.5,
+   "cited": [
+    {
+     "id": "S1",
+     "engine": "google",
+     "date": null,
+     "text": "At sea level, pure water boils at 212 °F (100°C). At the lower atmospheric pressure on the top of Mount Everest, pure water boils at about 154 °F (68°C). In the de..."
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": true,
+   "why": "'boils at about 154 °F (68°C)'."
+  },
+  {
+   "n": 17,
+   "question_id": "q19",
+   "claim": "Moonshot AI’s model 3 was released in July 2026.",
+   "checker": "supported",
+   "support": 0.75,
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "date": "15 hours ago",
+     "text": "New standard for open-weight. Inkling (Thinking Machines Lab) — Jul 2026. 3 (Moonshot AI) — Jul 2026. Weights released Jul 27. Kimi K2.6. ..."
+    }
+   ],
+   "label_backed": true,
+   "close_call": true,
+   "agrees": true,
+   "why": "Mirrors the snippet '3 (Moonshot AI) — Jul 2026'."
+  },
+  {
+   "n": 18,
+   "question_id": "q01",
+   "claim": "The meeting took place on September 16, 2026.",
+   "checker": "unsupported",
+   "support": 0.0,
+   "cited": [
+    {
+     "id": "S7",
+     "engine": "google_news",
+     "date": "2026-09-16",
+     "text": "Fed approves interest rate hike, signals one more to come this year (CNBC)"
+    }
+   ],
+   "label_backed": false,
+   "close_call": false,
+   "agrees": true,
+   "why": "The meeting date comes only from the article's date."
+  },
+  {
+   "n": 19,
+   "question_id": "q05",
+   "claim": "Some studies find remote work increases productivity, while others find it decreases productivity.",
+   "checker": "weak",
+   "support": 0.375,
+   "cited": [
+    {
+     "id": "S3",
+     "engine": "google",
+     "date": null,
+     "text": "The productivity of remote work depends critically on the mode. Fully remote work is associated with about 10% lower productivity than fully in-person work."
+    },
+    {
+     "id": "S5",
+     "engine": "google",
+     "date": null,
+     "text": "I was reading a 2023 survey from Stanford and a Microsoft report: remote workers average 10% higher productivity, companies save millions on overhead, ..."
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": false,
+   "why": "S3 (10% lower) and S5 (10% higher) together back it."
+  },
+  {
+   "n": 20,
+   "question_id": "q17",
+   "claim": "The UK CPI inflation rate for the year to August 2026 is 3.1%.",
+   "checker": "supported",
+   "support": 0.8,
+   "cited": [
+    {
+     "id": "S2",
+     "engine": "google",
+     "date": "Oct 2, 2026",
+     "text": "UK inflation was 3.1% in the year to August, up from 2.9% in the year to July. UK inflation was 3.8% in the year to August 2025. EU inflation ..."
+    },
+    {
+     "id": "S3",
+     "engine": "google",
+     "date": null,
+     "text": "* UK CPI inflation: 3.1% in year to Aug 2026 (above 2% target, highest in 5 mos). Driven by motor fuel (+23% vs Aug prior yr). Food inflation: 1.3%. Core CPI: 2.6%"
+    },
+    {
+     "id": "S5",
+     "engine": "google",
+     "date": null,
+     "text": "- UK CPI annual inflation: 3.1% in August 2026 (up from 2.9% in July). - Goods price rise: 2.7% in August 2026 (highest since September 2025). - Food price inflati..."
+    }
+   ],
+   "label_backed": true,
+   "close_call": false,
+   "agrees": true,
+   "why": "S3 and S5 both state 3.1% for August 2026."
+  }
+ ]
+}
