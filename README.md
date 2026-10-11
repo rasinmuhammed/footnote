@@ -133,13 +133,13 @@ from the saved claims with `--rescore` after the two fixes described under
 | Numeric claims with a number not in their sources | 2 of 53 (4%) | 36 of 46 (78%) |
 | Bad citations | 0 of 77 (0%) | n/a |
 
-The "Weak or unsupported" and "number not in their sources" rows overstate how many grounded claims lack support.
-Of 20 grounded gpt-oss-20b verdicts labelled by hand, the current checker flags 4: 2 weak, 1 unsupported and 1
-number not found, the same crore conversion as [below](#a-correct-claim-flagged-on-purpose). 3 of the 4 were backed
-by their cited results; the unsupported one took a meeting's date from the date of the result reporting it, and
-wasn't. "Backed by a source" errs the other way: of the 16 it marks supported, 12 were backed, 3 were not and 1 was
-a close call. Those 20 also picked the checker's fixes, so read the counts as a direction; only grounded claims were
-labelled.
+Hand labels of grounded claims ([below](#how-often-the-checker-is-right)) show these rows err in both directions.
+In the independent batch of 20, the checker flagged 4 claims and 2 of them were backed, so "Weak or unsupported"
+and "number not in their sources" overstate missing support. Of 15 clearly labelled claims it marked supported, 4
+weren't backed, so "Backed by a source" overstates support. Batch 1 (gpt-oss-20b, the sample that picked the fixes)
+gives 3 of 4 flags on backed claims and 3 of 15 supported claims not backed. None of the 3 number flags across both
+batches caught a wrong number: two were the "1" in "Formula 1" and one a correct crore conversion
+([below](#a-correct-claim-flagged-on-purpose)). Closed-book claims weren't labelled.
 
 Latency per question, grounded answers:
 
@@ -185,23 +185,59 @@ and every rule that lets a computed number through can also let a wrong one thro
 convert for the same reason, so a flag like this also marks an instruction it broke.
 
 The cost is recall. Correct restatements fail: "1,200,000" against "1.2 million", and even "5.5%" against "5.50%",
-since normalising only drops a trailing `.0`. In the hand-labelled gpt-oss-20b sample below, the only number flag
-was the same conversion, and the claim was backed.
+since normalising only drops a trailing `.0`. In hand-labelled batch 1 below, the only number flag was the same
+conversion, and the claim was backed.
 
 ### How often the checker is right
 
-20 grounded verdicts were drawn at random (seed 20261011) from the gpt-oss-20b run and labelled by hand with
-`evals/label.py`, which shows each claim with what the checker saw, the cited results' titles, snippets and dates,
-plus their URLs. The rule: a claim counts as backed only if the cited title, snippet and date together state
-everything it says, and a result's date shows when something was reported, not when it happened. A result's domain
-may be used to name its publisher ("Yahoo Finance" from finance.yahoo.com); URL paths and slugs are not evidence. The
-labels are in
+Two batches of 20 grounded verdicts were labelled by hand with `evals/label.py`, which shows each claim with what
+the checker saw, the cited results' titles, snippets and dates, plus their URLs. The rule: a claim counts as backed
+only if the cited title, snippet and date together state everything it says, and a result's date shows when
+something was reported, not when it happened. A result's domain may be used to name its publisher ("Yahoo Finance"
+from finance.yahoo.com); URL paths and slugs are not evidence. The checker agrees with a label when it marks a
+backed claim `supported` or flags one that isn't backed. Close calls are left out.
+
+**Batch 2, the independent check.** 20 new verdicts drawn after the checker's fixes (seed 20261012) from all three
+runs above, none from batch 1, and labelled blind, without the checker's verdict. The labels were reviewed after the
+first agreement figure had been computed, and 7 were corrected: 6 from backed to not backed and 1 from not backed to
+backed. Every correction applies the written rule; the rule's sentence on URLs was added during that review. Each
+corrected verdict keeps its original label in `corrected_from`, in
+[`evals/labels_human_2.json`](evals/labels_human_2.json).
+
+| Batch 2 | As first labelled | As corrected |
+|---|---|---|
+| Labels | 18 backed, 1 not backed, 1 close call | 13 backed, 6 not backed, 1 close call |
+| Checker agrees with the label | 14 of 19 | **13 of 19** |
+| Marked `supported`, and backed | 14 of 15 | 11 of 15 |
+| Flagged, but backed | 4 of 4 | 2 of 4 |
+
+As corrected, the checker agreed with **13 of 19** clear labels. Twenty is a small sample, so read that as a
+direction rather than a rate.
+
+- The 4 `supported` claims that weren't backed each added something the cited result doesn't state: a release
+  month the snippet gives to the model listed before it, a study design ("randomized clinical trial") the snippet
+  doesn't name, a cause the snippet gives to something else (lower hiring costs from lower turnover, not from
+  productivity gains), and a detail found only in a URL slug.
+- Of 4 flags, 2 were on backed claims: a paraphrased Scholar snippet scored `weak`, and a correct Grand Prix winner
+  failed on the "1" in "Formula 1". The other 2 matched a not-backed label, but not for its reason: both claims took
+  a date from the result's date, and the checker flagged one for the "1" in "Formula 1" and the other for its wording.
+- All 6 claims that weren't backed came from the two gpt-oss models. qwen's 6 were 5 backed and 1 close call, in line
+  with its copying (above).
+
+**Details taken from result metadata.** Across both batches, 5 labelled claims took a detail that only a result's
+metadata gives. Four dated an event by the date the result was published: a Fed meeting twice, a Python release and
+a Grand Prix sprint. One took "mission progress update" from a URL slug. The checker accepts a date that agrees
+with the result's date and never sees URLs, so it can't catch either: it marked 2 of the 5 `supported` and flagged
+the other 3 for reasons other than the date.
+
+**Batch 1, same sample used to pick the fixes.** 20 verdicts drawn at random (seed 20261011) from the gpt-oss-20b
+run, labelled with the checker's verdict shown. The labels are in
 [`evals/labels_human.json`](evals/labels_human.json): 15 backed, 4 not backed, 1 close call. Three labels were
 corrected after review, from backed to not backed, to apply the stated rule consistently: two took a date only from
 the cited result's date (a Fed meeting, a Python release), and one gave a release month the source doesn't state.
 
-With the checker as it was when they were labelled, its call (backed means `supported`) agreed with 11 of the 19
-clear labels. The close call was one the checker marked `supported`.
+With the checker as it was when they were labelled, its call agreed with 11 of the 19 clear labels. The close call
+was one the checker marked `supported`.
 
 - Of 13 claims the checker marked `supported`, 10 were backed. The 3 it over-credited added something the source
   doesn't say: two gave a release month for models the source only ranked "as of July 2026", and one, "It was
@@ -221,14 +257,7 @@ claims: the crore conversion, and two claims describing disagreement between sou
 studies find… while others find…"), whose framing words are in no snippet. Both fixes only loosen the checker, so
 the three over-credited claims are still marked supported.
 
-So in this sample the checker erred both ways: of the 15 clearly labelled claims it marks supported, 12 were backed,
-and 3 of its 4 current flags were false alarms.
-
-The independent check is a second batch: 20 new verdicts drawn after the fixes (seed 20261012) from all three runs
-above, none from the first 20, labelled the same way but blind, without the checker's verdict, using
-`python evals/label.py --batch 2`; the labels go in `evals/labels_human_2.json`.
-
-For comparison, an earlier set of labels made by Claude, the AI assistant that ran this evaluation, is in
+For comparison, an earlier set of batch-1 labels made by Claude, the AI assistant that ran this evaluation, is in
 [`evals/labels_ai.json`](evals/labels_ai.json). It agreed with the human labels on 16 of the 19 clear ones, and in
 all 3 disagreements it was the stricter of the two.
 
@@ -242,10 +271,9 @@ run of it used about 58k.
 ## Limitations
 
 - The verifier is lexical. It catches invented numbers and citations to the wrong result well, and paraphrases
-  poorly: a correct sentence worded differently from its snippet can score `weak`. On 19 hand-labelled verdicts it
-  agreed 11 times before the two fixes and 13 after, on the same sample, so the second figure isn't independent.
-  Of the 6 remaining misses, 3 are flags on claims that were backed and 3 are claims marked `supported` that add
-  something their source doesn't say (above). A sample of 50 or more would pin that down.
+  poorly: a correct sentence worded differently from its snippet can score `weak`. On the independent batch of hand
+  labels it agreed with 13 of 19: 4 misses were `supported` claims that add something their source doesn't say, and
+  2 were flags on backed claims (above). A sample of 50 or more would pin that down.
 - Coverage pools all cited sources, so a claim citing several results can collect its words from unrelated ones.
   And it can't see an added fact if the claim's other words match: "released in July 2026" passed against a page
   that only ranked the model "as of July 2026".
@@ -261,8 +289,8 @@ run of it used about 58k.
 - A result's date says when it was reported, but a claim's date that agrees with it is still accepted, as if it were
   the date of the event. A claim with few other words passes on little more than the date: "It was released on
   2026-10-10" scores 1.0 against a "Python 3.15 Released…" headline published that day, since "released" is its only
-  other content word. The labelled Fed meeting claim was flagged only because "meeting", "took" and "place" aren't
-  in its headline; its date was accepted.
+  other content word. Of 4 labelled claims that dated an event this way, the checker passed one and flagged the
+  other three for other reasons (above).
 - Number matching is literal by design, so correct restatements are flagged: "146.39 crore" as "1,463,900,000",
   "1.2 million" as "1,200,000", even "5.50%" as "5.5%" (see above). The model is told never to convert, but
   sometimes does, and then a correct claim reads as `number_not_found`.
