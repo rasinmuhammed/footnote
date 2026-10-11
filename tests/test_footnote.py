@@ -169,7 +169,11 @@ def test_groq_answerer_request_shape_and_retry(raw):
 
     from footnote.llm import GroqAnswerer
 
-    sent, replies = [], [Exception("Error code: 400 - tool_use_failed"), _resp("not json"),
+    class Rejected(Exception):  # shaped like groq.BadRequestError
+        body = {"error": {"code": "tool_use_failed", "message": "attempted to call tool 'open'",
+                          "failed_generation": '{"name": "open", "arguments": {"cursor": 0, "id": 7}}'}}
+
+    sent, replies = [], [Rejected("Error code: 400 - tool_use_failed"), _resp("not json"),
                           _resp(json.dumps({"claims": [{"text": "x", "source_ids": ["S1"]}]}))]
 
     def create(**kw):
@@ -183,6 +187,10 @@ def test_groq_answerer_request_shape_and_retry(raw):
     out = a.answer("q?", normalise(raw))
     assert out == {"claims": [{"text": "x", "source_ids": ["S1"]}], "gaps": []}
     assert len(sent) == 3  # one API error and one malformed reply were retried
+    assert len(sent[0]["messages"]) == 2
+    rejected, why = sent[1]["messages"][2:]  # the retry shows the model its rejected call and the reason
+    assert rejected == {"role": "assistant", "content": Rejected.body["error"]["failed_generation"]}
+    assert "attempted to call tool 'open'" in why["content"] and why["role"] == "user"
     kw = sent[-1]
     assert kw["model"] == "test-model" and kw["temperature"] == 0
     assert kw["tool_choice"] == {"type": "function", "function": {"name": "submit_answer"}}

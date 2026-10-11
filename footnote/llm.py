@@ -23,6 +23,7 @@ Rules:
 - If results disagree, say so in a claim and cite both sides.
 - For time-sensitive facts, include the date the result gives.
 - If the results don't answer part of the question, list that part under "gaps" instead of guessing.
+- You have no browsing tool and cannot open results: use only the text shown here.
 - Return between 2 and 8 claims. Always respond by calling submit_answer."""
 
 CLOSED_BOOK = """Answer the question from your own knowledge as short, atomic claims, one fact per sentence.
@@ -98,6 +99,14 @@ class GroqAnswerer:
                 if "tool_use_failed" not in str(e):
                     raise
                 last_error = e
+                # The identical request tends to fail identically (gpt-oss calls its built-in browser's "open"),
+                # so the retry shows the model its rejected call and why.
+                body = getattr(e, "body", None)
+                err = (body.get("error") or {}) if isinstance(body, dict) else {}
+                messages = messages[:2] + [
+                    {"role": "assistant", "content": err.get("failed_generation") or "(invalid tool call)"},
+                    {"role": "user", "content": f"That call was rejected: {err.get('message') or e}. "
+                                                "Call submit_answer, the only tool available."}]
                 continue
             usage = getattr(resp, "usage", None)
             if usage:
