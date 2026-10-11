@@ -2,7 +2,8 @@
 
 Each verdict shows the claim and everything the checker saw. Answers are saved after every one, so you can go back,
 quit and resume. Batch 1 (evals/labels_human.json) picked the checker's fixes; batch 2 (evals/labels_human_2.json)
-is 20 new verdicts drawn after them, with none from batch 1, as an independent check.
+is 20 new verdicts drawn after them, with none from batch 1, as an independent check. Batch 2 is labelled blind: the
+checker's verdict is neither shown nor saved.
 
 Usage: python evals/label.py [--batch 2]
 """
@@ -18,10 +19,10 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 N = 20
-BATCHES = {  # batch: (saved runs to draw from, seed, output file)
-    1: (["20261011-135840.json"], 20261011, "labels_human.json"),  # gpt-oss-20b
+BATCHES = {  # batch: (saved runs to draw from, seed, output file, show the checker's verdict)
+    1: (["20261011-135840.json"], 20261011, "labels_human.json", True),  # gpt-oss-20b
     2: (["20261011-133041.json", "20261011-134538.json", "20261011-135840.json"],  # gpt-oss-120b, qwen, gpt-oss-20b
-        20261012, "labels_human_2.json"),
+        20261012, "labels_human_2.json", False),
 }
 RULE = ("A claim counts as backed only if the cited title, snippet and date together state everything it says. "
         "A result's date shows when something was reported, not when it happened.")
@@ -32,7 +33,7 @@ def sample(batch: int, results_dir: Path) -> list[dict]:
     """Every grounded claim in the batch's runs, minus earlier batches' claims, then a seeded draw.
 
     Batch 1 comes out exactly as it did in the first labelling round."""
-    files, seed, _ = BATCHES[batch]
+    files, seed, _, shown = BATCHES[batch]
     earlier = {v["claim"] for b in BATCHES if b < batch for v in sample(b, results_dir)}
     pool = []
     for name in files:
@@ -43,7 +44,8 @@ def sample(batch: int, results_dir: Path) -> list[dict]:
                 if v["claim"] in earlier:
                     continue
                 pool.append({"question_id": row["id"], "question": row["question"], "claim": v["claim"],
-                             "checker": v["status"], "model": results["summary"]["model"], "results": name,
+                             **({"checker": v["status"]} if shown else {}),
+                             "model": results["summary"]["model"], "results": name,
                              "cited": [{k: by_id[i][k] for k in ("id", "engine", "title", "url", "date", "text")}
                                        for i in v["source_ids"] if i in by_id]})
     return random.Random(seed).sample(pool, N)
@@ -55,8 +57,8 @@ def load(out: Path, verdicts: list[dict], batch: int) -> dict:
         if [v["claim"] for v in data["verdicts"]] != [v["claim"] for v in verdicts]:
             raise SystemExit(f"{out} holds a different sample; move it aside to start over.")
         return data
-    files, seed, _ = BATCHES[batch]
-    return {"batch": batch, "results": files, "seed": seed, "labeller": "human", "rule": RULE,
+    files, seed, _, shown = BATCHES[batch]
+    return {"batch": batch, "results": files, "seed": seed, "checker_shown": shown, "labeller": "human", "rule": RULE,
             "verdicts": [{"n": n, **v, "label": None, "reason": ""} for n, v in enumerate(verdicts, 1)]}
 
 
@@ -77,7 +79,8 @@ def show(v: dict) -> None:
     print(line("Question: ", v["question"]))
     print()
     print(line("Claim:    ", v["claim"]))
-    print(line("Checker:  ", v["checker"]))
+    if "checker" in v:
+        print(line("Checker:  ", v["checker"]))
     print("\nCited sources")
     for s in v["cited"]:
         note = "  (news has no snippet: this is the headline and publisher)" if s["engine"] == "google_news" else ""

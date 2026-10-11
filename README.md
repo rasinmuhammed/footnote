@@ -220,8 +220,8 @@ So in this sample `supported` was nearly always right: of the 15 clearly labelle
 were backed. 3 of its 4 current flags were false alarms.
 
 The independent check is a second batch: 20 new verdicts drawn after the fixes (seed 20261012) from all three runs
-above, none from the first 20, labelled the same way with `python evals/label.py --batch 2` into
-`evals/labels_human_2.json`.
+above, none from the first 20, labelled the same way but blind, without the checker's verdict, using
+`python evals/label.py --batch 2`; the labels go in `evals/labels_human_2.json`.
 
 For comparison, an earlier set of labels made by Claude, the AI assistant that ran this evaluation, is in
 [`evals/labels_ai.json`](evals/labels_ai.json). It agreed with the human labels on 14 of the 19 clear ones, and in
