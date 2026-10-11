@@ -1,95 +1,11 @@
 # Footnote
 
-Search-grounded answers where every claim carries a footnote, and every footnote is checked.
+Checks AI search answers against the pages they cite, with no model in the checking. Built on
+[SerpApi](https://serpapi.com).
 
-Most "grounded" LLM answers attach a list of links and hope. Footnote makes the model cite a specific search
-result for every sentence, then checks each citation without a model: does the cited result exist, does it contain
-every number the sentence states, and how much of the sentence it actually covers. Anything that fails is flagged
-in the output instead of being presented as fact.
-
-`footnote audit` applies the same idea to Google's AI Mode: it checks every figure in an AI Mode answer against the
-pages that answer cites ([below](#auditing-google-ai-mode)).
-
-Built on [SerpApi](https://serpapi.com) (Google, Google News and Google Scholar engines) and open-weight models
-served by [Groq](https://groq.com). The model takes a second or two; search usually takes a couple more, and
-occasionally over a minute (see [Evaluation](#evaluation)).
-
-```
-$ footnote "Who is the current CEO of OpenAI?"
-Who is the current CEO of OpenAI?
-
-- Sam Altman has been the chief executive officer of OpenAI since 2019. [1]
-- As of February 28, 2026, Sam Altman is the CEO of OpenAI. [2]
-
-Sources
-[1] Sam Altman — Chief Executive Officer, OpenAI (siliconvalleyinvestclub.com, via google)
-[2] OpenAI CEO Sam Altman answers questions on new Pentagon deal: 'This technology is super important' (foxbusiness.com, 2026-02-28, via google_news)
-
-2/2 claims backed by their cited source | engines: google, google_news
-```
-
-<sub>A real run on 11 October 2026 with the default model, URLs and timing trimmed. A claim the checker can't back is flagged
-inline, e.g. `(number not in source)`, which means unverified rather than wrong: see
-[a correct claim, flagged on purpose](#a-correct-claim-flagged-on-purpose).</sub>
-
-## How it works
-
-```mermaid
-flowchart LR
-  Q[Question] --> R[Router]
-  R -->|google| S[SerpApi]
-  R -->|+ google_news if time-sensitive| S
-  R -->|+ google_scholar if about research| S
-  S --> N[Normalise to numbered sources S1..Sn]
-  N --> C[LLM on Groq: atomic claims, each citing source ids]
-  C --> V[Verifier: no model, plain rules]
-  V --> O[Answer with footnotes and flags]
-```
-
-1. **Route.** A small keyword router picks engines: Google always, Google News for time-sensitive wording,
-   Google Scholar for research questions. It's deterministic so it's free, testable and easy to argue with.
-2. **Search.** The official `serpapi` client fetches each engine. Responses are cached on disk by request, so
-   re-running a question or the eval costs no extra searches.
-3. **Normalise.** Answer boxes, knowledge graph, the pages an AI Overview cites (never its generated text), organic
-   results, clustered news stories and Scholar results (with citation counts) become one numbered list, de-duplicated
-   by URL.
-4. **Answer.** A Groq-hosted model (default `openai/gpt-oss-120b`) must return claims through a forced tool call
-   whose schema requires `source_ids` on every claim. It is told today's date, to copy numbers exactly and to list
-   unanswered parts as gaps rather than guess. A rejected tool call is retried with the rejection shown to the
-   model, and one that spent its whole token budget reasoning is retried with a larger budget.
-5. **Verify.** Each claim gets one of: `supported`, `weak`, `unsupported`, `number_not_found`, `bad_citation`, or
-   `abstain` for a refusal or placeholder ("I don't know", "[driver name]"), which is checked first. Numbers are
-   compared after normalising (`1,200` = `1200`, `18%` = `18`), and a date counts if it agrees with the cited
-   result's own date. Coverage is the share of the claim's content words found across all its cited sources
-   together, so a claim that combines two results is scored against both. Before words are compared, a short fixed
-   table expands common abbreviations in claims and sources alike: `RBI`, `Fed`, `ECB`, `BoE`, `BoJ`, `IMF`, `WHO`,
-   `UN`, `EU`, `US`/`U.S.`, `UK`/`U.K.`, `UAE`, `GDP`, `CPI`, `AI` and `LLM`. "RBI" and "Reserve Bank of India" then
-   share their words, and "Fed" weighs as much as "Federal Reserve" always did: two words. Abbreviations match only
-   as written, in capitals, so "us" and "who" are left alone. The table is `ALIASES` in
-   [`footnote/verify.py`](footnote/verify.py).
-
-The model writes sentences; it never decides whether they're true.
-
-## Quickstart
-
-```bash
-pip install -e .
-cp .env.example .env           # add SERPAPI_API_KEY and GROQ_API_KEY; .env is git-ignored and loaded automatically
-footnote --list-models          # models your key can use; Groq's catalogue changes
-footnote "Who won the most recent Formula 1 Grand Prix?"
-footnote "What does research say about RAG reducing hallucinations?" --format md
-footnote "Brent crude price this week" --format json --engines google,google_news
-footnote "Who is the current CEO of OpenAI?" --model qwen/qwen3.8-27b
-```
-
-Each question uses 1 to 3 SerpApi searches, printed after every run.
-
-## Auditing Google AI Mode
-
-`footnote audit` checks a Google AI Mode answer without a model. It fetches the answer through SerpApi's
-[Google AI Mode API](https://serpapi.com/google-ai-mode-api), splits it into paragraphs, list items and table rows
-with the citations each one carries, reads every cited page, and looks for each number, and each date precise to a
-month, in the pages its statement cites.
+- **`footnote audit`** checks every figure in a Google AI Mode answer against the pages that answer cites.
+- **`footnote "question"`** answers from live Google, Google News and Google Scholar results with an open-weight
+  model on [Groq](https://groq.com), every claim cited and every citation checked.
 
 ![footnote audit on Google AI Mode's answer about the latest Rust release: 1.99.0 and its date are found in a cited
 page, the beta's 1.100.0 has no citation but is in reference 4, and the nightly "Rust 1.01.0" is marked as not in
@@ -99,16 +15,45 @@ the cited pages](docs/audit.gif)
 no Rust 1.01.0, and releases.rs doesn't mention one. Recorded with [vhs](https://github.com/charmbracelet/vhs) from
 [`docs/audit.tape`](docs/audit.tape).</sub>
 
+**What 80 Google AI Mode answers showed** (11 October 2026, [details](#80-ai-mode-answers-checked)):
+
+- 105 of the 273 statements that state a figure (38%) cite nothing.
+- 276 of the 322 cited figures (86%) are on the cited pages as written. At least 9 aren't on any of them, including
+  a "Rust 1.01.0" that doesn't exist.
+- The audit flagged 39 figures. Checked by hand, 26 were on a cited page after all: 15 on pages that refused the
+  script or were PDFs, 11 where the text it read differed from what a person sees. Verifying AI answers is a
+  page-access problem first.
+
+New to the AI Mode API? [The tutorial](tutorial/) checks an answer's citations in about 70 lines of Python, and
+runs in [Colab](https://colab.research.google.com/github/rasinmuhammed/footnote/blob/main/tutorial/check_ai_mode.ipynb).
+
+## Quickstart
+
+```bash
+pip install -e ".[audit]"       # the audit extra adds trafilatura, to read pages
+cp .env.example .env           # add SERPAPI_API_KEY, and GROQ_API_KEY for grounded answers; git-ignored, loaded automatically
+footnote audit "What did the latest US Federal Reserve meeting decide about interest rates?"
+footnote audit "What is the latest Kubernetes release?" --format json
+footnote --list-models          # models your Groq key can use; Groq's catalogue changes
+footnote "Who won the most recent Formula 1 Grand Prix?"
+footnote "What does research say about RAG reducing hallucinations?" --format md
+footnote "Brent crude price this week" --format json --engines google,google_news
+footnote "Who is the current CEO of OpenAI?" --model qwen/qwen3.8-27b
+```
+
+An audit uses one SerpApi search; a grounded answer uses 1 to 3. Both print the count after every run.
+
+## Auditing Google AI Mode
+
+`footnote audit` checks a Google AI Mode answer without a model. It fetches the answer through SerpApi's
+[Google AI Mode API](https://serpapi.com/google-ai-mode-api), splits it into paragraphs, list items and table rows
+with the citations each one carries, reads every cited page, and looks for each number, and each date precise to a
+month, in the pages its statement cites.
+
 A number counts as found if a cited page states it as written, as the same value ("4.0%" for "4 percent"),
 converted ("3.75%" for "3-3/4 percent", "25 basis points" for "1/4 percentage point") or rounded ("1.48 billion"
 for 1,480,243,044). A date counts if a cited page's text gives it; one that only matches a page's own date (its
 published date, a date in its URL) or the day of the search is marked ◷. Bare years are skipped.
-
-```bash
-pip install -e ".[audit]"
-footnote audit "What did the latest US Federal Reserve meeting decide about interest rates?"
-footnote audit "What is the latest Kubernetes release?" --format json
-```
 
 Each audit is one SerpApi search plus one fetch per cited page, both cached in `.footnote_cache/`. Failed fetches
 are cached too, so a rerun audits the same text. The fetcher identifies itself as `footnote-audit/0.1` rather than
@@ -194,6 +139,76 @@ audit flagged 11 of AI Mode's 77 cited figures on those questions.
 - 7 statements contained LaTeX commands, such as `$8,848\text{ meters}$`, and one garbled a price with them.
 - Answers end with offers ("If you'd like, I can…"), sometimes followed by a list. The audit sets them aside.
 - AI Mode searches took a median of 6.7 seconds by `search_metadata.total_time_taken`, and at most 19.2.
+
+## Grounded answers
+
+`footnote "question"` answers from live search results, where every claim carries a footnote and every
+footnote is checked.
+
+Most "grounded" LLM answers attach a list of links and hope. Footnote makes the model cite a specific search
+result for every sentence, then checks each citation without a model: does the cited result exist, does it contain
+every number the sentence states, and how much of the sentence it actually covers. Anything that fails is flagged
+in the output instead of being presented as fact.
+
+Built on [SerpApi](https://serpapi.com) (Google, Google News and Google Scholar engines) and open-weight models
+served by [Groq](https://groq.com). The model takes a second or two; search usually takes a couple more, and
+occasionally over a minute (see [Evaluation](#evaluation)).
+
+```
+$ footnote "Who is the current CEO of OpenAI?"
+Who is the current CEO of OpenAI?
+
+- Sam Altman has been the chief executive officer of OpenAI since 2019. [1]
+- As of February 28, 2026, Sam Altman is the CEO of OpenAI. [2]
+
+Sources
+[1] Sam Altman — Chief Executive Officer, OpenAI (siliconvalleyinvestclub.com, via google)
+[2] OpenAI CEO Sam Altman answers questions on new Pentagon deal: 'This technology is super important' (foxbusiness.com, 2026-02-28, via google_news)
+
+2/2 claims backed by their cited source | engines: google, google_news
+```
+
+<sub>A real run on 11 October 2026 with the default model, URLs and timing trimmed. A claim the checker can't back is flagged
+inline, e.g. `(number not in source)`, which means unverified rather than wrong: see
+[a correct claim, flagged on purpose](#a-correct-claim-flagged-on-purpose).</sub>
+
+## How it works
+
+```mermaid
+flowchart LR
+  Q[Question] --> R[Router]
+  R -->|google| S[SerpApi]
+  R -->|+ google_news if time-sensitive| S
+  R -->|+ google_scholar if about research| S
+  S --> N[Normalise to numbered sources S1..Sn]
+  N --> C[LLM on Groq: atomic claims, each citing source ids]
+  C --> V[Verifier: no model, plain rules]
+  V --> O[Answer with footnotes and flags]
+```
+
+1. **Route.** A small keyword router picks engines: Google always, Google News for time-sensitive wording,
+   Google Scholar for research questions. It's deterministic so it's free, testable and easy to argue with.
+2. **Search.** The official `serpapi` client fetches each engine. Responses are cached on disk by request, so
+   re-running a question or the eval costs no extra searches.
+3. **Normalise.** Answer boxes, knowledge graph, the pages an AI Overview cites (never its generated text), organic
+   results, clustered news stories and Scholar results (with citation counts) become one numbered list, de-duplicated
+   by URL.
+4. **Answer.** A Groq-hosted model (default `openai/gpt-oss-120b`) must return claims through a forced tool call
+   whose schema requires `source_ids` on every claim. It is told today's date, to copy numbers exactly and to list
+   unanswered parts as gaps rather than guess. A rejected tool call is retried with the rejection shown to the
+   model, and one that spent its whole token budget reasoning is retried with a larger budget.
+5. **Verify.** Each claim gets one of: `supported`, `weak`, `unsupported`, `number_not_found`, `bad_citation`, or
+   `abstain` for a refusal or placeholder ("I don't know", "[driver name]"), which is checked first. Numbers are
+   compared after normalising (`1,200` = `1200`, `18%` = `18`), and a date counts if it agrees with the cited
+   result's own date. Coverage is the share of the claim's content words found across all its cited sources
+   together, so a claim that combines two results is scored against both. Before words are compared, a short fixed
+   table expands common abbreviations in claims and sources alike: `RBI`, `Fed`, `ECB`, `BoE`, `BoJ`, `IMF`, `WHO`,
+   `UN`, `EU`, `US`/`U.S.`, `UK`/`U.K.`, `UAE`, `GDP`, `CPI`, `AI` and `LLM`. "RBI" and "Reserve Bank of India" then
+   share their words, and "Fed" weighs as much as "Federal Reserve" always did: two words. Abbreviations match only
+   as written, in capitals, so "us" and "who" are left alone. The table is `ALIASES` in
+   [`footnote/verify.py`](footnote/verify.py).
+
+The model writes sentences; it never decides whether they're true.
 
 ## Evaluation
 
@@ -444,10 +459,10 @@ On Groq's free plan, gpt-oss-120b gets 8K tokens a minute and 200K a day (Free P
 ## Tests
 
 ```bash
-pip install -e ".[dev]" && pytest
+pip install -e ".[dev,audit]" && pytest
 ```
 
-The suite runs fully offline against SerpApi-shaped fixtures, trimmed real responses (`tests/fixtures/live/`) and
-a fake model.
+The suite runs fully offline against SerpApi-shaped fixtures, trimmed real responses (`tests/fixtures/live/`), a
+fake model and fake page fetches. It also checks that the tutorial's text and notebook show its script as it is.
 
 MIT licence.
