@@ -57,7 +57,8 @@ flowchart LR
 5. **Verify.** Each claim gets one of: `supported`, `weak`, `unsupported`, `number_not_found`, `bad_citation`, or
    `abstain` for a refusal or placeholder ("I don't know", "[driver name]"), which is checked first. Numbers are
    compared after normalising (`1,200` = `1200`, `18%` = `18`), and a date counts if it agrees with the cited
-   result's own date. Coverage is the share of the claim's content words found in its best cited source.
+   result's own date. Coverage is the share of the claim's content words found across all its cited sources
+   together, so a claim that combines two results is scored against both.
 
 The model writes sentences; it never decides whether they're true.
 
@@ -186,7 +187,7 @@ the checker marked `supported`. Twenty is a small sample, so read this as a dire
 - Of 13 claims the checker marked `supported`, 12 were backed. The one it over-credited gave a release month for a
   model the source only ranked "as of July 2026".
 - All 6 claims it flagged as weak, unsupported or number_not_found were backed. Three drew on more than one cited
-  source, and coverage is scored against the best single source. One said "Reserve Bank of India" where the
+  source, and coverage was then scored against the best single source. One said "Reserve Bank of India" where the
   headline said "RBI". One restated "146.39 crore" as "1,463,900,000": a correct conversion, but the checker matches numbers
   literally, and converting is what the model is told not to do. One gave the date of a Fed meeting from the date of
   the result reporting it.
@@ -211,9 +212,9 @@ run of it used about 58k.
   poorly: a correct sentence worded differently from its snippet can score `weak`. On 19 hand-labelled verdicts it
   agreed 12 times, and 6 of the 7 misses were flags on claims that were backed (above). A sample of 50 or more would
   pin that down.
-- Coverage is scored against the best single cited source, so a claim that correctly combines two cited results
-  scores `weak`. And it can't see an added fact if the claim's other words match: "released in July 2026" passed
-  against a page that only ranked the model "as of July 2026".
+- Coverage pools all cited sources, so a claim citing several results can collect its words from unrelated ones.
+  And it can't see an added fact if the claim's other words match: "released in July 2026" passed against a page
+  that only ranked the model "as of July 2026".
 - Google News results carry a headline and no snippet, so a claim cited to news is checked against the headline
   alone, and correct paraphrases score `weak`. "The current repo rate set by the Reserve Bank of India is 5.5% as of
   October 2026" was weak against "RBI raises the Repo Rate by 25 bps to 5.5% in October, as expected": only 3 of its

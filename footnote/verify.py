@@ -3,7 +3,7 @@
 A refusal or placeholder ("I don't know", "[driver name]") is marked abstain before anything else is checked.
 A claim fails if it cites a source that doesn't exist, or states a number that none of its cited sources contain.
 A date counts as contained when it agrees with a cited source's own date, which the model is shown and told to use.
-Otherwise it is scored by how much of its content vocabulary appears in its best cited source.
+Otherwise it is scored by how much of its content vocabulary appears across all its cited sources together.
 """
 
 from __future__ import annotations
@@ -104,11 +104,15 @@ class Verdict:
         return asdict(self)
 
 
-def _score(claim: str, source: Source) -> float:
+def _coverage(claim: str, text: str) -> float:
     ct = terms(claim)
     if not ct:
         return 1.0
-    return len(ct & terms(source.title + " " + source.text)) / len(ct)
+    return len(ct & terms(text)) / len(ct)
+
+
+def _score(claim: str, source: Source) -> float:
+    return _coverage(claim, source.title + " " + source.text)
 
 
 def _abstention(claim: str, cited_ids: list[str]) -> Verdict | None:
@@ -127,9 +131,9 @@ def check(claim: str, cited_ids: list[str], sources: list[Source]) -> Verdict:
         return Verdict(claim, cited_ids, "bad_citation", 0.0, None, [],
                        f"cites unknown source(s): {', '.join(unknown)}" if unknown else "no citation")
 
-    best = max(cited, key=lambda s: _score(claim, s))
-    support = round(_score(claim, best), 3)
+    best = max(cited, key=lambda s: _score(claim, s))  # reported for display; coverage counts every cited source
     pool = " ".join(s.title + " " + s.text for s in cited)
+    support = round(_coverage(claim, pool), 3)
     missing = sorted(numbers(without_source_dates(claim, cited)) - numbers(pool))
     if missing:
         return Verdict(claim, cited_ids, "number_not_found", support, best.id, missing,

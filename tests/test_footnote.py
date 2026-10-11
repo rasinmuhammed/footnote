@@ -110,6 +110,16 @@ def test_dates_count_when_they_match_the_cited_source_date():
     assert check("The RBI raised the repo rate 7 times to 5.5%.", [hike], s).missing_numbers == ["7"]
 
 
+def test_coverage_counts_every_cited_source():
+    s = normalise({"google_news": _live("google_news_rbi")})  # S1: Aug hold (Reuters), S2: Oct hike to 5.5%
+    claim = ("India's central bank held rates in August, awaiting a clearer inflation signal, "
+             "then the RBI raised the repo rate by 25 bps to 5.5% in October.")
+    assert check(claim, ["S1"], s).status == "number_not_found"
+    assert check(claim, ["S2"], s).support < 0.5  # neither headline alone covers half of it
+    v = check(claim, ["S1", "S2"], s)
+    assert v.status == "supported" and v.support > 0.7 and v.best_source in ("S1", "S2")
+
+
 def test_pipeline_end_to_end(searcher, make_answerer):
     claims = [
         {"text": "Mount Example is 4,321 metres tall.", "source_ids": ["S1"]},
