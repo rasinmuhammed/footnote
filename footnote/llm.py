@@ -64,7 +64,9 @@ class Answerer(Protocol):
 
 
 class GroqAnswerer:
-    def __init__(self, model: str | None = None, client=None, max_tokens: int = 2000, retries: int = 2):
+    # Reasoning counts against the budget: gpt-oss-20b has spent 5.4k tokens deliberating before its tool call.
+    # Groq bills tokens generated, not this cap.
+    def __init__(self, model: str | None = None, client=None, max_tokens: int = 8000, retries: int = 2):
         if client is None:
             from groq import Groq
 
