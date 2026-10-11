@@ -166,7 +166,7 @@ number although it is told never to convert, and the checker flagged the claim `
 20 grounded verdicts were drawn at random (seed 20261011) from the gpt-oss-20b run and labelled by Claude, the AI
 assistant that ran this evaluation, not by a person. Each claim was judged against exactly what the checker sees,
 the cited results' titles, snippets and dates, and counted as backed only if that text states everything the claim
-says. Labels and reasons are in [`evals/labels.json`](evals/labels.json).
+says. Labels and reasons are in [`evals/labels_ai.json`](evals/labels_ai.json).
 
 The checker's call (backed means `supported`) matched the label on **13 of 20**, with 3 close calls. Twenty is a
 small sample, so read it as a direction rather than a rate.
