@@ -3,6 +3,8 @@
 Covers the 20 questions Footnote was evaluated on and 60 more (aimode_questions.jsonl). Each answer's cited pages
 are read straight after its search, so live prices have as little time as possible to move; questions about live
 figures are still reported apart. Every answer is audited twice, from snippets alone and with the pages read.
+Footnote's own checker also scores every statement against its snippets, unchanged, so AI Mode can be compared with
+the open models Footnote was evaluated with on the same ruler.
 
 Usage: python evals/aimode_audit.py [--max-searches 77]   # writes evals/aimode_results.json
        python evals/aimode_audit.py --report               # tables, and aimode_summary.json; no searches, no fetching
@@ -26,6 +28,9 @@ from footnote import aimode
 from footnote.aimode import FOUND
 from footnote.pages import PageFetcher
 from footnote.search import SerpApiSearcher
+from footnote.sources import Source
+from footnote.verify import Verdict, check
+from run import summarise
 
 HERE = Path(__file__).parent
 OUT, SUMMARY = HERE / "aimode_results.json", HERE / "aimode_summary.json"
@@ -84,10 +89,19 @@ def markdown_citations(response: dict) -> dict:
     return out
 
 
+def footnote_status(statement: aimode.Statement, refs: list[aimode.Reference]) -> str:
+    """Footnote's verdict on a statement, from what its checker reads in a search result: title, snippet and date.
+    A statement with no citation is a bad citation, as it would be from Footnote's model."""
+    sources = [Source(f"S{r.index}", "google_ai_mode", r.title, r.url, " ".join(filter(None, (r.snippet, r.passage))),
+                      r.snippet_date) for r in refs]
+    return check(statement.text, [f"S{i}" for i in statement.refs], sources).status
+
+
 def record(q: dict, response: dict, fetch) -> dict:
     full, snippets = aimode.audit(response, fetch), aimode.audit(response)
     data = full.to_dict()
     for s, t in zip(data["statements"], snippets.statements):
+        s["footnote_status"] = footnote_status(t, snippets.references)
         for m, n in zip(s["mentions"], t.mentions):
             m["snippet_status"] = n.status
     meta = response.get("search_metadata") or {}
@@ -152,6 +166,11 @@ def stats(rows: list[dict]) -> dict:
         "missing_but_in_another_reference": sum(bool(m["elsewhere"]) for m in missing),
         "cited_dates": sum(m["kind"] == "date" for m in cited),
         "uncited_figures": len(uncited), "uncited_in_some_reference": sum(bool(m["elsewhere"]) for m in uncited),
+        "references": sum(len(r["audit"]["references"]) for r in answers),
+        "references_with_snippet_date": sum(bool(x["snippet_date"]) for r in answers for x in r["audit"]["references"]),
+        "references_with_passage": sum(bool(x["passage"]) for r in answers for x in r["audit"]["references"]),
+        "references_never_cited": sum(x["index"] not in {i for s in r["audit"]["statements"] for i in s["refs"]}
+                                      for r in answers for x in r["audit"]["references"]),
         "pages": len(pages), "pages_read": sum(not p["error"] for p in pages.values()),
         "page_errors": dict(Counter(p["error"].split(":")[0] for p in pages.values() if p["error"])),
         "markdown_agree": sum(m["agree"] for m in md), "markdown_differ": sum(len(m["differ"]) for m in md),
@@ -159,6 +178,9 @@ def stats(rows: list[dict]) -> dict:
         "markdown_table_rows_cited": sum(m["table_rows_cited"] for m in md),
         "serpapi_s": {"median": round(statistics.median(times), 1), "p90": times[math.ceil(0.9 * len(times)) - 1],
                       "max": times[-1]} if times else {},
+        "footnote_checker": summarise([Verdict(s["text"], [], s["footnote_status"], 0.0, None, []) for s in stmts]),
+        "footnote_checker_cited": summarise([Verdict(s["text"], [], s["footnote_status"], 0.0, None, [])
+                                             for s in stmts if s["refs"]]),
     }
 
 

@@ -1,0 +1,367 @@
+{
+ "All": {
+  "answers": 80,
+  "errors": 0,
+  "statements": 429,
+  "with_figures": 273,
+  "uncited_with_figures": 105,
+  "table_rows": 3,
+  "answers_with_uncited_figures": 42,
+  "cited_figures": 322,
+  "full": {
+   "in_text": 66,
+   "literal": 208,
+   "search_date": 2,
+   "rounded": 4,
+   "not_found": 36,
+   "same_value": 2,
+   "metadata_only": 1,
+   "converted": 3
+  },
+  "snippets": {
+   "metadata_only": 3,
+   "literal": 161,
+   "same_value": 3,
+   "in_text": 37,
+   "not_found": 108,
+   "search_date": 4,
+   "rounded": 4,
+   "converted": 2
+  },
+  "found_only_in_pages": 72,
+  "missing_but_in_another_reference": 11,
+  "cited_dates": 71,
+  "uncited_figures": 183,
+  "uncited_in_some_reference": 168,
+  "references": 206,
+  "references_with_snippet_date": 0,
+  "references_with_passage": 0,
+  "references_never_cited": 5,
+  "pages": 205,
+  "pages_read": 171,
+  "page_errors": {
+   "HTTP 403": 21,
+   "no main text": 3,
+   "not HTML": 3,
+   "HTTP 401": 4,
+   "ReadTimeout": 2,
+   "HTTP 405": 1
+  },
+  "markdown_agree": 508,
+  "markdown_differ": 0,
+  "markdown_unmatched": 12,
+  "markdown_table_rows_cited": 0,
+  "serpapi_s": {
+   "median": 6.7,
+   "p90": 11.33,
+   "max": 19.16
+  },
+  "footnote_checker": {
+   "claims": 429,
+   "supported": 54,
+   "weak_or_unsupported": 100,
+   "abstain": 0,
+   "numeric_claims": 293,
+   "numbers_not_in_sources": 95,
+   "bad_citations": 180
+  },
+  "footnote_checker_cited": {
+   "claims": 249,
+   "supported": 54,
+   "weak_or_unsupported": 100,
+   "abstain": 0,
+   "numeric_claims": 181,
+   "numbers_not_in_sources": 95,
+   "bad_citations": 0
+  }
+ },
+ "Footnote's 20": {
+  "answers": 20,
+  "errors": 0,
+  "statements": 99,
+  "with_figures": 57,
+  "uncited_with_figures": 19,
+  "table_rows": 3,
+  "answers_with_uncited_figures": 9,
+  "cited_figures": 77,
+  "full": {
+   "in_text": 16,
+   "literal": 45,
+   "search_date": 1,
+   "rounded": 4,
+   "not_found": 9,
+   "same_value": 1,
+   "metadata_only": 1
+  },
+  "snippets": {
+   "metadata_only": 2,
+   "literal": 38,
+   "same_value": 2,
+   "in_text": 7,
+   "not_found": 21,
+   "search_date": 2,
+   "rounded": 4,
+   "converted": 1
+  },
+  "found_only_in_pages": 12,
+  "missing_but_in_another_reference": 2,
+  "cited_dates": 18,
+  "uncited_figures": 33,
+  "uncited_in_some_reference": 29,
+  "references": 57,
+  "references_with_snippet_date": 0,
+  "references_with_passage": 0,
+  "references_never_cited": 1,
+  "pages": 57,
+  "pages_read": 52,
+  "page_errors": {
+   "HTTP 403": 4,
+   "no main text": 1
+  },
+  "markdown_agree": 115,
+  "markdown_differ": 0,
+  "markdown_unmatched": 5,
+  "markdown_table_rows_cited": 0,
+  "serpapi_s": {
+   "median": 5.4,
+   "p90": 9.53,
+   "max": 17.02
+  },
+  "footnote_checker": {
+   "claims": 99,
+   "supported": 7,
+   "weak_or_unsupported": 27,
+   "abstain": 0,
+   "numeric_claims": 59,
+   "numbers_not_in_sources": 24,
+   "bad_citations": 41
+  },
+  "footnote_checker_cited": {
+   "claims": 58,
+   "supported": 7,
+   "weak_or_unsupported": 27,
+   "abstain": 0,
+   "numeric_claims": 38,
+   "numbers_not_in_sources": 24,
+   "bad_citations": 0
+  }
+ },
+ "New 60": {
+  "answers": 60,
+  "errors": 0,
+  "statements": 330,
+  "with_figures": 216,
+  "uncited_with_figures": 86,
+  "table_rows": 0,
+  "answers_with_uncited_figures": 33,
+  "cited_figures": 245,
+  "full": {
+   "in_text": 50,
+   "literal": 163,
+   "not_found": 27,
+   "converted": 3,
+   "search_date": 1,
+   "same_value": 1
+  },
+  "snippets": {
+   "in_text": 30,
+   "literal": 123,
+   "not_found": 87,
+   "search_date": 2,
+   "metadata_only": 1,
+   "same_value": 1,
+   "converted": 1
+  },
+  "found_only_in_pages": 60,
+  "missing_but_in_another_reference": 9,
+  "cited_dates": 53,
+  "uncited_figures": 150,
+  "uncited_in_some_reference": 139,
+  "references": 149,
+  "references_with_snippet_date": 0,
+  "references_with_passage": 0,
+  "references_never_cited": 4,
+  "pages": 149,
+  "pages_read": 120,
+  "page_errors": {
+   "not HTML": 3,
+   "HTTP 401": 4,
+   "HTTP 403": 17,
+   "no main text": 2,
+   "ReadTimeout": 2,
+   "HTTP 405": 1
+  },
+  "markdown_agree": 393,
+  "markdown_differ": 0,
+  "markdown_unmatched": 7,
+  "markdown_table_rows_cited": 0,
+  "serpapi_s": {
+   "median": 7.6,
+   "p90": 11.45,
+   "max": 19.16
+  },
+  "footnote_checker": {
+   "claims": 330,
+   "supported": 47,
+   "weak_or_unsupported": 73,
+   "abstain": 0,
+   "numeric_claims": 234,
+   "numbers_not_in_sources": 71,
+   "bad_citations": 139
+  },
+  "footnote_checker_cited": {
+   "claims": 191,
+   "supported": 47,
+   "weak_or_unsupported": 73,
+   "abstain": 0,
+   "numeric_claims": 143,
+   "numbers_not_in_sources": 71,
+   "bad_citations": 0
+  }
+ },
+ "Live figures": {
+  "answers": 7,
+  "errors": 0,
+  "statements": 25,
+  "with_figures": 19,
+  "uncited_with_figures": 8,
+  "table_rows": 0,
+  "answers_with_uncited_figures": 2,
+  "cited_figures": 23,
+  "full": {
+   "not_found": 9,
+   "rounded": 1,
+   "same_value": 1,
+   "in_text": 2,
+   "literal": 9,
+   "search_date": 1
+  },
+  "snippets": {
+   "not_found": 10,
+   "rounded": 1,
+   "same_value": 1,
+   "in_text": 2,
+   "literal": 8,
+   "search_date": 1
+  },
+  "found_only_in_pages": 1,
+  "missing_but_in_another_reference": 0,
+  "cited_dates": 3,
+  "uncited_figures": 10,
+  "uncited_in_some_reference": 6,
+  "references": 14,
+  "references_with_snippet_date": 0,
+  "references_with_passage": 0,
+  "references_never_cited": 0,
+  "pages": 13,
+  "pages_read": 10,
+  "page_errors": {
+   "HTTP 403": 1,
+   "ReadTimeout": 1,
+   "HTTP 401": 1
+  },
+  "markdown_agree": 34,
+  "markdown_differ": 0,
+  "markdown_unmatched": 0,
+  "markdown_table_rows_cited": 0,
+  "serpapi_s": {
+   "median": 5.0,
+   "p90": 9.16,
+   "max": 9.16
+  },
+  "footnote_checker": {
+   "claims": 25,
+   "supported": 2,
+   "weak_or_unsupported": 4,
+   "abstain": 0,
+   "numeric_claims": 19,
+   "numbers_not_in_sources": 7,
+   "bad_citations": 12
+  },
+  "footnote_checker_cited": {
+   "claims": 13,
+   "supported": 2,
+   "weak_or_unsupported": 4,
+   "abstain": 0,
+   "numeric_claims": 11,
+   "numbers_not_in_sources": 7,
+   "bad_citations": 0
+  }
+ },
+ "Not live": {
+  "answers": 73,
+  "errors": 0,
+  "statements": 404,
+  "with_figures": 254,
+  "uncited_with_figures": 97,
+  "table_rows": 3,
+  "answers_with_uncited_figures": 40,
+  "cited_figures": 299,
+  "full": {
+   "in_text": 64,
+   "literal": 199,
+   "search_date": 1,
+   "rounded": 3,
+   "not_found": 27,
+   "metadata_only": 1,
+   "converted": 3,
+   "same_value": 1
+  },
+  "snippets": {
+   "metadata_only": 3,
+   "literal": 153,
+   "same_value": 2,
+   "in_text": 35,
+   "not_found": 98,
+   "search_date": 3,
+   "rounded": 3,
+   "converted": 2
+  },
+  "found_only_in_pages": 71,
+  "missing_but_in_another_reference": 11,
+  "cited_dates": 68,
+  "uncited_figures": 173,
+  "uncited_in_some_reference": 162,
+  "references": 192,
+  "references_with_snippet_date": 0,
+  "references_with_passage": 0,
+  "references_never_cited": 5,
+  "pages": 192,
+  "pages_read": 161,
+  "page_errors": {
+   "HTTP 403": 20,
+   "no main text": 3,
+   "not HTML": 3,
+   "HTTP 401": 3,
+   "ReadTimeout": 1,
+   "HTTP 405": 1
+  },
+  "markdown_agree": 474,
+  "markdown_differ": 0,
+  "markdown_unmatched": 12,
+  "markdown_table_rows_cited": 0,
+  "serpapi_s": {
+   "median": 7.0,
+   "p90": 11.45,
+   "max": 19.16
+  },
+  "footnote_checker": {
+   "claims": 404,
+   "supported": 52,
+   "weak_or_unsupported": 96,
+   "abstain": 0,
+   "numeric_claims": 274,
+   "numbers_not_in_sources": 88,
+   "bad_citations": 168
+  },
+  "footnote_checker_cited": {
+   "claims": 236,
+   "supported": 52,
+   "weak_or_unsupported": 96,
+   "abstain": 0,
+   "numeric_claims": 170,
+   "numbers_not_in_sources": 88,
+   "bad_citations": 0
+  }
+ }
+}
