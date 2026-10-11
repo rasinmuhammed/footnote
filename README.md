@@ -231,6 +231,11 @@ a Grand Prix sprint. Two took a detail from a URL: "mission progress update" fro
 path. The checker accepts a date that agrees with the result's date and never sees URLs, so it can't catch either:
 it marked 2 of the 6 `supported` and flagged the other 4 for other reasons.
 
+The model's prompt likely encourages the date cases: it says "For time-sensitive facts, include the date the result
+gives" ([`footnote/llm.py`](footnote/llm.py#L24)), and a result's date is when it was published. The next step is to
+tell the model that a result's date is when it was reported, then re-run and re-label. The prompt is unchanged here
+so the published results reproduce.
+
 **Batch 1, same sample used to pick the fixes.** 20 verdicts drawn at random (seed 20261011) from the gpt-oss-20b
 run, labelled with the checker's verdict shown. The labels are in
 [`evals/labels_human.json`](evals/labels_human.json): 14 backed, 5 not backed, 1 close call. Four labels were
