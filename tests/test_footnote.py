@@ -1,12 +1,14 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from footnote import Footnote
 from footnote.render import markdown, text
 from footnote.router import plan
 from footnote.search import SerpApiSearcher, params_for
 from footnote.sources import normalise
-from footnote.verify import check, numbers
+from footnote.verify import check, check_against_pool, numbers
 
 
 def test_normalise_flattens_dedupes_and_numbers(raw):
@@ -70,6 +72,28 @@ def test_verdicts(raw):
     assert v.status == "number_not_found" and v.missing_numbers == ["5000"]
     assert check("Mount Example is tall.", ["S99"], s).status == "bad_citation"
     assert check("Penguins enjoy jazz festivals in Lisbon.", [club], s).status == "unsupported"
+
+
+@pytest.mark.parametrize("claim", [
+    "I do not have the specific outcome of that meeting.",
+    "I don't know who won the race.",
+    "I don’t know who won the race.",  # curly apostrophe, as models write it
+    "I am unable to determine the current repo rate.",
+    "The repo rate is unable to be confirmed; I'm unable to verify it.",
+    "As of my knowledge cutoff, the repo rate was 6.5%.",
+    "The winner of that Grand Prix was [driver name].",
+])
+def test_abstentions_are_not_answers(raw, claim):
+    s = normalise(raw)
+    assert check(claim, ["S99"], s).status == "abstain"  # checked before the citation
+    assert check_against_pool(claim, s).status == "abstain"
+    assert check_against_pool(claim, []).status == "abstain"
+
+
+@pytest.mark.parametrize("claim", ["The lander was unable to touch down after a sensor fault.",
+                                   "Mount Example is 4,321 metres tall [S1]."])
+def test_claims_that_only_look_like_abstentions(raw, claim):
+    assert check(claim, ["S1"], normalise(raw)).status != "abstain"
 
 
 def test_dates_count_when_they_match_the_cited_source_date():

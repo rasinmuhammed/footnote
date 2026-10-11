@@ -1,5 +1,6 @@
 """Check every claim against the snippets it cites. No model involved: the rules are simple enough to read.
 
+A refusal or placeholder ("I don't know", "[driver name]") is marked abstain before anything else is checked.
 A claim fails if it cites a source that doesn't exist, or states a number that none of its cited sources contain.
 A date counts as contained when it agrees with a cited source's own date, which the model is shown and told to use.
 Otherwise it is scored by how much of its content vocabulary appears in its best cited source.
@@ -28,6 +29,14 @@ DATE = re.compile(r"\b(?:(\d{1,2})\s+)?(january|february|march|april|may|june|ju
                   r"(?:,?\s+((?:19|20)\d\d)\b)?"
                   r"|\b((?:19|20)\d\d)[-‐‑–](\d\d)[-‐‑–](\d\d)\b"
                   r"|\b((?:19|20)\d\d)\b", re.I)
+
+# Refusals and template placeholders aren't claims; scored by word overlap they would pass as supported.
+# A bare "unable to" would also catch real claims ("the lander was unable to touch down"), so it is narrowed.
+ABSTAIN = re.compile(r"\bi (?:do not|don['’]t|cannot|can['’]t) (?:have|know)\b"
+                     r"|\b(?:i am|i['’]m|i was) unable to\b"
+                     r"|\bunable to (?:determine|confirm|verify|find|provide|access)\b"
+                     r"|\bas of my (?:knowledge|last|training)\b|\bmy knowledge cut-?off\b"
+                     r"|\[[a-z][a-z ,_/-]*\]", re.I)
 
 SUPPORTED, WEAK = 0.5, 0.25
 
@@ -81,7 +90,7 @@ def terms(text: str) -> set[str]:
 class Verdict:
     claim: str
     source_ids: list[str]
-    status: str  # supported | weak | unsupported | number_not_found | bad_citation
+    status: str  # abstain | supported | weak | unsupported | number_not_found | bad_citation
     support: float
     best_source: str | None
     missing_numbers: list[str]
@@ -102,7 +111,15 @@ def _score(claim: str, source: Source) -> float:
     return len(ct & terms(source.title + " " + source.text)) / len(ct)
 
 
+def _abstention(claim: str, cited_ids: list[str]) -> Verdict | None:
+    if ABSTAIN.search(claim):
+        return Verdict(claim, cited_ids, "abstain", 0.0, None, [], "a refusal or placeholder, not an answer")
+    return None
+
+
 def check(claim: str, cited_ids: list[str], sources: list[Source]) -> Verdict:
+    if abstained := _abstention(claim, cited_ids):
+        return abstained
     by_id = {s.id: s for s in sources}
     cited = [by_id[i] for i in cited_ids if i in by_id]
     unknown = [i for i in cited_ids if i not in by_id]
@@ -123,6 +140,8 @@ def check(claim: str, cited_ids: list[str], sources: list[Source]) -> Verdict:
 
 def check_against_pool(claim: str, sources: list[Source]) -> Verdict:
     """For uncited (closed-book) claims: would any retrieved source back this up?"""
+    if abstained := _abstention(claim, []):
+        return abstained
     if not sources:
         return Verdict(claim, [], "unsupported", 0.0, None, sorted(numbers(claim)), "no sources")
     ranked = sorted(sources, key=lambda s: _score(claim, s), reverse=True)[:3]

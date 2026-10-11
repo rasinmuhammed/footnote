@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 from .pipeline import Report
 
 FLAG = {"supported": "", "weak": " (weak support)", "unsupported": " (not supported by its source)",
-        "number_not_found": " (number not in source)", "bad_citation": " (bad citation)"}
+        "number_not_found": " (number not in source)", "bad_citation": " (bad citation)", "abstain": " (not an answer)"}
 
 
 def _domain(url: str) -> str:
