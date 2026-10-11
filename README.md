@@ -186,8 +186,9 @@ audit flagged 11 of AI Mode's 77 cited figures on those questions.
 
 **Working with the API.**
 
-- Answers came as `paragraph`, `list` and `table` blocks; the [docs](https://serpapi.com/google-ai-mode-api) show
-  only paragraphs. List items carry their own `reference_indexes`; table rows carried none.
+- These 80 answers used `paragraph`, `list` and `table` blocks; the [docs](https://serpapi.com/google-ai-mode-api)
+  also show headings, code and charts. List items carry their own `reference_indexes`. The docs' table example has
+  them on the table block; the one table here had none, so its 3 rows count as uncited.
 - References have no date field. The docs' example shows a date before the snippet ("Sep 18, 2025 — …") and a
   `#:~:text=` passage in the link; none of these 206 references had either, but the audit handles both.
 - 7 statements contained LaTeX commands, such as `$8,848\text{ meters}$`, and one garbled a price with them.

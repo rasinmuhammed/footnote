@@ -22,7 +22,10 @@ def test_statements_keep_their_own_citations_and_set_offers_aside():
     python, _ = statements(_live("python"))
     assert [s.kind for s in python] == ["paragraph", "table", "table", "table", "paragraph", "offer", "offer", "offer"]
     assert python[1].text == ("Version: Python 3.15.0; Release Date: Oct 9, 2026; "
-                              "Support Status: Latest major bugfix release")
+                              "Support Status: Latest major bugfix release") and python[1].refs == []
+    table = {"type": "table", "table": [["Team", "Seasons"], ["Heat", "2010–2014"]], "reference_indexes": [1, 3]}
+    assert statements({"text_blocks": [table, {"type": "heading", "snippet": "Teams"}]}) == \
+        ([aimode.Statement("Team: Heat; Seasons: 2010–2014", [1, 3], "table")], ["heading"])  # as in SerpApi's docs
 
 
 def test_references_split_off_the_linked_passage_and_snippet_date():

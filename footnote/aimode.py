@@ -228,9 +228,10 @@ def statements(response: dict) -> tuple[list[Statement], list[str]]:
         elif kind == "list":
             out += [Statement(i.get("snippet") or "", list(i.get("reference_indexes") or []),
                               "offer" if offering else "list") for i in items(block)]
-        elif kind == "table":
+        elif kind == "table":  # a table's citations, when it has any, are on the whole block
             head, *rows = block.get("table") or [[]]
-            out += [Statement("; ".join(f"{h}: {c}" for h, c in zip(head, row)), [], "table") for row in rows]
+            refs = list(block.get("reference_indexes") or [])
+            out += [Statement("; ".join(f"{h}: {c}" for h, c in zip(head, row)), refs, "table") for row in rows]
             offering = False
         else:
             skipped.append(kind)
