@@ -4,6 +4,7 @@
  "seed": 20261011,
  "labeller": "human",
  "rule": "A claim counts as backed only if the cited title, snippet and date together state everything it says. A result's date shows when something was reported, not when it happened.",
+ "note": "One label was corrected after review to match the stated rule: #18 changed from backed to not backed, because its date comes only from the cited result's date.",
  "verdicts": [
   {
    "n": 1,
@@ -384,8 +385,9 @@
      "text": "Fed approves interest rate hike, signals one more to come this year (CNBC)"
     }
    ],
-   "label": "backed",
-   "reason": ""
+   "label": "not_backed",
+   "reason": "the meeting date comes only from the result's date, which shows when it was reported",
+   "corrected_from": "backed"
   },
   {
    "n": 19,
