@@ -50,6 +50,8 @@ def test_figures_skip_bare_years_and_names():
     ("0.25 percentage point", "a 25bps rise", "converted"),
     ("1,463,900,000", "146.39 crore", "converted"),
     ("12 members", "twelve members", "converted"),
+    ("the 13th-lowest extent", "thirteenth lowest", "converted"),
+    ("Kubernetes v1.37.1", "Kubernetes v1.37.1 is out", "literal"),
     ("1.48 billion", "is 1,480,243,044", "rounded"),
     ("17.8%", "17.83 per cent", "rounded"),
     ("$5.5–5.6 trillion", "worth $5.53 trillion", "rounded"),  # the range's scale applies to both ends
@@ -62,6 +64,12 @@ def test_figures_skip_bare_years_and_names():
 def test_number_provenance(claim, page, status):
     pool = [evidence(Reference(0, "", "https://x.org", ""), Page("https://x.org", page))]
     assert check(claim, [0], pool)[0].status == status
+
+
+def test_a_repeated_figure_counts_once():
+    pool = [evidence(Reference(0, "", "https://x.org", ""), Page("https://x.org", "around $104.28"))]
+    assert [m.written for m in check("$104.72 per barrel, in the $104.28 to $104.72 range", [0], pool)] == \
+        ["104.72", "104.28"]
 
 
 def test_dates_need_a_month_and_a_day_or_year():

@@ -52,6 +52,9 @@ _TENS = "twenty thirty forty fifty sixty seventy eighty ninety".split()
 WORDS = {w: i for i, w in enumerate(["zero", *_ONES, *"ten eleven twelve thirteen fourteen fifteen sixteen "
                                                        "seventeen eighteen nineteen".split()])}
 WORDS |= {w: 20 + 10 * i for i, w in enumerate(_TENS)}
+WORDS |= {w: i for i, w in enumerate("first second third fourth fifth sixth seventh eighth ninth tenth eleventh "
+                                     "twelfth thirteenth fourteenth fifteenth sixteenth seventeenth eighteenth "
+                                     "nineteenth twentieth".split(), 1)}
 SCALES = {"thousand": 10**3, "k": 10**3, "lakh": 10**5, "million": 10**6, "mn": 10**6, "m": 10**6, "crore": 10**7,
           "billion": 10**9, "bn": 10**9, "b": 10**9, "trillion": 10**12, "tn": 10**12, "t": 10**12}
 
@@ -60,7 +63,7 @@ def _number_pattern(words: bool) -> re.Pattern:
     spelled = (rf"|(?P<tens>{'|'.join(_TENS)})[-\s](?P<ones>{'|'.join(_ONES)})"
                rf"|(?P<word>{'|'.join(sorted(WORDS, key=len, reverse=True))})") if words else ""
     return re.compile(
-        r"(?<![\w.,/])(?<![A-Za-z]-)(?:"  # not part of a name such as "H-1B" or "COVID-19"
+        r"(?:(?<=\b[vV])|(?<![\w.,/])(?<![A-Za-z]-))(?:"  # "v1.37", but not part of a name such as "H-1B"
         r"(?P<ver>\d+(?:\.\d+){2,})"
         r"|(?P<w>\d+)[-\s](?P<fn>\d+)/(?P<fd>\d+)"
         r"|(?P<n>\d+)/(?P<d>\d+)"
@@ -300,7 +303,11 @@ def check(text: str, refs: list[int], pool: list[Evidence], searched: str = "") 
     others = [e for e in pool if e.ref not in refs]
     today = [p for _, ps, _ in dates(searched) for p in ps]
     found: list[tuple[int, Mention]] = []
+    seen = set()  # a figure a statement repeats is one figure
     for phrase, readings, start in dates(text):
+        if (phrase, "date") in seen:
+            continue
+        seen.add((phrase, "date"))
         status, e, matched, at = _find_date(readings, cited) if refs else ("uncited", None, "", -1)
         if status == "not_found" and any(_agrees(c, p) for c in readings for p in today):
             status, matched = "search_date", f"searched {searched}"
@@ -310,6 +317,9 @@ def check(text: str, refs: list[int], pool: list[Evidence], searched: str = "") 
             m.elsewhere = [o.ref for o in others if _find_date(readings, [o])[0] == "in_text"]
         found.append((start, m))
     for n in numbers(_blank(text)):
+        if (n.written, "number") in seen:
+            continue
+        seen.add((n.written, "number"))
         status, e, t = _find_number(n, cited) if refs else ("uncited", None, None)
         m = Mention(n.written, "number", status, e.ref if e else None, t.written if t else "",
                     _context(e.text, t.start, len(t.written)) if e and t else "")
