@@ -26,7 +26,8 @@ Sources
 ```
 
 <sub>A real run on 11 October 2026 with the default model, URLs and timing trimmed. A claim the checker can't back is flagged
-inline, e.g. `(number not in source)`; there's a worked example under [Evaluation](#the-checker-at-work).</sub>
+inline, e.g. `(number not in source)`, which means unverified rather than wrong: see
+[a correct claim, flagged on purpose](#a-correct-claim-flagged-on-purpose).</sub>
 
 ## How it works
 
@@ -140,7 +141,7 @@ token cap stopped its re-run; its claims and verdicts come from the same prompt 
 
 How to read the tables:
 
-- Grounding cuts invented numbers for every model: 4 of 60, 3 of 107 and 2 of 53 grounded numeric claims had a
+- Grounding cuts unverifiable numbers for every model: 4 of 60, 3 of 107 and 2 of 53 grounded numeric claims had a
   number their sources lack, against 39 of 50, 26 of 37 and 36 of 46 closed-book (gpt-oss-120b, qwen, gpt-oss-20b).
 - "Backed by a source" rewards copying. qwen writes more claims and more extractive ones: 40 of its 120 share at
   least 90% of their content words with the cited snippet, against 12 of 77 for gpt-oss-20b and 4 of 74 for
@@ -150,16 +151,26 @@ How to read the tables:
 - Refusals and placeholders ("I do not have…", "[driver name]") are counted as abstentions, not support. Before that
   rule, closed-book got credit for them.
 
-### The checker at work
+### A correct claim, flagged on purpose
 
 Asked for India's population (q03, gpt-oss-120b, in a first 5-question run the same day), the model wrote:
 
 > Other recent estimates differ: Trading Economics estimated 1,421.0 million people for the 2025‑26 fiscal year,
 > Population Pyramid reported 1,450,935,791 for 2024, and a YouTube short cited 146.39 crore (1,463,900,000).
 
-The cited YouTube result says only "India's Population hits 146.39 crore". The model converted crore into a plain
-number although it is told never to convert, and the checker flagged the claim `number_not_found`, missing
-`1463900000`. Every other number in the claim matched its source after normalising.
+The cited YouTube result says "India's Population hits 146.39 crore", and 146.39 crore is 1,463,900,000, so the
+claim is right. The checker flagged it `number_not_found` anyway, missing `1463900000`. It didn't catch an error: it
+enforced the rule that numbers are copied, not computed, and flagged a correct claim it can't verify.
+
+That strictness is by design. The checker has no model and does no arithmetic, so every number in a claim has to
+appear in the cited text after light normalising (`1,200` = `1200`, `18%` = `18`, `$4.0` = `4`). Accepting
+converted numbers would mean redoing the model's arithmetic, for crore and lakh, millions, units and percentages,
+and every rule that lets a computed number through can also let a wrong one through. The model is told never to
+convert for the same reason, so a flag like this also marks an instruction it broke.
+
+The cost is recall. Correct restatements fail: "1,200,000" against "1.2 million", and even "5.5%" against "5.50%",
+since normalising only drops a trailing `.0`. In the hand-labelled sample below, this was the only number flag, and
+the claim was backed.
 
 ### How often the checker is right
 
@@ -211,9 +222,9 @@ run of it used about 58k.
   the source doesn't happen to contain a "1". A year the model correctly infers is flagged too: from a page dated
   October 2026 that says "the year to August", the claim "the year to August 2026" fails, because only dates that
   agree with the cited result's own date are excused.
-- The model doesn't always follow its rules. In q03 it turned "146.39 crore" into "1,463,900,000" despite being told
-  never to convert. The checker caught it (see above), but a conversion that happened to land on a number already
-  in the source would pass.
+- Number matching is literal by design, so correct restatements are flagged: "146.39 crore" as "1,463,900,000",
+  "1.2 million" as "1,200,000", even "5.50%" as "5.5%" (see above). The model is told never to convert, but
+  sometimes does, and then a correct claim reads as `number_not_found`.
 - Snippets are short. A claim can be true on the page and still not be in the snippet, which counts as a miss.
   Fetching full pages would fix this at the cost of latency.
 - The closed-book comparison favours grounded answers, because grounded claims are written from the same
