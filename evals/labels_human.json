@@ -3,8 +3,8 @@
  "model": "openai/gpt-oss-20b",
  "seed": 20261011,
  "labeller": "human",
- "rule": "A claim counts as backed only if the cited title, snippet and date together state everything it says. A result's date shows when something was reported, not when it happened.",
- "note": "Three labels were corrected after review to apply the stated rule consistently, each from backed to not backed: #1 states a release month the source doesn't give, and #6 and #18 take a date only from the cited result's date.",
+ "rule": "A claim counts as backed only if the cited title, snippet and date together state everything it says. A result's date shows when something was reported, not when it happened. A result's domain may be used to name its publisher; URL paths and slugs are not evidence.",
+ "note": "Four labels were corrected after review to apply the stated rule consistently, each from backed to not backed: #1 states a release month the source doesn't give, #6 and #18 take a date only from the cited result's date, and #7 takes 'short' from the URL path. The rule's last sentence, on URLs, was added during the batch-2 review, and #7 was re-checked against it.",
  "verdicts": [
   {
    "n": 1,
@@ -162,8 +162,9 @@
      "text": "India's Population hits 146.39 crore."
     }
    ],
-   "label": "backed",
-   "reason": ""
+   "label": "not_backed",
+   "reason": "'short' is only in the URL path (/shorts/); the title and snippet don't say it, though the conversion is correct",
+   "corrected_from": "backed"
   },
   {
    "n": 8,

@@ -137,7 +137,7 @@ Hand labels of grounded claims ([below](#how-often-the-checker-is-right)) show t
 In the independent batch of 20, the checker flagged 4 claims and 2 of them were backed, so "Weak or unsupported"
 and "number not in their sources" overstate missing support. Of 15 clearly labelled claims it marked supported, 4
 weren't backed, so "Backed by a source" overstates support. Batch 1 (gpt-oss-20b, the sample that picked the fixes)
-gives 3 of 4 flags on backed claims and 3 of 15 supported claims not backed. None of the 3 number flags across both
+gives 2 of 4 flags on backed claims and 3 of 15 supported claims not backed. None of the 3 number flags across both
 batches caught a wrong number: two were the "1" in "Formula 1" and one a correct crore conversion
 ([below](#a-correct-claim-flagged-on-purpose)). Closed-book claims weren't labelled.
 
@@ -186,7 +186,8 @@ convert for the same reason, so a flag like this also marks an instruction it br
 
 The cost is recall. Correct restatements fail: "1,200,000" against "1.2 million", and even "5.5%" against "5.50%",
 since normalising only drops a trailing `.0`. In hand-labelled batch 1 below, the only number flag was the same
-conversion, and the claim was backed.
+conversion. It was correct; the claim was labelled not backed only because it also called the result a "short", a
+word found only in the URL path.
 
 ### How often the checker is right
 
@@ -224,42 +225,44 @@ direction rather than a rate.
 - All 6 claims that weren't backed came from the two gpt-oss models. qwen's 6 were 5 backed and 1 close call, in line
   with its copying (above).
 
-**Details taken from result metadata.** Across both batches, 5 labelled claims took a detail that only a result's
+**Details taken from result metadata.** Across both batches, 6 labelled claims took a detail that only a result's
 metadata gives. Four dated an event by the date the result was published: a Fed meeting twice, a Python release and
-a Grand Prix sprint. One took "mission progress update" from a URL slug. The checker accepts a date that agrees
-with the result's date and never sees URLs, so it can't catch either: it marked 2 of the 5 `supported` and flagged
-the other 3 for reasons other than the date.
+a Grand Prix sprint. Two took a detail from a URL: "mission progress update" from a slug, and "short" from a YouTube
+path. The checker accepts a date that agrees with the result's date and never sees URLs, so it can't catch either:
+it marked 2 of the 6 `supported` and flagged the other 4 for other reasons.
 
 **Batch 1, same sample used to pick the fixes.** 20 verdicts drawn at random (seed 20261011) from the gpt-oss-20b
 run, labelled with the checker's verdict shown. The labels are in
-[`evals/labels_human.json`](evals/labels_human.json): 15 backed, 4 not backed, 1 close call. Three labels were
+[`evals/labels_human.json`](evals/labels_human.json): 14 backed, 5 not backed, 1 close call. Four labels were
 corrected after review, from backed to not backed, to apply the stated rule consistently: two took a date only from
-the cited result's date (a Fed meeting, a Python release), and one gave a release month the source doesn't state.
+the cited result's date (a Fed meeting, a Python release), one gave a release month the source doesn't state, and
+one, re-checked against the URL sentence added in the batch-2 review, called a result a "short", a word only in its
+URL path.
 
-With the checker as it was when they were labelled, its call agreed with 11 of the 19 clear labels. The close call
+With the checker as it was when they were labelled, its call agreed with 12 of the 19 clear labels. The close call
 was one the checker marked `supported`.
 
 - Of 13 claims the checker marked `supported`, 10 were backed. The 3 it over-credited added something the source
   doesn't say: two gave a release month for models the source only ranked "as of July 2026", and one, "It was
   released on 2026-10-10", took the release date from the date of the headline reporting it.
-- Of 6 claims it flagged as weak, unsupported or number_not_found, 5 were backed. Three drew on more than one
+- Of 6 claims it flagged as weak, unsupported or number_not_found, 4 were backed. Three drew on more than one
   cited source, and coverage was then scored against the best single source. One said "Reserve Bank of India" where
-  the headline said "RBI". One restated "146.39 crore" as "1,463,900,000": a correct conversion, but the checker
-  matches numbers literally, and converting is what the model is told not to do. The sixth flag was right: it gave
-  the date of a Fed meeting from the date of the result reporting it.
+  the headline said "RBI". The other 2 flags matched not-backed labels: a Fed meeting dated by the result reporting
+  it, and a correct "146.39 crore" to "1,463,900,000" conversion, flagged because the checker matches numbers
+  literally, in a claim that also called its source a YouTube "short", a word only in the URL path.
 
 Those flags picked the two fixes now in the checker: coverage across all cited sources together, and the
-abbreviation table. Re-scored with them, the same 20 verdicts agree with 13 of the 19 clear labels: **same sample
+abbreviation table. Re-scored with them, the same 20 verdicts agree with 14 of the 19 clear labels: **same sample
 used to pick the fixes, not independent**. It shows the fixes work on the cases that prompted them, not how often
 the checker is right. Two flags cleared, both on backed claims: a NASA claim combining three results, and the
-"Reserve Bank of India" claim. Four remain. The Fed meeting date is a correct flag. The other three are on backed
-claims: the crore conversion, and two claims describing disagreement between sources ("Sources disagree…", "Some
-studies find… while others find…"), whose framing words are in no snippet. Both fixes only loosen the checker, so
-the three over-credited claims are still marked supported.
+"Reserve Bank of India" claim. Four remain. Two match not-backed labels, the Fed meeting date and the crore claim.
+The other two are on backed claims describing disagreement between sources ("Sources disagree…", "Some studies
+find… while others find…"), whose framing words are in no snippet. Both fixes only loosen the checker, so the
+three over-credited claims are still marked supported.
 
 For comparison, an earlier set of batch-1 labels made by Claude, the AI assistant that ran this evaluation, is in
-[`evals/labels_ai.json`](evals/labels_ai.json). It agreed with the human labels on 16 of the 19 clear ones, and in
-all 3 disagreements it was the stricter of the two.
+[`evals/labels_ai.json`](evals/labels_ai.json). It agreed with the human labels on 17 of the 19 clear ones, and in
+both disagreements it was the stricter of the two.
 
 ## Comparing models
 
