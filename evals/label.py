@@ -25,7 +25,8 @@ BATCHES = {  # batch: (saved runs to draw from, seed, output file, show the chec
         20261012, "labels_human_2.json", False),
 }
 RULE = ("A claim counts as backed only if the cited title, snippet and date together state everything it says. "
-        "A result's date shows when something was reported, not when it happened.")
+        "A result's date shows when something was reported, not when it happened. "
+        "A result's domain may be used to name its publisher; URL paths and slugs are not evidence.")
 LABELS = {"b": "backed", "n": "not_backed", "c": "close_call"}
 
 

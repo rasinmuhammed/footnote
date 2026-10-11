@@ -191,9 +191,11 @@ was the same conversion, and the claim was backed.
 ### How often the checker is right
 
 20 grounded verdicts were drawn at random (seed 20261011) from the gpt-oss-20b run and labelled by hand with
-`evals/label.py`, which shows each claim with exactly what the checker saw: the cited results' titles, snippets,
-dates and URLs. The rule: a claim counts as backed only if the cited title, snippet and date together state
-everything it says, and a result's date shows when something was reported, not when it happened. The labels are in
+`evals/label.py`, which shows each claim with what the checker saw, the cited results' titles, snippets and dates,
+plus their URLs. The rule: a claim counts as backed only if the cited title, snippet and date together state
+everything it says, and a result's date shows when something was reported, not when it happened. A result's domain
+may be used to name its publisher ("Yahoo Finance" from finance.yahoo.com); URL paths and slugs are not evidence. The
+labels are in
 [`evals/labels_human.json`](evals/labels_human.json): 15 backed, 4 not backed, 1 close call. Three labels were
 corrected after review, from backed to not backed, to apply the stated rule consistently: two took a date only from
 the cited result's date (a Fed meeting, a Python release), and one gave a release month the source doesn't state.
