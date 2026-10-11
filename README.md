@@ -207,6 +207,10 @@ Bank of India" claim. Four remain, all on backed claims: the crore conversion, t
 describing disagreement between sources ("Sources disagree…", "Some studies find… while others find…"), whose
 framing words are in no snippet.
 
+The independent check is a second batch: 20 new verdicts drawn after the fixes (seed 20261012) from all three runs
+above, none from the first 20, labelled the same way with `python evals/label.py --batch 2` into
+`evals/labels_human_2.json`.
+
 So in this sample `supported` was nearly always right and every flag was a false alarm. The weak and unsupported
 counts in the tables above likely overstate how many claims lack support.
 

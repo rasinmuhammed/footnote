@@ -7,21 +7,37 @@ label = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(label)
 
 
-def test_labels_save_after_each_answer_go_back_and_resume(tmp_path):
+def _runs(tmp_path):
     source = {"id": "S1", "engine": "google", "title": "t", "url": "u", "text": "x", "date": None, "position": 1}
-    rows = [{"id": f"q{i}", "question": f"Q{i}?", "grounded": {"sources": [source], "claims": [
-        {"claim": f"c{i}.{j}", "source_ids": ["S1"], "status": "supported"} for j in range(3)]}} for i in range(10)]
-    results, out = tmp_path / "results.json", tmp_path / "labels_human.json"
-    results.write_text(json.dumps({"summary": {"model": "m"}, "rows": rows}))
+    for k, name in enumerate(label.BATCHES[2][0]):
+        rows = [{"id": f"q{i}", "question": f"Q{i}?", "grounded": {"sources": [source], "claims": [
+            {"claim": f"c{k}.{i}.{j}", "source_ids": ["S1"], "status": "supported"} for j in range(3)]}}
+            for i in range(10)]
+        (tmp_path / name).write_text(json.dumps({"summary": {"model": f"m{k}"}, "rows": rows}))
+    return tmp_path
+
+
+def test_labels_save_after_each_answer_go_back_and_resume(tmp_path):
+    runs = _runs(tmp_path)
 
     def run(*answers):
         replies = iter(answers)
-        label.main(results, out, ask=lambda _: next(replies))
-        return json.loads(out.read_text())
+        label.main(1, runs, tmp_path, ask=lambda _: next(replies))
+        return json.loads((tmp_path / "labels_human.json").read_text())
 
     # label, go back, keep it with Enter, label the next, quit before the third
     data = run("b", "says so", "p", "", "n", "", "q")
-    assert data["labeller"] == "human" and data["seed"] == label.SEED
+    assert data["labeller"] == "human" and data["seed"] == label.BATCHES[1][1]
     assert [v["label"] for v in data["verdicts"][:3]] == ["backed", "not_backed", None]
     assert data["verdicts"][0]["reason"] == "says so"
     assert run("c", "", "q")["verdicts"][2]["label"] == "close_call"  # resumes at the first unlabelled verdict
+
+
+def test_second_batch_is_new_verdicts_from_every_run(tmp_path):
+    runs = _runs(tmp_path)
+    first, second = label.sample(1, runs), label.sample(2, runs)
+    assert len(second) == label.N and not {v["claim"] for v in first} & {v["claim"] for v in second}
+    assert len({v["model"] for v in second}) > 1
+    assert second == label.sample(2, runs)  # seeded
+    label.main(2, runs, tmp_path, ask=lambda _: "q")
+    assert not (tmp_path / "labels_human_2.json").exists()  # nothing saved until an answer is given
