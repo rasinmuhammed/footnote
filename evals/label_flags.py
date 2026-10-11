@@ -1,9 +1,9 @@
-"""Hand-check a sample of the AI Mode audit's flags: is a flagged figure really missing from the pages it cites?
+"""Hand-check every flag from the AI Mode audit: is a flagged figure really missing from the pages it cites?
 
 A flag is a figure in a cited statement that the audit found in none of the cited pages, or only as a page's own
-date or the day of the search. Open the cited pages and judge from what they say now. Which kind of flag it is
-isn't shown or saved, so every one is judged the same way. Answers are saved after each one; you can go back, quit
-and resume.
+date or the day of the search. They come in a seeded random order, not grouped by question. Open the cited pages
+and judge from what they say now. Which kind of flag it is isn't shown or saved, so every one is judged the same
+way. Answers are saved after each one; you can go back, quit and resume.
 
 Usage: python evals/label_flags.py
 """
@@ -19,7 +19,7 @@ from pathlib import Path
 from footnote.aimode import FLAGS
 
 HERE = Path(__file__).parent
-N, SEED = 30, 20261013
+SEED = 20261013
 RULE = ("A figure counts as stated if a cited page gives the same value in any form (3.75%, 3-3/4 percent). "
         "A date counts only if the page's text gives it; a date the page shows as when it was published or "
         "updated doesn't count.")
@@ -41,7 +41,7 @@ def sample(results: Path) -> list[dict]:
                                  "figure": m["written"], "at": [si, mi],
                                  "cited": [{"n": i + 1, "title": refs[i]["title"], "url": refs[i]["url"]}
                                            for i in s["refs"] if i in refs]})
-    return random.Random(SEED).sample(pool, min(N, len(pool)))
+    return random.Random(SEED).sample(pool, len(pool))
 
 
 def save(out: Path, data: dict) -> None:

@@ -64,7 +64,7 @@ def test_flags_sample_only_cited_flags_and_never_save_their_kind(tmp_path):
     results = tmp_path / "results.json"
     results.write_text(json.dumps({"rows": rows}))
     sample = flags.sample(results)
-    assert len(sample) == flags.N and sample == flags.sample(results)  # seeded
+    assert len(sample) == 40 and sample == flags.sample(results)  # every flag, in a seeded order
     assert {f["figure"] for f in sample} == {"not_found", "metadata_only"}
     replies = iter(["n", "gone", "q"])
     flags.main(results, tmp_path / "labels.json", ask=lambda _: next(replies))
