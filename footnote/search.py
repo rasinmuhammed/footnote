@@ -16,7 +16,7 @@ class Searcher(Protocol):
 
 class SerpApiSearcher:
     def __init__(self, api_key: str | None = None, cache_dir: str | os.PathLike | None = ".footnote_cache",
-                 timeout: float = 30.0, client=None):
+                 timeout: float = 120.0, client=None):  # Google searches have taken 80s; a timeout is still charged
         if client is None:
             import serpapi
 

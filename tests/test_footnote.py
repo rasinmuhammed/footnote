@@ -72,6 +72,19 @@ def test_verdicts(raw):
     assert check("Penguins enjoy jazz festivals in Lisbon.", [club], s).status == "unsupported"
 
 
+def test_dates_count_when_they_match_the_cited_source_date():
+    s = normalise({"google_news": _live("google_news_rbi")})  # S2: Oct 7 hike to 5.5%, title has no date
+    hike = next(x.id for x in s if x.date == "2026-10-07" and "5.5%" in x.text)
+    for claim in ("On 7 October 2026, the RBI raised the repo rate by 25 bps to 5.5%.",
+                  "On Oct. 7, 2026, the RBI raised the repo rate by 25 bps to 5.5%.",
+                  "In October 2026 the RBI raised the repo rate to 5.5%."):
+        assert check(claim, [hike], s).status == "supported", claim
+    wrong_day = check("On 8 October 2026, the RBI raised the repo rate to 5.5%.", [hike], s)
+    assert wrong_day.missing_numbers == ["2026", "8"]  # the date disagrees as a whole
+    assert check("In 2025, the RBI raised the repo rate to 5.5%.", [hike], s).missing_numbers == ["2025"]
+    assert check("The RBI raised the repo rate 7 times to 5.5%.", [hike], s).missing_numbers == ["7"]
+
+
 def test_pipeline_end_to_end(searcher, make_answerer):
     claims = [
         {"text": "Mount Example is 4,321 metres tall.", "source_ids": ["S1"]},
@@ -151,6 +164,7 @@ def test_groq_answerer_request_shape_and_retry(raw):
     item = kw["tools"][0]["function"]["parameters"]["properties"]["claims"]["items"]
     assert "source_ids" in item["required"]
     assert "[S1]" in kw["messages"][1]["content"]
+    assert "Today's date is 20" in kw["messages"][0]["content"]
     assert a.usage == {"input_tokens": 20, "output_tokens": 10}
 
 

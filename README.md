@@ -46,13 +46,14 @@ flowchart LR
    Google Scholar for research questions. It's deterministic so it's free, testable and easy to argue with.
 2. **Search.** The official `serpapi` client fetches each engine. Responses are cached on disk by request, so
    re-running a question or the eval costs no extra searches.
-3. **Normalise.** Answer boxes, knowledge graph, organic results, clustered news stories and Scholar results
-   (with citation counts) become one numbered list, de-duplicated by URL.
+3. **Normalise.** Answer boxes, knowledge graph, the pages an AI Overview cites (never its generated text), organic
+   results, clustered news stories and Scholar results (with citation counts) become one numbered list, de-duplicated
+   by URL.
 4. **Answer.** A Groq-hosted model (default `openai/gpt-oss-120b`) must return claims through a forced tool call
    whose schema requires `source_ids` on every claim. Malformed tool calls are retried. It is told to copy numbers exactly and to list unanswered parts as gaps rather than guess.
 5. **Verify.** Each claim gets one of: `supported`, `weak`, `unsupported`, `number_not_found`, `bad_citation`.
-   Numbers are compared after normalising (`1,200` = `1200`, `18%` = `18`). Coverage is the share of the claim's
-   content words found in its best cited source.
+   Numbers are compared after normalising (`1,200` = `1200`, `18%` = `18`), and a date counts if it agrees with the
+   cited result's own date. Coverage is the share of the claim's content words found in its best cited source.
 
 The model writes sentences; it never decides whether they're true.
 

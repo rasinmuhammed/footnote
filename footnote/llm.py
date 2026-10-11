@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import os
+from datetime import date
 from typing import Protocol
 
 from .sources import Source
@@ -79,8 +80,8 @@ class GroqAnswerer:
         user = f"Question: {question}"
         if cited:
             user = f"Search results:\n\n{format_sources(sources)}\n\n{user}"
-        messages = [{"role": "system", "content": SYSTEM if cited else CLOSED_BOOK},
-                    {"role": "user", "content": user}]
+        system = f"{SYSTEM if cited else CLOSED_BOOK}\n\nToday's date is {date.today().isoformat()}."
+        messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
         last_error: Exception | None = None
         for _ in range(self.retries + 1):

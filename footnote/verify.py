@@ -1,6 +1,7 @@
 """Check every claim against the snippets it cites. No model involved: the rules are simple enough to read.
 
 A claim fails if it cites a source that doesn't exist, or states a number that none of its cited sources contain.
+A date counts as contained when it agrees with a cited source's own date, which the model is shown and told to use.
 Otherwise it is scored by how much of its content vocabulary appears in its best cited source.
 """
 
@@ -19,6 +20,13 @@ do not no yes all any each other some only very just per via""".split())
 NUMBER = re.compile(r"(?<![\w.])[$€£₹]?\d[\d,]*(?:\.\d+)?%?")
 WORD = re.compile(r"[a-z0-9]+")
 
+MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
+# "7 October 2026", "Oct. 7, 2026", "October 2026", "Jun 25, 2026", or a bare year
+DATE = re.compile(r"\b(?:(\d{1,2})\s+)?(january|february|march|april|may|june|july|august|september|october|november|"
+                  r"december|jan|feb|mar|apr|jun|jul|aug|sept?|oct|nov|dec)\b\.?(?:\s+(\d{1,2})(?:st|nd|rd|th)?\b)?"
+                  r"(?:,?\s+((?:19|20)\d\d)\b)?|\b((?:19|20)\d\d)\b", re.I)
+ISO_DATE = re.compile(r"((?:19|20)\d\d)-(\d\d)-(\d\d)")
+
 SUPPORTED, WEAK = 0.5, 0.25
 
 
@@ -32,6 +40,34 @@ def numbers(text: str) -> set[str]:
         if v:
             out.add(v)
     return out
+
+
+def _parts(m: re.Match) -> tuple[int | None, int | None, int | None]:
+    """(year, month, day) of a DATE match, None where the text doesn't say."""
+    if m.group(5):
+        return int(m.group(5)), None, None
+    day = m.group(1) or m.group(3)
+    return (int(m.group(4)) if m.group(4) else None, MONTHS.index(m.group(2)[:3].lower()) + 1,
+            int(day) if day else None)
+
+
+def source_date(date: str | None) -> tuple[int | None, int | None, int | None] | None:
+    if not date:
+        return None
+    if iso := ISO_DATE.fullmatch(date):
+        return tuple(map(int, iso.groups()))
+    m = DATE.search(date)
+    return _parts(m) if m else None
+
+
+def without_source_dates(claim: str, cited: list[Source]) -> str:
+    """Drop date phrases that agree with a cited source's date in every part they state; other numbers stay."""
+    dates = [d for d in (source_date(s.date) for s in cited) if d]
+
+    def agrees(m: re.Match) -> bool:
+        return any(all(c is None or c == s for c, s in zip(_parts(m), d)) for d in dates)
+
+    return DATE.sub(lambda m: " " if agrees(m) else m.group(0), claim)
 
 
 def terms(text: str) -> set[str]:
@@ -75,7 +111,7 @@ def check(claim: str, cited_ids: list[str], sources: list[Source]) -> Verdict:
     best = max(cited, key=lambda s: _score(claim, s))
     support = round(_score(claim, best), 3)
     pool = " ".join(s.title + " " + s.text for s in cited)
-    missing = sorted(numbers(claim) - numbers(pool))
+    missing = sorted(numbers(without_source_dates(claim, cited)) - numbers(pool))
     if missing:
         return Verdict(claim, cited_ids, "number_not_found", support, best.id, missing,
                        "states a number its sources don't contain")
