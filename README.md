@@ -253,9 +253,16 @@ run of it used about 58k.
   the source doesn't happen to contain a "1". A year the model correctly infers is flagged too: from a page dated
   October 2026 that says "the year to August", the claim "the year to August 2026" fails, because only dates that
   agree with the cited result's own date are excused.
+- A result's date says when it was reported, but a claim's date that agrees with it is still accepted, as if it were
+  the date of the event. A claim with few other words passes on little more than the date: "It was released on
+  2026-10-10" scores 1.0 against a "Python 3.15 Released…" headline published that day, since "released" is its only
+  other content word. The labelled Fed meeting claim was flagged only because "meeting", "took" and "place" aren't
+  in its headline; its date was accepted.
 - Number matching is literal by design, so correct restatements are flagged: "146.39 crore" as "1,463,900,000",
   "1.2 million" as "1,200,000", even "5.50%" as "5.5%" (see above). The model is told never to convert, but
   sometimes does, and then a correct claim reads as `number_not_found`.
+- The reverse also holds: numbers are matched by value, not by meaning. A converted or computed number that happens
+  to equal a number already in any of its cited sources passes, even if that number means something else there.
 - Snippets are short. A claim can be true on the page and still not be in the snippet, which counts as a miss.
   Fetching full pages would fix this at the cost of latency.
 - The closed-book comparison favours grounded answers, because grounded claims are written from the same
