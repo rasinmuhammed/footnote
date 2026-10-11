@@ -18,11 +18,10 @@ no Rust 1.01.0, and releases.rs doesn't mention one. Recorded with [vhs](https:/
 **What 80 Google AI Mode answers showed** (11 October 2026, [details](#80-ai-mode-answers-checked)):
 
 - 105 of the 273 statements that state a figure (38%) cite nothing.
-- 276 of the 322 cited figures (86%) are on the cited pages as written. At least 9 aren't on any of them, including
-  a "Rust 1.01.0" that doesn't exist.
-- The audit flagged 39 figures. Checked by hand, 26 were on a cited page after all: 15 on pages that refused the
-  script or were PDFs, 11 where the text it read differed from what a person sees. Verifying AI answers is a
-  page-access problem first.
+- The audit found 276 of the 322 cited figures (86%) on the cited pages. At least 9 aren't on any of them,
+  including a "Rust 1.01.0" that doesn't exist.
+- The audit flagged 39 figures. Checked by hand, 26 of them were on a cited page after all: 15 on pages that
+  refused the script or were PDFs, and 11 where the text it read differed from what a person sees.
 
 New to the AI Mode API? [The tutorial](tutorial/) checks an answer's citations in about 70 lines of Python, and
 runs in [Colab](https://colab.research.google.com/github/rasinmuhammed/footnote/blob/main/tutorial/check_ai_mode.ipynb).
@@ -105,10 +104,10 @@ gives the same value in any form; a date counts only if the page's text gives it
 | Stated on a cited page | 26 | 11 | 15 |
 | Can't tell | 1 | 1 | 0 |
 
-So the flags were mostly wrong: 12 of the 38 decided ones were right that no cited page states the figure as
-written (9 not at all, 3 only rounded), and 7 of 18 where the script had read every cited page. The 26 misses came
-from what the script could read, not from how it matches
-([`evals/flag_causes.json`](evals/flag_causes.json), from re-reading those pages afterwards):
+So the flags were mostly wrong. 12 of the 38 decided ones were right that no cited page states the figure as
+written (9 not at all, 3 only rounded), and 7 of 18 where the script had read every cited page. All 26 misses came
+down to what the script could read ([`evals/flag_causes.json`](evals/flag_causes.json), from re-reading those pages
+afterwards):
 
 - 15 cite a page the script couldn't read: blocked (bls.gov, incometaxindia.gov.in, piie.com, jec.senate.gov,
   reuters.com, sciencedirect.com) or a PDF (a Bank of Japan statement, cited by two of them).
@@ -119,15 +118,15 @@ from what the script could read, not from how it matches
 
 The 9 figures no cited page states include the Rust "1.01.0" above, a gold futures price that reached the answer
 as `$[$4, 216.30]$`, and Everest's height given as 29,031 feet. Found figures weren't checked by hand, and a number
-can turn up by chance on a long page, so 9 of 322 is a floor, not a rate.
+can turn up by chance on a long page, so 9 of 322 is a minimum.
 
 **Footnote's checker on the same 20 questions.** Run unchanged against AI Mode's snippets, Footnote's checker
 marks 7 of AI Mode's 58 cited statements on those questions supported, and finds a number missing from the
 snippets in 24 of 38 numeric ones. The open models it was built with scored 60 of 74 to 114 of 120 supported, and
-had a number missing in 4 of 60, 3 of 107 and 2 of 53 numeric claims (tables below). That measures the ruler more
-than AI Mode: Footnote's model writes short claims from the snippets it is shown, AI Mode writes longer statements
-from whole pages that a snippet only samples, and the checker counts a year as a number. With the pages read, the
-audit flagged 11 of AI Mode's 77 cited figures on those questions.
+had a number missing in 4 of 60, 3 of 107 and 2 of 53 numeric claims (tables below). That mostly measures the
+checker. Footnote's model writes short claims from the snippets it is shown; AI Mode writes longer statements from
+whole pages, of which a snippet is a small sample; and the checker counts a year as a number. With the pages read,
+the audit flagged 11 of AI Mode's 77 cited figures on those questions.
 
 **Working with the API.**
 
@@ -137,7 +136,8 @@ audit flagged 11 of AI Mode's 77 cited figures on those questions.
 - References have no date field. The docs' example shows a date before the snippet ("Sep 18, 2025 — …") and a
   `#:~:text=` passage in the link; none of these 206 references had either, but the audit handles both.
 - 7 statements contained LaTeX commands, such as `$8,848\text{ meters}$`, and one garbled a price with them.
-- Answers end with offers ("If you'd like, I can…"), sometimes followed by a list. The audit sets them aside.
+- Answers often end with an offer ("If you'd like, I can…"), sometimes followed by a list. The audit sets them
+  aside.
 - AI Mode searches took a median of 6.7 seconds by `search_metadata.total_time_taken`, and at most 19.2.
 
 ## Grounded answers
@@ -449,7 +449,7 @@ On Groq's free plan, gpt-oss-120b gets 8K tokens a minute and 200K a day (Free P
   reasoning. Both are retried, which costs extra calls, and on Groq's free plan (8K tokens a minute) that is slow.
 - Router keywords and the abstention patterns are English-only.
 - `footnote audit` reads pages without a browser, so its flags are unreliable wherever pages block scripts, are
-  PDFs, or fill in figures with JavaScript: 26 of its 39 flags in the study were figures a person found on the page.
+  PDFs, or keep figures out of their HTML: a hand check found 26 of its 39 flags in the study on the page.
   A found figure is only somewhere on the page, matched by value, not necessarily support for the statement.
 - The audit takes each statement's citations as given. AI Mode may mean a citation after a list item to cover the
   items above it; an uncited item is reported as uncited, with the references that contain its figures.

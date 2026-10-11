@@ -1,8 +1,8 @@
 # Check Google AI Mode's citations with Python
 
-Google's AI Mode answers with citations. This tutorial checks them: for every statement in an answer, it reads the
-pages the statement cites and looks for each number it states. It takes about 70 lines of Python, one SerpApi
-search per question, and no model.
+Google's AI Mode answers with citations. This tutorial checks them: for each statement in an answer, it reads the
+pages the statement cites and looks for every number it states. The script is about 70 lines of Python and uses one
+SerpApi search per question. There's no model involved.
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rasinmuhammed/footnote/blob/main/tutorial/check_ai_mode.ipynb)
 The full script is [`check_ai_mode.py`](check_ai_mode.py).
@@ -35,7 +35,7 @@ answer = client.search(engine="google_ai_mode",
                        q="What did the latest US Federal Reserve meeting decide about interest rates?")
 ```
 
-Here's part of a real answer from 11 October 2026, trimmed:
+Part of a real answer from 11 October 2026, trimmed:
 
 ```json
 "text_blocks": [
@@ -118,7 +118,8 @@ def page_text(url):
     return trafilatura.extract(response.content, favor_recall=True)
 ```
 
-The client says who it is. Some sites refuse scripts, and pretending to be a browser isn't the fix.
+The client identifies itself. Some sites refuse scripts, and the script reports those pages as unread rather
+than disguising its requests.
 
 ## Step 5: Compare
 
@@ -162,8 +163,8 @@ Nightly: Rust 1.01.0 represents the active nightly development channel. [4]
     ✗ 1.01.0
 ```
 
-Rust 1.99.0 is on the cited page. The beta's number has no citation. And the cited page, releases.rs, doesn't
-mention a Rust 1.01.0, because there isn't one.
+Rust 1.99.0 is on the cited page, and the beta's version number cites nothing. The page cited for the nightly,
+releases.rs, doesn't mention a Rust 1.01.0, and no such version exists.
 
 `?` means the figure wasn't on any page that could be read, but at least one cited page couldn't be:
 
@@ -186,6 +187,6 @@ out ✗. It treats dates as plain numbers. It reads HTML only, so a PDF counts a
 isn't proof the page supports the statement: long pages contain many numbers.
 
 [`footnote audit`](../README.md#auditing-google-ai-mode) handles conversions, rounding and dates. Its study of 80
-answers found that 38% of statements with a figure cite nothing. It also found why `?` matters: of 39 figures the
-audit couldn't find, a person found 26 on the cited page, mostly on pages a script can't read. Treat `?` and ✗ as
-"look at this one", not as a verdict.
+answers found that 38% of statements with a figure cite nothing. The audit flagged 39 figures, and a hand check
+found 26 of them on the cited page, mostly on pages a script can't read. That's why `?` is kept apart from ✗, and
+either one is a reason to go and look.
