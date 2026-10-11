@@ -7,6 +7,9 @@ result for every sentence, then checks each citation without a model: does the c
 every number the sentence states, and how much of the sentence it actually covers. Anything that fails is flagged
 in the output instead of being presented as fact.
 
+`footnote audit` applies the same idea to Google's AI Mode: it checks every figure in an AI Mode answer against the
+pages that answer cites ([below](#auditing-google-ai-mode)).
+
 Built on [SerpApi](https://serpapi.com) (Google, Google News and Google Scholar engines) and open-weight models
 served by [Groq](https://groq.com). The model takes a second or two; search usually takes a couple more, and
 occasionally over a minute (see [Evaluation](#evaluation)).
@@ -80,6 +83,128 @@ footnote "Who is the current CEO of OpenAI?" --model qwen/qwen3.8-27b
 ```
 
 Each question uses 1 to 3 SerpApi searches, printed after every run.
+
+## Auditing Google AI Mode
+
+`footnote audit` checks a Google AI Mode answer without a model. It fetches the answer through SerpApi's
+[Google AI Mode API](https://serpapi.com/google-ai-mode-api), splits it into paragraphs, list items and table rows
+with the citations each one carries, reads every cited page, and looks for each number, and each date precise to a
+month, in the pages its statement cites.
+
+```
+$ footnote audit "What is the latest stable release of Rust?"
+What is the latest stable release of Rust?
+
+The latest stable release of Rust is Rust 1.99.0, which was released on October 1, 2026. [1]
+    ✓ 1.99.0   ✓ October 1, 2026
+- Beta: Rust 1.100.0 is currently in beta. (no citation)
+    · 1.100.0 (in [4])
+- Nightly: Rust 1.01.0 represents the active nightly development channel. [4]
+    ✗ 1.01.0
+
+References
+[1] Announcing Rust 1.99.0 | Rust Blog (blog.rust-lang.org, dated 2026-10-01)
+[4] Rust Changelogs: Rust Versions (releases.rs, dated 2026-10-11)
+
+4 figures: 2 in a cited page, 0 converted or rounded, 0 only a page's date or the search date, 1 not in the cited pages, 1 with no citation | cited pages read: 4/4
+```
+
+<sub>A real run on 11 October 2026, trimmed: three list items with no figures, a closing line, references [2] and [3]
+and the URLs are cut. There is no Rust 1.01.0, and releases.rs doesn't mention one.</sub>
+
+A number counts as found if a cited page states it as written, as the same value ("4.0%" for "4 percent"),
+converted ("3.75%" for "3-3/4 percent", "25 basis points" for "1/4 percentage point") or rounded ("1.48 billion"
+for 1,480,243,044). A date counts if a cited page's text gives it; one that only matches a page's own date (its
+published date, a date in its URL) or the day of the search is marked ◷. Bare years are skipped.
+
+```bash
+pip install -e ".[audit]"
+footnote audit "What did the latest US Federal Reserve meeting decide about interest rates?"
+footnote audit "What is the latest Kubernetes release?" --format json
+```
+
+Each audit is one SerpApi search plus one fetch per cited page, both cached in `.footnote_cache/`. Failed fetches
+are cached too, so a rerun audits the same text. The fetcher identifies itself as `footnote-audit/0.1` rather than
+posing as a browser, so some sites refuse it.
+
+### 80 AI Mode answers, checked
+
+`evals/aimode_audit.py` ran on 11 October 2026 over Footnote's 20 eval questions and 60 new ones
+([`evals/aimode_questions.jsonl`](evals/aimode_questions.jsonl)), 10 each on central banks and the economy,
+software releases, sports, science and health, policy, and business. That took 80 SerpApi searches, 3 of them from
+an earlier pilot. Each answer's cited pages were fetched straight after its search: 171 of the 205 were read, and 21
+refused the script with HTTP 403 (bls.gov refused every request). Per-answer results are in
+[`evals/aimode_results.json`](evals/aimode_results.json), totals in
+[`evals/aimode_summary.json`](evals/aimode_summary.json).
+
+The checker changed in five ways during and after the run, all before any hand check. Rounding and the day of the
+search got their own categories after the first 11 answers; once all flags had been read, spelled-out ordinals
+("thirteenth"), versions written "v1.37" and a figure repeated within one statement were handled. Every answer was
+re-scored from the cache.
+
+**Citations.** Of 429 statements, 273 state a figure, and 105 of those (38%) carry no citation of their own, in 42
+of the 80 answers. None of the 3 table rows did. The figures were usually somewhere in the answer's references
+anyway: 168 of the 183 uncited figures were found in at least one of them. The markdown form of each answer
+(`reconstructed_markdown`) placed its `[n]` markers exactly where the JSON's `reference_indexes` put them, in all
+508 blocks that could be matched.
+
+**Cited figures.** 322 figures are in statements that cite something.
+
+| Cited figures | Snippets only | Pages read |
+|---|---|---|
+| Found as written or as the same value | 201 (62%) | 276 (86%) |
+| Converted | 2 | 3 |
+| Rounded | 4 | 4 |
+| Flagged: only a page's own date, or the day of the search | 7 | 3 |
+| Flagged: not in the cited pages | 108 (34%) | 36 (11%) |
+
+Read from snippets alone, 115 figures would have been flagged; reading the pages cut that to 39.
+
+**The 39 flags, checked by hand.** Every flag was checked against the live pages with `evals/label_flags.py`, in a
+seeded random order and without being told what kind of flag it was. A figure counts as stated if a cited page
+gives the same value in any form; a date counts only if the page's text gives it. Labels are in
+[`evals/labels_flags.json`](evals/labels_flags.json).
+
+| Hand label | Flags | Every cited page was read | A cited page wasn't read |
+|---|---|---|---|
+| Not stated on any cited page | 9 | 5 | 4 |
+| Only rounded or approximate | 3 | 2 | 1 |
+| Stated on a cited page | 26 | 11 | 15 |
+| Can't tell | 1 | 1 | 0 |
+
+So the flags were mostly wrong: 12 of the 38 decided ones were right that no cited page states the figure as
+written (9 not at all, 3 only rounded), and 7 of 18 where the script had read every cited page. The 26 misses came
+from what the script could read, not from how it matches
+([`evals/flag_causes.json`](evals/flag_causes.json), from re-reading those pages afterwards):
+
+- 15 cite a page the script couldn't read: blocked (bls.gov, incometaxindia.gov.in, piie.com, jec.senate.gov,
+  reuters.com, sciencedirect.com) or a PDF (two Bank of Japan statements).
+- 5 were in the page's HTML but outside the main text the extractor kept, such as "Latest Release: 1.37.1" on
+  kubernetes.io's releases page.
+- 6 weren't in the page's HTML at all: live quotes on Google Finance (3) and Worldometer (1), and figures from
+  statements citing YouTube videos (2).
+
+The 9 figures no cited page states include the Rust "1.01.0" above, a gold futures price that reached the answer
+as `$[$4, 216.30]$`, and Everest's height given as 29,031 feet. Found figures weren't checked by hand, and a number
+can turn up by chance on a long page, so 9 of 322 is a floor, not a rate.
+
+**Footnote's checker on the same 20 questions.** Run unchanged against AI Mode's snippets, Footnote's checker
+marks 7 of AI Mode's 58 cited statements on those questions supported, and finds a number missing from the
+snippets in 24 of 38 numeric ones. The open models it was built with scored 60 of 74 to 114 of 120 supported, and
+had a number missing in 4 of 60, 3 of 107 and 2 of 53 numeric claims (tables below). That measures the ruler more
+than AI Mode: Footnote's model writes short claims from the snippets it is shown, AI Mode writes longer statements
+from whole pages that a snippet only samples, and the checker counts a year as a number. With the pages read, the
+audit flagged 11 of AI Mode's 77 cited figures on those questions.
+
+**Working with the API.**
+
+- Answers came as `paragraph`, `list` and `table` blocks; the [docs](https://serpapi.com/google-ai-mode-api) show
+  only paragraphs. List items carry their own `reference_indexes`; table rows carried none.
+- References have no date field. The docs' example shows a date before the snippet ("Sep 18, 2025 — …") and a
+  `#:~:text=` passage in the link; none of these 206 references had either, but the audit handles both.
+- 7 statements contained LaTeX commands, such as `$8,848\text{ meters}$`, and one garbled a price with them.
+- Answers end with offers ("If you'd like, I can…"), sometimes followed by a list. The audit sets them aside.
+- AI Mode searches took a median of 6.7 seconds by `search_metadata.total_time_taken`, and at most 19.2.
 
 ## Evaluation
 
@@ -319,6 +444,13 @@ On Groq's free plan, gpt-oss-120b gets 8K tokens a minute and 200K a day (Free P
 - gpt-oss models sometimes call a browsing tool they were trained with (`open`) or spend their whole token budget
   reasoning. Both are retried, which costs extra calls, and on Groq's free plan (8K tokens a minute) that is slow.
 - Router keywords and the abstention patterns are English-only.
+- `footnote audit` reads pages without a browser, so its flags are unreliable wherever pages block scripts, are
+  PDFs, or fill in figures with JavaScript: 26 of its 39 flags in the study were figures a person found on the page.
+  A found figure is only somewhere on the page, matched by value, not necessarily support for the statement.
+- The audit takes each statement's citations as given. AI Mode may mean a citation after a list item to cover the
+  items above it; an uncited item is reported as uncited, with the references that contain its figures.
+- Live prices change between the answer and the check. The study's 7 questions about live figures are reported
+  apart in `evals/aimode_summary.json`.
 
 ## Tests
 
