@@ -38,6 +38,18 @@ ABSTAIN = re.compile(r"\bi (?:do not|don['’]t|cannot|can['’]t) (?:have|know)
                      r"|\bas of my (?:knowledge|last|training)\b|\bmy knowledge cut-?off\b"
                      r"|\[[a-z][a-z ,_/-]*\]", re.I)
 
+# Common abbreviations, expanded in claims and sources alike so "RBI" and "Reserve Bank of India" share their words.
+# Matched only as written (in capitals), so "us" and "who" are left alone.
+ALIASES = {
+    "RBI": "Reserve Bank of India", "Fed": "Federal Reserve", "ECB": "European Central Bank",
+    "BoE": "Bank of England", "BoJ": "Bank of Japan", "IMF": "International Monetary Fund",
+    "WHO": "World Health Organization", "UN": "United Nations", "EU": "European Union",
+    "US": "United States", "U.S.": "United States", "UK": "United Kingdom", "U.K.": "United Kingdom",
+    "UAE": "United Arab Emirates", "GDP": "gross domestic product", "CPI": "consumer price index",
+    "AI": "artificial intelligence", "LLM": "large language model",
+}
+ALIAS = re.compile(r"(?<!\w)(" + "|".join(map(re.escape, sorted(ALIASES, key=len, reverse=True))) + r")(?!\w)")
+
 SUPPORTED, WEAK = 0.5, 0.25
 
 
@@ -82,6 +94,7 @@ def without_source_dates(claim: str, cited: list[Source]) -> str:
 
 
 def terms(text: str) -> set[str]:
+    text = ALIAS.sub(lambda m: ALIASES[m.group(1)], text)
     words = (w[:-1] if len(w) > 4 and w.endswith("s") else w for w in WORD.findall(text.lower()))
     return {w for w in words if len(w) > 2 and w not in STOP and not w.isdigit()}
 

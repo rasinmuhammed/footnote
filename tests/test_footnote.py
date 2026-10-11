@@ -8,7 +8,7 @@ from footnote.render import markdown, text
 from footnote.router import plan
 from footnote.search import SerpApiSearcher, params_for
 from footnote.sources import normalise
-from footnote.verify import check, check_against_pool, numbers
+from footnote.verify import check, check_against_pool, numbers, terms
 
 
 def test_normalise_flattens_dedupes_and_numbers(raw):
@@ -118,6 +118,15 @@ def test_coverage_counts_every_cited_source():
     assert check(claim, ["S2"], s).support < 0.5  # neither headline alone covers half of it
     v = check(claim, ["S1", "S2"], s)
     assert v.status == "supported" and v.support > 0.7 and v.best_source in ("S1", "S2")
+
+
+def test_abbreviations_match_their_full_names():
+    s = normalise({"google_news": _live("google_news_rbi")})  # S2's headline says "RBI"
+    claim = "The current repo rate set by the Reserve Bank of India is 5.5% as of October 2026."
+    assert check(claim, ["S2"], s).status == "supported"
+    assert terms("The WHO says the US and U.K. lead in AI") >= {"world", "health", "united", "state", "kingdom",
+                                                               "artificial", "intelligence"}
+    assert terms("who told us about the USB fed") == {"told", "usb", "fed"}  # only as written, in capitals
 
 
 def test_pipeline_end_to_end(searcher, make_answerer):

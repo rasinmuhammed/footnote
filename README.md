@@ -58,7 +58,12 @@ flowchart LR
    `abstain` for a refusal or placeholder ("I don't know", "[driver name]"), which is checked first. Numbers are
    compared after normalising (`1,200` = `1200`, `18%` = `18`), and a date counts if it agrees with the cited
    result's own date. Coverage is the share of the claim's content words found across all its cited sources
-   together, so a claim that combines two results is scored against both.
+   together, so a claim that combines two results is scored against both. Before words are compared, a short fixed
+   table expands common abbreviations in claims and sources alike: `RBI`, `Fed`, `ECB`, `BoE`, `BoJ`, `IMF`, `WHO`,
+   `UN`, `EU`, `US`/`U.S.`, `UK`/`U.K.`, `UAE`, `GDP`, `CPI`, `AI` and `LLM`. "RBI" and "Reserve Bank of India" then
+   share their words, and "Fed" weighs as much as "Federal Reserve" always did: two words. Abbreviations match only
+   as written, in capitals, so "us" and "who" are left alone. The table is `ALIASES` in
+   [`footnote/verify.py`](footnote/verify.py).
 
 The model writes sentences; it never decides whether they're true.
 
@@ -216,9 +221,10 @@ run of it used about 58k.
   And it can't see an added fact if the claim's other words match: "released in July 2026" passed against a page
   that only ranked the model "as of July 2026".
 - Google News results carry a headline and no snippet, so a claim cited to news is checked against the headline
-  alone, and correct paraphrases score `weak`. "The current repo rate set by the Reserve Bank of India is 5.5% as of
-  October 2026" was weak against "RBI raises the Repo Rate by 25 bps to 5.5% in October, as expected": only 3 of its
-  8 content words appear, because the headline says "RBI".
+  alone, and correct paraphrases score `weak`. "The repo rate was increased by 25 basis points to reach 5.5%" is
+  weak against "RBI raises the Repo Rate by 25 bps to 5.5% in October, as expected": "increased", "basis points"
+  and "reach" aren't in the headline. Abbreviations outside the alias table, like "bps", don't match their full
+  form.
 - Numbers inside names count as numbers. "The most recent Formula 1 Grand Prix…" is flagged `number_not_found` when
   the source doesn't happen to contain a "1". A year the model correctly infers is flagged too: from a page dated
   October 2026 that says "the year to August", the claim "the year to August 2026" fails, because only dates that
