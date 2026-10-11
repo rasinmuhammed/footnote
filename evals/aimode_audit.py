@@ -1,0 +1,205 @@
+"""Audit Google AI Mode's answers to the eval questions: is every figure in the pages each statement cites?
+
+Covers the 20 questions Footnote was evaluated on and 60 more (aimode_questions.jsonl). Each answer's cited pages
+are read straight after its search, so live prices have as little time as possible to move; questions about live
+figures are still reported apart. Every answer is audited twice, from snippets alone and with the pages read.
+
+Usage: python evals/aimode_audit.py [--max-searches 77]   # writes evals/aimode_results.json
+       python evals/aimode_audit.py --report               # tables, and aimode_summary.json; no searches, no fetching
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import os
+import re
+import statistics
+from collections import Counter
+from pathlib import Path
+
+import httpx
+from dotenv import load_dotenv
+
+from footnote import aimode
+from footnote.aimode import FOUND
+from footnote.pages import PageFetcher
+from footnote.search import SerpApiSearcher
+
+HERE = Path(__file__).parent
+OUT, SUMMARY = HERE / "aimode_results.json", HERE / "aimode_summary.json"
+LIVE = {"q06", "q13", "a42", "a51", "a52", "a55", "a56"}  # market caps, prices and totals that move by the hour
+
+
+def questions() -> list[dict]:
+    def read(name: str) -> list[dict]:
+        return [json.loads(line) for line in (HERE / name).read_text().splitlines() if line.strip()]
+
+    qs = [{**q, "topic": "footnote_eval"} for q in read("questions.jsonl")] + read("aimode_questions.jsonl")
+    return [{**q, "live": q["id"] in LIVE} for q in qs]
+
+
+def searches_left() -> int | None:
+    """From SerpApi's Account API, which costs no searches."""
+    try:
+        r = httpx.get("https://serpapi.com/account.json", params={"api_key": os.environ["SERPAPI_API_KEY"]},
+                      timeout=30)
+        return r.json()["plan_searches_left"]
+    except Exception as e:  # the message would hold the request URL, key included
+        print(f"Account check failed: {type(e).__name__}")
+        return None
+
+
+MARKER = re.compile(r"\[(\d+)\]")
+LINK = re.compile(r"\[([^\]]*)\]\([^)]*\)")
+
+
+def _key(text: str) -> str:
+    return " ".join(re.sub(r"[^\w%.]+", " ", text.lower()).split())
+
+
+def markdown_citations(response: dict) -> dict:
+    """Do reconstructed_markdown's [n] markers agree with the reference_indexes on each text block?"""
+    body = (response.get("reconstructed_markdown") or "").split("### References")[0]
+    lines, table_rows_cited = {}, 0
+    for raw in body.splitlines():
+        line = LINK.sub(r"\1", re.sub(r"\\(.)", r"\1", raw)).strip()
+        refs = sorted({int(n) for n in MARKER.findall(line)})
+        if line.startswith("|"):
+            table_rows_cited += bool(refs)
+            continue
+        lines[_key(MARKER.sub("", line).removeprefix("- ").removeprefix("* "))] = refs
+    out = {"agree": 0, "differ": [], "unmatched": 0, "table_rows_cited": table_rows_cited}
+    for s in aimode.statements(response)[0]:
+        if s.kind == "table":
+            continue
+        refs = lines.get(_key(s.text))
+        if refs is None:
+            out["unmatched"] += 1
+        elif refs == sorted(s.refs):
+            out["agree"] += 1
+        else:
+            out["differ"].append({"text": s.text, "json": s.refs, "markdown": refs})
+    return out
+
+
+def record(q: dict, response: dict, fetch) -> dict:
+    full, snippets = aimode.audit(response, fetch), aimode.audit(response)
+    data = full.to_dict()
+    for s, t in zip(data["statements"], snippets.statements):
+        for m, n in zip(s["mentions"], t.mentions):
+            m["snippet_status"] = n.status
+    meta = response.get("search_metadata") or {}
+    return {**q, "searched_at": meta.get("created_at"), "serpapi_s": meta.get("total_time_taken"),
+            "audit": data, "markdown": markdown_citations(response)}
+
+
+def save(rows: list[dict]) -> None:
+    tmp = OUT.with_suffix(".tmp")
+    tmp.write_text(json.dumps({"rows": rows}, indent=1, ensure_ascii=False) + "\n")
+    tmp.replace(OUT)
+
+
+def run(max_searches: int) -> None:
+    searcher, fetcher = SerpApiSearcher(), PageFetcher()
+    qs = questions()
+    todo = [q for q in qs if not searcher.cached(aimode.params(q["q"]))]
+    if len(todo) > max_searches:
+        raise SystemExit(f"{len(todo)} questions aren't cached, over the limit of {max_searches}. Nothing spent.")
+    print(f"{len(qs)} questions, {len(todo)} SerpApi searches to spend. Searches left on the plan: {searches_left()}")
+    rows = []
+    for i, q in enumerate(qs, 1):
+        params = aimode.params(q["q"])
+        if not searcher.cached(params) and searcher.calls >= max_searches:
+            raise SystemExit("Search limit reached.")
+        try:
+            rows.append(record(q, searcher.search(params), fetcher.fetch))
+        except RuntimeError as e:  # a SerpApi error; the key never appears in it
+            rows.append({**q, "error": str(e)})
+        save(rows)
+        s = rows[-1].get("audit", {}).get("summary", {})
+        print(f"[{i}/{len(qs)}] {q['id']} {rows[-1].get('error') or s.get('figures')} "
+              f"pages {s.get('pages_read')}/{s.get('pages')} | searches {searcher.calls}, pages fetched "
+              f"{fetcher.fetched}", flush=True)
+    print(f"Done. SerpApi searches spent: {searcher.calls}. Searches left on the plan: {searches_left()}")
+
+
+def _pct(n: int, d: int) -> str:
+    return f"{n}/{d} ({round(100 * n / d)}%)" if d else "0/0"
+
+
+def stats(rows: list[dict]) -> dict:
+    answers = [r for r in rows if "audit" in r]
+    stmts = [s for r in answers for s in r["audit"]["statements"] if s["kind"] != "offer"]
+    figured = [s for s in stmts if s["mentions"]]
+    cited = [m for s in figured if s["refs"] for m in s["mentions"]]
+    uncited = [m for s in figured if not s["refs"] for m in s["mentions"]]
+    full, snip = Counter(m["status"] for m in cited), Counter(m["snippet_status"] for m in cited)
+    missing = [m for m in cited if m["status"] == "not_found"]
+    pages = {u: p for r in answers for u, p in r["audit"]["pages"].items()}
+    md = [r["markdown"] for r in answers]
+    times = sorted(r["serpapi_s"] for r in answers if r.get("serpapi_s") is not None)
+    return {
+        "answers": len(answers), "errors": len(rows) - len(answers),
+        "statements": len(stmts), "with_figures": len(figured),
+        "uncited_with_figures": sum(not s["refs"] for s in figured),
+        "table_rows": sum(s["kind"] == "table" for s in stmts),
+        "answers_with_uncited_figures": sum(any(s["mentions"] and not s["refs"] for s in r["audit"]["statements"]
+                                                if s["kind"] != "offer") for r in answers),
+        "cited_figures": len(cited), "full": dict(full), "snippets": dict(snip),
+        "found_only_in_pages": sum(m["snippet_status"] == "not_found" and m["status"] in FOUND for m in cited),
+        "missing_but_in_another_reference": sum(bool(m["elsewhere"]) for m in missing),
+        "cited_dates": sum(m["kind"] == "date" for m in cited),
+        "uncited_figures": len(uncited), "uncited_in_some_reference": sum(bool(m["elsewhere"]) for m in uncited),
+        "pages": len(pages), "pages_read": sum(not p["error"] for p in pages.values()),
+        "page_errors": dict(Counter(p["error"].split(":")[0] for p in pages.values() if p["error"])),
+        "markdown_agree": sum(m["agree"] for m in md), "markdown_differ": sum(len(m["differ"]) for m in md),
+        "markdown_unmatched": sum(m["unmatched"] for m in md),
+        "markdown_table_rows_cited": sum(m["table_rows_cited"] for m in md),
+        "serpapi_s": {"median": round(statistics.median(times), 1), "p90": times[math.ceil(0.9 * len(times)) - 1],
+                      "max": times[-1]} if times else {},
+    }
+
+
+def statement_flags(rows: list[dict], status_key: str) -> tuple[int, int]:
+    """Cited statements stating a number (dates aside) whose cited text lacks at least one of their numbers."""
+    stmts = [s for r in rows if "audit" in r for s in r["audit"]["statements"]
+             if s["kind"] != "offer" and s["refs"] and any(m["kind"] == "number" for m in s["mentions"])]
+    return sum(any(m["kind"] == "number" and m[status_key] == "not_found" for m in s["mentions"]) for s in stmts), \
+        len(stmts)
+
+
+def report() -> None:
+    rows = json.loads(OUT.read_text())["rows"]
+    groups = {"All": rows, "Footnote's 20": [r for r in rows if r["topic"] == "footnote_eval"],
+              "New 60": [r for r in rows if r["topic"] != "footnote_eval"],
+              "Live figures": [r for r in rows if r["live"]], "Not live": [r for r in rows if not r["live"]]}
+    out = {name: stats(rs) for name, rs in groups.items()}
+    a = out["All"]
+    SUMMARY.write_text(json.dumps(out, indent=1) + "\n")
+    print(f"\nAnswers: {a['answers']} ({a['errors']} errors). Statements: {a['statements']}, "
+          f"{a['with_figures']} with figures, {_pct(a['uncited_with_figures'], a['with_figures'])} of those uncited "
+          f"({a['table_rows']} table rows).")
+    print("\n| Cited figures | Snippets only | Pages read |\n|---|---|---|")
+    for label, keys in (("As written or same value", ("literal", "same_value", "in_text")),
+                        ("Converted", ("converted",)), ("Only a page's own date", ("metadata_only",)),
+                        ("Not in the cited pages", ("not_found",))):
+        print(f"| {label} | {_pct(sum(a['snippets'].get(k, 0) for k in keys), a['cited_figures'])} | "
+              f"{_pct(sum(a['full'].get(k, 0) for k in keys), a['cited_figures'])} |")
+    for name, rs in groups.items():
+        print(f"{name}: cited statements with a number missing from cited text, snippets "
+              f"{_pct(*statement_flags(rs, 'snippet_status'))}, pages {_pct(*statement_flags(rs, 'status'))}")
+
+
+def main() -> None:
+    load_dotenv()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--max-searches", type=int, default=77)
+    ap.add_argument("--report", action="store_true", help="summarise evals/aimode_results.json; no API calls")
+    args = ap.parse_args()
+    report() if args.report else run(args.max_searches)
+
+
+if __name__ == "__main__":
+    main()

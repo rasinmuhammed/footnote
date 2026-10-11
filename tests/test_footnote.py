@@ -159,9 +159,10 @@ def test_cache_spends_one_search(tmp_path):
 
     s = SerpApiSearcher(cache_dir=tmp_path, client=Client())
     p = params_for("google", "same question")
+    assert not s.cached(p)
     s.search(p)
     s.search(p)
-    assert (Client.calls, s.calls, s.hits) == (1, 1, 1)
+    assert (Client.calls, s.calls, s.hits) == (1, 1, 1) and s.cached(p)
 
 
 def test_search_errors_never_leak_api_key(tmp_path):

@@ -1,0 +1,60 @@
+{"id": "a01", "topic": "economy", "q": "What did the European Central Bank decide at its most recent monetary policy meeting?"}
+{"id": "a02", "topic": "economy", "q": "What is the current Bank of England base rate?"}
+{"id": "a03", "topic": "economy", "q": "What did the Bank of Japan decide at its latest policy meeting?"}
+{"id": "a04", "topic": "economy", "q": "What was the latest US CPI inflation rate?"}
+{"id": "a05", "topic": "economy", "q": "What is the current US unemployment rate?"}
+{"id": "a06", "topic": "economy", "q": "What was the latest quarterly US GDP growth rate?"}
+{"id": "a07", "topic": "economy", "q": "What is India's latest quarterly GDP growth rate?"}
+{"id": "a08", "topic": "economy", "q": "What is the latest inflation rate in the euro area?"}
+{"id": "a09", "topic": "economy", "q": "What is the current Reserve Bank of Australia cash rate?"}
+{"id": "a10", "topic": "economy", "q": "What is the current Bank of Canada policy interest rate?"}
+{"id": "a11", "topic": "tech", "q": "What is the latest version of iOS and when was it released?"}
+{"id": "a12", "topic": "tech", "q": "What is the latest stable Linux kernel release?"}
+{"id": "a13", "topic": "tech", "q": "What is the latest Node.js LTS release?"}
+{"id": "a14", "topic": "tech", "q": "What is the latest version of Android and when was it released?"}
+{"id": "a15", "topic": "tech", "q": "What is the latest stable release of Rust?"}
+{"id": "a16", "topic": "tech", "q": "What is the latest Kubernetes release?"}
+{"id": "a17", "topic": "tech", "q": "What is the latest PostgreSQL release?"}
+{"id": "a18", "topic": "tech", "q": "What is the latest version of macOS?"}
+{"id": "a19", "topic": "tech", "q": "What is the latest stable release of Go?"}
+{"id": "a20", "topic": "tech", "q": "What is the latest JDK release and when was it released?"}
+{"id": "a21", "topic": "sports", "q": "Who won the 2026 FIFA World Cup final and what was the score?"}
+{"id": "a22", "topic": "sports", "q": "Who won the most recent Tour de France?"}
+{"id": "a23", "topic": "sports", "q": "Who won the men's singles title at the most recent US Open tennis championship?"}
+{"id": "a24", "topic": "sports", "q": "Who won the most recent NBA Finals?"}
+{"id": "a25", "topic": "sports", "q": "Who won the most recent Super Bowl and what was the score?"}
+{"id": "a26", "topic": "sports", "q": "Who won the most recent Ballon d'Or?"}
+{"id": "a27", "topic": "sports", "q": "Who won the most recent IPL season?"}
+{"id": "a28", "topic": "sports", "q": "Who won the most recent Wimbledon women's singles title?"}
+{"id": "a29", "topic": "sports", "q": "What is the current men's marathon world record?"}
+{"id": "a30", "topic": "sports", "q": "Who won the most recent MotoGP world championship?"}
+{"id": "a31", "topic": "science_health", "q": "Who won the 2026 Nobel Prize in Physiology or Medicine?"}
+{"id": "a32", "topic": "science_health", "q": "Who won the 2026 Nobel Prize in Physics?"}
+{"id": "a33", "topic": "science_health", "q": "Who won the 2026 Nobel Prize in Chemistry?"}
+{"id": "a34", "topic": "science_health", "q": "What happened on the most recent SpaceX Starship test flight?"}
+{"id": "a35", "topic": "science_health", "q": "What is the current concentration of carbon dioxide in the atmosphere?"}
+{"id": "a36", "topic": "science_health", "q": "How did this year's Arctic sea ice minimum compare with previous years?"}
+{"id": "a37", "topic": "science_health", "q": "What did the latest WHO global tuberculosis report find?"}
+{"id": "a38", "topic": "science_health", "q": "How many measles cases has the United States reported this year?"}
+{"id": "a39", "topic": "science_health", "q": "What new drugs has the FDA approved most recently?"}
+{"id": "a40", "topic": "science_health", "q": "What did the World Meteorological Organization's latest State of the Global Climate report say?"}
+{"id": "a41", "topic": "policy", "q": "What is the current National Living Wage in the UK?"}
+{"id": "a42", "topic": "policy", "q": "How large is the US national debt right now?"}
+{"id": "a43", "topic": "policy", "q": "What is the income tax rebate limit under India's new tax regime?"}
+{"id": "a44", "topic": "policy", "q": "What is the latest Social Security cost-of-living adjustment?"}
+{"id": "a45", "topic": "policy", "q": "Who is the current Prime Minister of Japan?"}
+{"id": "a46", "topic": "policy", "q": "What are the current GST rates in India after the latest reform?"}
+{"id": "a47", "topic": "policy", "q": "What is the current fee for a new H-1B visa petition?"}
+{"id": "a48", "topic": "policy", "q": "What is the full UK new State Pension per week this tax year?"}
+{"id": "a49", "topic": "policy", "q": "What is the current US tariff rate on imports from China?"}
+{"id": "a50", "topic": "policy", "q": "What is the EU's current target for cutting greenhouse gas emissions by 2040?"}
+{"id": "a51", "topic": "business", "q": "What is the price of gold per ounce today?"}
+{"id": "a52", "topic": "business", "q": "What is the price of Bitcoin today?"}
+{"id": "a53", "topic": "business", "q": "What did Apple report in its most recent quarterly earnings?"}
+{"id": "a54", "topic": "business", "q": "What was Nvidia's revenue in its most recent quarter?"}
+{"id": "a55", "topic": "business", "q": "What is the current US dollar to Indian rupee exchange rate?"}
+{"id": "a56", "topic": "business", "q": "Where did the S&P 500 close on the most recent trading day?"}
+{"id": "a57", "topic": "business", "q": "How many vehicles did Tesla deliver in the most recent quarter?"}
+{"id": "a58", "topic": "business", "q": "What did Microsoft report in its most recent quarterly earnings?"}
+{"id": "a59", "topic": "business", "q": "What is the current average 30-year fixed mortgage rate in the US?"}
+{"id": "a60", "topic": "business", "q": "What was the largest IPO of 2026 so far?"}

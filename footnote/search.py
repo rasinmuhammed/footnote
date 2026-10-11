@@ -35,6 +35,10 @@ class SerpApiSearcher:
         digest = hashlib.sha256(json.dumps(params, sort_keys=True).encode()).hexdigest()[:24]
         return self.cache / f"{params.get('engine', 'google')}-{digest}.json"
 
+    def cached(self, params: dict) -> bool:
+        path = self._path(params)
+        return bool(path and path.exists())
+
     def search(self, params: dict) -> dict:
         path = self._path(params)
         if path and path.exists():
