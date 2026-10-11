@@ -183,7 +183,8 @@ def report() -> None:
           f"({a['table_rows']} table rows).")
     print("\n| Cited figures | Snippets only | Pages read |\n|---|---|---|")
     for label, keys in (("As written or same value", ("literal", "same_value", "in_text")),
-                        ("Converted", ("converted",)), ("Only a page's own date", ("metadata_only",)),
+                        ("Converted", ("converted",)), ("Rounded", ("rounded",)),
+                        ("Only a page's own date", ("metadata_only",)), ("The day of the search", ("search_date",)),
                         ("Not in the cited pages", ("not_found",))):
         print(f"| {label} | {_pct(sum(a['snippets'].get(k, 0) for k in keys), a['cited_figures'])} | "
               f"{_pct(sum(a['full'].get(k, 0) for k in keys), a['cited_figures'])} |")

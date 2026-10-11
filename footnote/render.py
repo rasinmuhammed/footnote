@@ -59,15 +59,15 @@ def markdown(report: Report) -> str:
     return "\n".join(out)
 
 
-MARKS = {"literal": "✓", "same_value": "✓", "in_text": "✓", "converted": "≈", "metadata_only": "◷",
-         "not_found": "✗", "uncited": "·"}
+MARKS = {"literal": "✓", "same_value": "✓", "in_text": "✓", "converted": "≈", "rounded": "≈",
+         "metadata_only": "◷", "search_date": "◷", "not_found": "✗", "uncited": "·"}
 
 
 def _mark(m: Mention) -> str:
     where = f" (in {''.join(f'[{i + 1}]' for i in m.elsewhere)})" if m.elsewhere else ""
-    if m.status == "converted":
+    if m.status in ("converted", "rounded"):
         return f"≈ {m.written} ({m.matched})"
-    if m.status == "metadata_only":
+    if m.status in ("metadata_only", "search_date"):
         return f"◷ {m.written} ({m.matched}){where}"
     if m.status == "uncited":
         return f"· {m.written}{where or ' (in no reference)'}"
@@ -93,9 +93,10 @@ def audit_text(a: Audit) -> str:
     f = n["figures"]
     pages = f" | cited pages read: {n['pages_read']}/{n['pages']}" if n["pages"] else " | snippets only"
     found = f.get("literal", 0) + f.get("same_value", 0) + f.get("in_text", 0)
-    lines += ["", f"{sum(f.values())} figures: {found} in a cited page, {f.get('converted', 0)} converted, "
-              f"{f.get('metadata_only', 0)} only as a page's own date, {f.get('not_found', 0)} not in the cited "
-              f"pages, {f.get('uncited', 0)} in statements with no citation{pages}",
-              "✓ in a cited page  ≈ converted  ◷ only a page's own date  ✗ not in the cited pages  "
-              "· no citation  (in [n]) found in that reference instead"]
+    lines += ["", f"{sum(f.values())} figures: {found} in a cited page, "
+              f"{f.get('converted', 0) + f.get('rounded', 0)} converted or rounded, "
+              f"{f.get('metadata_only', 0) + f.get('search_date', 0)} only a page's date or the search date, "
+              f"{f.get('not_found', 0)} not in the cited pages, {f.get('uncited', 0)} with no citation{pages}",
+              "✓ in a cited page  ≈ converted or rounded  ◷ only a page's date or the search date  "
+              "✗ not in the cited pages  · no citation  (in [n]) found in that reference instead"]
     return "\n".join(lines)

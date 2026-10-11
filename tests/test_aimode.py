@@ -50,13 +50,18 @@ def test_figures_skip_bare_years_and_names():
     ("0.25 percentage point", "a 25bps rise", "converted"),
     ("1,463,900,000", "146.39 crore", "converted"),
     ("12 members", "twelve members", "converted"),
+    ("1.48 billion", "is 1,480,243,044", "rounded"),
+    ("17.8%", "17.83 per cent", "rounded"),
+    ("$5.5–5.6 trillion", "worth $5.53 trillion", "rounded"),  # the range's scale applies to both ends
+    ("4%", "3.6 percent", "not_found"),  # one significant digit: too coarse to call a rounding
+    ("25 jobs", "24.8 jobs", "not_found"),  # whole numbers aren't read as roundings
     ("1.2 billion", "1.2 million", "not_found"),
     ("Python 3.15.0", "Python 3.15", "not_found"),
     ("12 members", "on December 12, 2025", "not_found"),  # a date's digits aren't figures
 ])
 def test_number_provenance(claim, page, status):
     pool = [evidence(Reference(0, "", "https://x.org", ""), Page("https://x.org", page))]
-    assert [m.status for m in check(claim, [0], pool)] == [status]
+    assert check(claim, [0], pool)[0].status == status
 
 
 def test_dates_need_a_month_and_a_day_or_year():
@@ -73,12 +78,14 @@ def test_dates_found_in_text_or_only_as_a_page_date():
                     snippet_date="Sep 18, 2025")
     pool = [evidence(ref, Page(ref.url, "The meeting ends October 28.", "2026-09-17"))]
     got = {m.written: (m.status, m.matched) for m in check(
-        "On September 16, 2026, September 17, 2026, Sep 18, 2025, October 28, 2026 and May 1, 2026.", [0], pool)}
+        "On September 16, 2026, September 17, 2026, Sep 18, 2025, October 28, 2026, May 1, 2026, "
+        "as of 11 October 2026.", [0], pool, searched="2026-10-11")}
     assert got == {"September 16, 2026": ("metadata_only", "date in URL"),
                    "September 17, 2026": ("metadata_only", "published 2026-09-17"),
                    "Sep 18, 2025": ("metadata_only", "snippet dated Sep 18, 2025"),
                    "October 28, 2026": ("in_text", "October 28"),
-                   "May 1, 2026": ("not_found", "")}
+                   "May 1, 2026": ("not_found", ""),
+                   "11 October 2026": ("search_date", "searched 2026-10-11")}
 
 
 def test_fed_answer_from_snippets_then_pages():

@@ -4,10 +4,11 @@ SerpApi's google_ai_mode engine returns the answer as text blocks (paragraphs, l
 indexes of the references it cites. Every number, and every date precise to a month, is looked for in the cited
 references: title, snippet, the passage Google's link highlights and, when fetched, the page's main text.
 
-A number is found as written ("3.75"), as the same value ("3.750"), or converted ("3-3/4"; "25 basis points" for
-"1/4 percentage point"; "146.39 crore" for "1,463,900,000"). A date the cited text doesn't state may still match a
-cited page's own date (its published date, a date in its URL, the date before its snippet); that is reported apart.
-Bare years are skipped, since almost every page states several.
+A number is found as written ("3.75"), as the same value ("3.750"), converted ("3-3/4"; "25 basis points" for
+"1/4 percentage point"; "146.39 crore" for "1,463,900,000") or rounded ("1.48 billion" for 1,480,243,044). A date
+the cited text doesn't state may still match a cited page's own date (its published date, a date in its URL, the
+date before its snippet) or the day of the search; both are reported apart. Bare years are skipped, since almost
+every page states several.
 
 A found figure is only on the page somewhere; a missing one is a real gap.
 """
@@ -18,13 +19,15 @@ import re
 from collections import Counter
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from decimal import Decimal
 from urllib.parse import unquote, urldefrag
 
 from .pages import Page
 
-FOUND = ("literal", "same_value", "converted", "in_text")
+RANKS = ("literal", "same_value", "converted", "rounded")  # how a number was found, best first
+FOUND = (*RANKS, "in_text")
+FLAGS = ("not_found", "metadata_only", "search_date")
 
 OFFER = re.compile(r"(?:if you(?:['’]d| would)? (?:like|want)|(?:would|do) you (?:like|want)|let me know"
                    r"|i can also)\b", re.I)
@@ -68,6 +71,7 @@ def _number_pattern(words: bool) -> re.Pattern:
 
 
 DIGITS, ANY_NUMBER = _number_pattern(False), _number_pattern(True)
+RANGE = re.compile(r"\s*(?:[-–—]|to)\s*[$€£₹]?")
 
 
 @dataclass(frozen=True)
@@ -110,6 +114,9 @@ def numbers(text: str, words: bool = False) -> list[Num]:
             spelled = WORDS[(m["tens"] or m["word"]).lower()] + (_ONES.index(m["ones"].lower()) + 1 if m["ones"] else 0)
             digits, value, plain = None, Decimal(spelled), False
         out.append(Num(m.group(0), digits, value, scale, plain, bool(m["bps"]), m.start()))
+    for i, (a, b) in enumerate(zip(out, out[1:])):  # "5.5–5.6 trillion", "25-50 basis points"
+        if not (a.scale or a.bps) and RANGE.fullmatch(text, a.start + len(a.written), b.start):
+            out[i] = replace(a, scale=b.scale, bps=b.bps)
     return out
 
 
@@ -183,7 +190,8 @@ def references(response: dict) -> list[Reference]:
 class Mention:
     written: str
     kind: str  # number | date
-    status: str  # literal | same_value | converted | in_text | metadata_only | not_found | uncited
+    status: str  # literal | same_value | converted | rounded | in_text | metadata_only | search_date | not_found
+    #              | uncited
     ref: int | None = None  # the cited reference it was found in
     matched: str = ""  # what it matched: the source's wording, or which page date
     context: str = ""  # the source text around the match
@@ -247,8 +255,20 @@ def _context(text: str, start: int, length: int, pad: int = 70) -> str:
     return " ".join(text[max(0, start - pad):start + length + pad].split())
 
 
+def _rounds(n: Num, t: Num) -> bool:
+    """Whether n is t rounded. Only for figures written like a rounding, with a decimal point or a scale word and at
+    least two significant digits, so "4%" doesn't match every 3.6 on a page."""
+    if not n.plain:
+        return False
+    whole, _, frac = n.digits.partition(".")
+    if not (frac or n.scale) or len((whole + frac).lstrip("0")) < 2:
+        return False
+    unit, v = Decimal(1).scaleb(-len(frac)) * (n.scale or 1), n.value * (n.scale or 1)
+    return any(abs(x - v) * 2 <= unit for x in t.values)
+
+
 def _find_number(n: Num, pool: list[Evidence]) -> tuple[str, Evidence | None, Num | None]:
-    best: tuple[int, Evidence | None, Num | None] = (len(FOUND), None, None)
+    best: tuple[int, Evidence | None, Num | None] = (len(RANKS), None, None)
     for e in pool:
         for t in e.numbers:
             same_scale = n.scale is None or t.scale is None or n.scale == t.scale
@@ -256,10 +276,10 @@ def _find_number(n: Num, pool: list[Evidence]) -> tuple[str, Evidence | None, Nu
                                                          t.value is None and t.digits.startswith(n.digits + ".")):
                 return "literal", e, t
             rank = (1 if same_scale and n.plain and t.plain and n.value == t.value
-                    else 2 if n.values & t.values else len(FOUND))
+                    else 2 if n.values & t.values else 3 if _rounds(n, t) else len(RANKS))
             if rank < best[0]:
                 best = (rank, e, t)
-    return (FOUND[best[0]] if best[0] < len(FOUND) else "not_found"), best[1], best[2]
+    return (RANKS[best[0]] if best[0] < len(RANKS) else "not_found"), best[1], best[2]
 
 
 def _find_date(readings: list[tuple], pool: list[Evidence]) -> tuple[str, Evidence | None, str, int]:
@@ -274,12 +294,16 @@ def _find_date(readings: list[tuple], pool: list[Evidence]) -> tuple[str, Eviden
     return "not_found", None, "", -1
 
 
-def check(text: str, refs: list[int], pool: list[Evidence]) -> list[Mention]:
+def check(text: str, refs: list[int], pool: list[Evidence], searched: str = "") -> list[Mention]:
+    """Every figure in a statement, looked for in the references it cites; `searched` is the day of the search."""
     cited = [e for e in pool if e.ref in refs]
     others = [e for e in pool if e.ref not in refs]
+    today = [p for _, ps, _ in dates(searched) for p in ps]
     found: list[tuple[int, Mention]] = []
     for phrase, readings, start in dates(text):
         status, e, matched, at = _find_date(readings, cited) if refs else ("uncited", None, "", -1)
+        if status == "not_found" and any(_agrees(c, p) for c in readings for p in today):
+            status, matched = "search_date", f"searched {searched}"
         m = Mention(phrase, "date", status, e.ref if e else None, matched,
                     _context(e.text, at, len(matched)) if e and at >= 0 else "")
         if status not in FOUND:
@@ -332,7 +356,8 @@ def audit(response: dict, fetch: Callable[[str], Page] | None = None, workers: i
             pages = dict(zip(urls, ex.map(fetch, urls)))
     pool = [evidence(r, pages.get(r.url)) for r in refs]
     stmts, skipped = statements(response)
+    searched = ((response.get("search_metadata") or {}).get("created_at") or "")[:10]
     for s in stmts:
         if s.kind != "offer":
-            s.mentions = check(s.text, s.refs, pool)
+            s.mentions = check(s.text, s.refs, pool, searched)
     return Audit((response.get("search_parameters") or {}).get("q", ""), stmts, refs, pages, skipped)
