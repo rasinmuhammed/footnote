@@ -183,8 +183,8 @@ and every rule that lets a computed number through can also let a wrong one thro
 convert for the same reason, so a flag like this also marks an instruction it broke.
 
 The cost is recall. Correct restatements fail: "1,200,000" against "1.2 million", and even "5.5%" against "5.50%",
-since normalising only drops a trailing `.0`. In the hand-labelled sample below, this was the only number flag, and
-the claim was backed.
+since normalising only drops a trailing `.0`. In the hand-labelled gpt-oss-20b sample below, the only number flag
+was the same conversion, and the claim was backed.
 
 ### How often the checker is right
 
@@ -208,10 +208,10 @@ clear labels. The close call was one the checker marked `supported`.
 Those flags picked the two fixes now in the checker: coverage across all cited sources together, and the
 abbreviation table. Re-scored with them, the same 20 verdicts agree with 14 of the 19 clear labels: **same sample
 used to pick the fixes, not independent**. It shows the fixes work on the cases that prompted them, not how often
-the checker is right. Two flags cleared: a NASA claim combining three results, and the "Reserve
-Bank of India" claim. Four remain, all on backed claims: the crore conversion, the Fed meeting date, and two claims
-describing disagreement between sources ("Sources disagree…", "Some studies find… while others find…"), whose
-framing words are in no snippet.
+the checker is right. Two flags cleared: a NASA claim combining three results, and the "Reserve Bank of India"
+claim. Four remain, all on backed claims: the crore conversion, the Fed meeting date, and two claims describing
+disagreement between sources ("Sources disagree…", "Some studies find… while others find…"), whose framing words
+are in no snippet.
 
 So in this sample `supported` was nearly always right and every flag was a false alarm.
 
