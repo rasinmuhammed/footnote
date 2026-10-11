@@ -1,0 +1,49 @@
+{
+ "search_metadata": {
+  "status": "Success"
+ },
+ "organic_results": [
+  {
+   "position": 1,
+   "title": "Retrieval augmentation reduces hallucination in conversation",
+   "link": "https://aclanthology.org/2021.findings-emnlp.320/",
+   "snippet": "… (non-retrieval augmented) large language models indeed suffer from hallucination, whereas our … Retrieval-augmented generation in particular is an intuitively promising solution to this …",
+   "publication_info": {
+    "summary": "K Shuster, S Poff, M Chen, D Kiela… - Findings of the …, 2021 - aclanthology.org"
+   },
+   "inline_links": {
+    "cited_by": {
+     "total": 1635
+    }
+   }
+  },
+  {
+   "position": 2,
+   "title": "Hallucination Mitigation for Retrieval-Augmented Large Language Models: A Review.",
+   "link": "https://openurl.ebsco.com/contentitem/gcd:183648214?sid=ebsco:plink:crawler-gcd&id=ebsco:gcd:183648214&crl=c&jrnl=22277390",
+   "snippet": "… reduce the impact of hallucination through detection and correction. Finally, we discuss promising future research directions for mitigating hallucinations … retrieval and generation phases …",
+   "publication_info": {
+    "summary": "W Zhang, J Zhang - Mathematics (2227-7390), 2025 - openurl.ebsco.com"
+   },
+   "inline_links": {
+    "cited_by": {
+     "total": 256
+    }
+   }
+  },
+  {
+   "position": 3,
+   "title": "Reducing hallucination in structured outputs via Retrieval-Augmented Generation",
+   "link": "https://aclanthology.org/2024.naacl-industry.19/",
+   "snippet": "… We propose an approach to deploy a RetrievalAugmented LLM to reduce hallucination and allow generalization in a structured output task. Reducing hallucination is a sine qua non for …",
+   "publication_info": {
+    "summary": "P Béchard, OM Ayala - Proceedings of the 2024 Conference of the …, 2024 - aclanthology.org"
+   },
+   "inline_links": {
+    "cited_by": {
+     "total": 356
+    }
+   }
+  }
+ ]
+}

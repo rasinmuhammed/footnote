@@ -1,0 +1,47 @@
+{
+ "search_metadata": {
+  "status": "Success"
+ },
+ "news_results": [
+  {
+   "position": 1,
+   "title": "India's central bank holds rates, awaits clearer inflation signal before acting",
+   "link": "https://www.reuters.com/world/india/indian-central-bank-holds-rates-expected-taking-comfort-still-modest-inflation-2026-08-05/",
+   "date": "08/05/2026, 07:00 AM, +0000 UTC",
+   "iso_date": "2026-08-05T07:00:00Z",
+   "source": {
+    "name": "Reuters"
+   }
+  },
+  {
+   "position": 2,
+   "title": "RBI raises the Repo Rate by 25 bps to 5.5% in October, as expected",
+   "link": "https://www.fxstreet.com/news/rbi-looks-set-to-step-up-repo-rate-by-25-bps-to-55-202610070030",
+   "date": "10/07/2026, 05:00 AM, +0000 UTC",
+   "iso_date": "2026-10-07T05:00:08Z",
+   "source": {
+    "name": "FXStreet"
+   }
+  },
+  {
+   "position": 6,
+   "title": "RBI keeps the Repo Rate unchanged at 5.25% in August, as expected",
+   "link": "https://www.fxstreet.com/news/rbi-set-to-keep-interest-rates-unchanged-as-inflation-risks-persist-202608050030",
+   "date": "08/05/2026, 07:00 AM, +0000 UTC",
+   "iso_date": "2026-08-05T07:00:00Z",
+   "source": {
+    "name": "FXStreet"
+   }
+  },
+  {
+   "position": 8,
+   "title": "Loans set to get dearer as RBI hikes repo rate after 44 months",
+   "link": "https://timesofindia.indiatimes.com/business/india-business/loans-set-to-get-dearer-as-rbi-hikes-repo-rate-after-44-months/articleshow/134774530.cms",
+   "date": "10/07/2026, 09:21 PM, +0000 UTC",
+   "iso_date": "2026-10-07T21:21:00Z",
+   "source": {
+    "name": "The Times of India"
+   }
+  }
+ ]
+}

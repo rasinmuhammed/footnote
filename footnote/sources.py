@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass
+from itertools import zip_longest
+
+YEAR = re.compile(r"\b(?:19|20)\d\d\b")
 
 
 @dataclass(frozen=True)
@@ -36,9 +40,13 @@ def _google(results: dict) -> list[dict]:
         out.append({"title": kg.get("title") or "Knowledge graph",
                     "url": (kg.get("source") or {}).get("link") or kg.get("website") or "",
                     "text": _join(kg.get("type"), kg.get("description")), "date": None})
-    for r in results.get("organic_results") or []:
-        out.append({"title": r.get("title", ""), "url": r.get("link", ""), "text": _join(r.get("snippet")),
-                    "date": r.get("date"), "position": r.get("position")})
+    # An AI Overview's own text is model output, so only the pages it cites are kept. They alternate with organic
+    # results so neither crowds the other out of the per-engine limit.
+    refs = [{"title": r.get("title", ""), "url": r.get("link", ""), "text": _join(r.get("snippet")), "date": None}
+            for r in (results.get("ai_overview") or {}).get("references") or []]
+    organic = [{"title": r.get("title", ""), "url": r.get("link", ""), "text": _join(r.get("snippet")),
+                "date": r.get("date"), "position": r.get("position")} for r in results.get("organic_results") or []]
+    out += [x for pair in zip_longest(refs, organic) for x in pair if x]
     return out
 
 
@@ -50,7 +58,8 @@ def _news(results: dict) -> list[dict]:
             name = src.get("name") if isinstance(src, dict) else src
             out.append({"title": s.get("title", ""), "url": s.get("link", ""),
                         "text": _join(s.get("title"), s.get("snippet"), f"({name})" if name else ""),
-                        "date": s.get("date"), "position": s.get("position")})
+                        # "date" is "10/07/2026, 05:00 AM, +0000 UTC", which reads as 10 July outside the US
+                        "date": (s.get("iso_date") or "")[:10] or s.get("date"), "position": s.get("position")})
     return out
 
 
@@ -59,9 +68,10 @@ def _scholar(results: dict) -> list[dict]:
     for r in results.get("organic_results") or []:
         pub = (r.get("publication_info") or {}).get("summary")
         cited = ((r.get("inline_links") or {}).get("cited_by") or {}).get("total")
+        years = YEAR.findall(pub or "")  # "K Shuster, S Poff… - Findings of the …, 2021 - aclanthology.org"
         out.append({"title": r.get("title", ""), "url": r.get("link", ""),
                     "text": _join(r.get("title"), r.get("snippet"), pub, f"Cited by {cited}." if cited else ""),
-                    "date": None, "position": r.get("position")})
+                    "date": years[-1] if years else None, "position": r.get("position")})
     return out
 
 

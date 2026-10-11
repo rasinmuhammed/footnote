@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from footnote import Footnote
 from footnote.render import markdown, text
@@ -17,6 +18,32 @@ def test_normalise_flattens_dedupes_and_numbers(raw):
     assert "https://times.example.com/record" in urls  # clustered news stories are unpacked
     scholar = next(s for s in sources if s.engine == "google_scholar")
     assert "Cited by 42" in scholar.text and "2021" in scholar.text
+
+
+def _live(name):  # trimmed real SerpApi responses
+    return json.loads((Path(__file__).parent / "fixtures" / "live" / f"{name}.json").read_text())
+
+
+def test_live_google_keeps_ai_overview_references_not_its_text():
+    s = normalise({"google": _live("google_rbi")})
+    texts = " ".join(x.text for x in s)
+    assert "announced a hike in the key rep" in texts  # Times of India page the overview cites
+    assert "after a 25 basis point hike announced" not in texts  # the overview's own generated paragraph
+    assert [x.position for x in s] == [None, 1, None, 2, None, 3]  # references alternate with organic results
+    token_only = {"ai_overview": {"page_token": "t"}, "organic_results": [{"title": "t", "link": "u", "snippet": "x"}]}
+    assert [x.url for x in normalise({"google": token_only})] == ["u"]
+
+
+def test_live_news_dates_are_unambiguous():
+    s = normalise({"google_news": _live("google_news_rbi")})
+    assert [x.date for x in s] == ["2026-08-05", "2026-10-07", "2026-08-05", "2026-10-07"]
+    assert s[1].text == "RBI raises the Repo Rate by 25 bps to 5.5% in October, as expected (FXStreet)"
+
+
+def test_live_scholar_year_and_citations():
+    s = normalise({"google_scholar": _live("google_scholar_rag")})
+    assert [x.date for x in s] == ["2021", "2025", "2024"]
+    assert "Cited by 1635." in s[0].text and "aclanthology.org" in s[0].text
 
 
 def test_router():
