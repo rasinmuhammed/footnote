@@ -10,7 +10,8 @@ the cited text doesn't state may still match a cited page's own date (its publis
 date before its snippet) or the day of the search; both are reported apart. Bare years are skipped, since almost
 every page states several.
 
-A found figure is only on the page somewhere; a missing one is a real gap.
+Neither verdict is final. A found figure is only somewhere on the page. A missing one may still be on the page as a
+reader sees it: behind a block on scripts, in a PDF, outside the extracted main text, or drawn in by JavaScript.
 """
 
 from __future__ import annotations

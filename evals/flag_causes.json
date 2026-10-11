@@ -1,0 +1,307 @@
+{
+ "refetched_at": "2026-10-11T15:05:21+00:00",
+ "causes": [
+  {
+   "n": 2,
+   "question_id": "a03",
+   "figure": "1.5%",
+   "cause": "page not read",
+   "errors": [
+    "not HTML: application/pdf"
+   ],
+   "urls": [
+    "https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2026/k260918a.pdf"
+   ]
+  },
+  {
+   "n": 3,
+   "question_id": "a55",
+   "figure": "1",
+   "cause": "not in the page's HTML",
+   "errors": [],
+   "urls": [
+    "https://www.google.com/finance/quote/USD-INR"
+   ]
+  },
+  {
+   "n": 5,
+   "question_id": "a49",
+   "figure": "31.9%",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.piie.com/research/piie-charts/2019/us-china-trade-war-tariffs-date-chart"
+   ]
+  },
+  {
+   "n": 6,
+   "question_id": "q18",
+   "figure": "8,848",
+   "cause": "not in the page's HTML",
+   "errors": [],
+   "urls": [
+    "https://www.lpi.usra.edu/education/explore/ice/background/allAboutWater/",
+    "https://www.youtube.com/watch?v=-nf8w-SeFDM"
+   ]
+  },
+  {
+   "n": 7,
+   "question_id": "a43",
+   "figure": "12 lakh",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.incometaxindia.gov.in/w/what-is-rebate-under-section-87a-for-f.y-2025-26-and-who-can-claim-it-"
+   ]
+  },
+  {
+   "n": 13,
+   "question_id": "a52",
+   "figure": "October 11, 2026",
+   "cause": "not in the page's HTML",
+   "errors": [],
+   "urls": [
+    "https://www.google.com/finance/quote/BTC-USD"
+   ]
+  },
+  {
+   "n": 14,
+   "question_id": "a05",
+   "figure": "September 2026",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.bls.gov/news.release/empsit.nr0.htm"
+   ]
+  },
+  {
+   "n": 15,
+   "question_id": "q11",
+   "figure": "77%",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.nature.com/articles/s41598-024-81931-9",
+    "https://www.sciencedirect.com/science/article/pii/S0160412022001258"
+   ]
+  },
+  {
+   "n": 16,
+   "question_id": "q03",
+   "figure": "October 2026",
+   "cause": "not in the page's HTML",
+   "errors": [],
+   "urls": [
+    "https://www.worldometers.info/world-population/india-population/"
+   ]
+  },
+  {
+   "n": 17,
+   "question_id": "a43",
+   "figure": "12,00,000",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.incometaxindia.gov.in/w/what-is-rebate-under-section-87a-for-f.y-2025-26-and-who-can-claim-it-"
+   ]
+  },
+  {
+   "n": 18,
+   "question_id": "a43",
+   "figure": "12,00,000",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.incometaxindia.gov.in/w/what-is-rebate-under-section-87a-for-f.y-2025-26-and-who-can-claim-it-"
+   ]
+  },
+  {
+   "n": 19,
+   "question_id": "a05",
+   "figure": "59.2%",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403",
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.bls.gov/news.release/empsit.nr0.htm",
+    "https://www.bls.gov/opub/ted/2026/unemployment-rate-little-changed-at-4-2-percent-in-september-2026.htm"
+   ]
+  },
+  {
+   "n": 21,
+   "question_id": "a38",
+   "figure": "2,289",
+   "cause": "outside the extracted main text",
+   "errors": [],
+   "urls": [
+    "https://usafacts.org/answers/how-many-measles-cases-are-there-in-the-us/country/united-states/"
+   ]
+  },
+  {
+   "n": 22,
+   "question_id": "q14",
+   "figure": "October 2026",
+   "cause": "outside the extracted main text",
+   "errors": [],
+   "urls": [
+    "https://www.nasa.gov/blogs/missions/2026/10/07/nasa-releases-artemis-ii-lunar-science-data-images/",
+    "https://science.nasa.gov/feature/artemis-ii-preliminary-lunar-science-report/"
+   ]
+  },
+  {
+   "n": 24,
+   "question_id": "a04",
+   "figure": "3.4%",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.bls.gov/news.release/pdf/cpi.pdf"
+   ]
+  },
+  {
+   "n": 25,
+   "question_id": "a16",
+   "figure": "1.37.1",
+   "cause": "outside the extracted main text",
+   "errors": [],
+   "urls": [
+    "https://kubernetes.io/releases/",
+    "https://kubernetes.io/blog/2026/08/26/kubernetes-v1-37-release/"
+   ]
+  },
+  {
+   "n": 26,
+   "question_id": "a03",
+   "figure": "1.25%",
+   "cause": "page not read",
+   "errors": [
+    "not HTML: application/pdf"
+   ],
+   "urls": [
+    "https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2026/k260918a.pdf"
+   ]
+  },
+  {
+   "n": 27,
+   "question_id": "a42",
+   "figure": "297,522",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.jec.senate.gov/public/index.cfm/republicans/debt-dashboard"
+   ]
+  },
+  {
+   "n": 28,
+   "question_id": "a60",
+   "figure": "135",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 401"
+   ],
+   "urls": [
+    "https://www.reuters.com/business/finance/anthropics-ipo-prospectus-shows-sweeping-ai-vision-surging-costs-2026-09-28/"
+   ]
+  },
+  {
+   "n": 29,
+   "question_id": "a55",
+   "figure": "96.78",
+   "cause": "not in the page's HTML",
+   "errors": [],
+   "urls": [
+    "https://www.google.com/finance/quote/USD-INR"
+   ]
+  },
+  {
+   "n": 33,
+   "question_id": "q18",
+   "figure": "212",
+   "cause": "outside the extracted main text",
+   "errors": [],
+   "urls": [
+    "https://www.youtube.com/watch?v=-nf8w-SeFDM",
+    "https://www.youtube.com/watch?v=8lyqFkFsH28&t=116",
+    "https://www.northridgepumps.com/article-2_boil-egg-on-everest"
+   ]
+  },
+  {
+   "n": 34,
+   "question_id": "a04",
+   "figure": "0.3%",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.bls.gov/news.release/cpi.nr0.htm"
+   ]
+  },
+  {
+   "n": 35,
+   "question_id": "q18",
+   "figure": "101.3",
+   "cause": "not in the page's HTML",
+   "errors": [],
+   "urls": [
+    "https://www.youtube.com/watch?v=-nf8w-SeFDM",
+    "https://www.youtube.com/watch?v=8lyqFkFsH28&t=116",
+    "https://www.northridgepumps.com/article-2_boil-egg-on-everest"
+   ]
+  },
+  {
+   "n": 36,
+   "question_id": "a04",
+   "figure": "August 2026",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.bls.gov/news.release/cpi.nr0.htm"
+   ]
+  },
+  {
+   "n": 38,
+   "question_id": "q06",
+   "figure": "5.5",
+   "cause": "outside the extracted main text",
+   "errors": [],
+   "urls": [
+    "https://www.alpha-sense.com/largest-companies-by-market-cap/",
+    "https://www.google.com/intl/en_us/googlefinance/disclaimer",
+    "https://www.fool.com/research/largest-companies-by-market-cap/"
+   ]
+  },
+  {
+   "n": 39,
+   "question_id": "a04",
+   "figure": "12",
+   "cause": "page not read",
+   "errors": [
+    "HTTP 403"
+   ],
+   "urls": [
+    "https://www.bls.gov/news.release/pdf/cpi.pdf"
+   ]
+  }
+ ]
+}

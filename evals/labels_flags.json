@@ -1,0 +1,878 @@
+{
+ "results": "aimode_results.json",
+ "seed": 20261013,
+ "labeller": "human",
+ "rule": "A figure counts as stated if a cited page gives the same value in any form (3.75%, 3-3/4 percent). A date counts only if the page's text gives it; a date the page shows as when it was published or updated doesn't count.",
+ "flags": [
+  {
+   "n": 1,
+   "question_id": "a49",
+   "question": "What is the current US tariff rate on imports from China?",
+   "statement": "The average U.S. tariff rate on imports from China is approximately 47.5%, covering virtually 100% of Chinese goods.",
+   "figure": "100%",
+   "at": [
+    0,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "US-China Trade War Tariffs: An Up-to-Date Chart | PIIE",
+     "url": "https://www.piie.com/research/piie-charts/2019/us-china-trade-war-tariffs-date-chart"
+    }
+   ],
+   "label": "not_stated",
+   "reason": ""
+  },
+  {
+   "n": 2,
+   "question_id": "a03",
+   "question": "What did the Bank of Japan decide at its latest policy meeting?",
+   "statement": "Facility Rates Adjustment: Raised the complementary deposit facility rate to 1.25% and the basic loan rate to 1.5%.",
+   "figure": "1.5%",
+   "at": [
+    2,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "1 September 18, 2026 Bank of Japan Change in the Guideline for Money Market Operations 1. At the Monetary Policy Meeting held to",
+     "url": "https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2026/k260918a.pdf"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 3,
+   "question_id": "a55",
+   "question": "What is the current US dollar to Indian rupee exchange rate?",
+   "statement": "The current exchange rate is 1 US Dollar (USD) to approximately 96.78 Indian Rupees (INR).",
+   "figure": "1",
+   "at": [
+    0,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "USD-INR - Google Finance",
+     "url": "https://www.google.com/finance/quote/USD-INR"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 4,
+   "question_id": "a15",
+   "question": "What is the latest stable release of Rust?",
+   "statement": "Nightly: Rust 1.01.0 represents the active nightly development channel.",
+   "figure": "1.01.0",
+   "at": [
+    5,
+    0
+   ],
+   "cited": [
+    {
+     "n": 4,
+     "title": "Rust Changelogs: Rust Versions",
+     "url": "https://releases.rs/"
+    }
+   ],
+   "label": "not_stated",
+   "reason": ""
+  },
+  {
+   "n": 5,
+   "question_id": "a49",
+   "question": "What is the current US tariff rate on imports from China?",
+   "statement": "Comparison: For broader perspective, U.S. tariffs on imports from the rest of the world average significantly lower, at around 18.4%. Meanwhile, China's average retaliatory tariffs on U.S. exports stand at approximately 31.9%.",
+   "figure": "31.9%",
+   "at": [
+    4,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "US-China Trade War Tariffs: An Up-to-Date Chart | PIIE",
+     "url": "https://www.piie.com/research/piie-charts/2019/us-china-trade-war-tariffs-date-chart"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 6,
+   "question_id": "q18",
+   "question": "What is the boiling point of water at the top of Mount Everest?",
+   "statement": "At the summit of Mount Everest (elevation $8,848\\text{ meters}$ or $29,031\\text{ feet}$), the atmospheric pressure is significantly lower than at sea level. Because of this, water boils at a much lower temperature.",
+   "figure": "8,848",
+   "at": [
+    0,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "All About Water and Ice Background",
+     "url": "https://www.lpi.usra.edu/education/explore/ice/background/allAboutWater/"
+    },
+    {
+     "n": 2,
+     "title": "Why does water boil at high altitudes at lower temperatures?",
+     "url": "https://www.youtube.com/watch?v=-nf8w-SeFDM"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 7,
+   "question_id": "a43",
+   "question": "What is the income tax rebate limit under India's new tax regime?",
+   "statement": "Maximum Income Limit: Resident individuals with a total taxable income of up to $12,00,000 (Rs. 12 lakh) are eligible for the tax rebate.",
+   "figure": "12 lakh",
+   "at": [
+    1,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "What is rebate under section 87A for F.Y 2025-26 and who can claim it?",
+     "url": "https://www.incometaxindia.gov.in/w/what-is-rebate-under-section-87a-for-f.y-2025-26-and-who-can-claim-it-"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 8,
+   "question_id": "q13",
+   "question": "What is the price of Brent crude oil this week?",
+   "statement": "As of the market close for the week ending October 9, 2026, Brent crude oil was trading at approximately $104.72 per barrel (with daily settlements hovering around the $104.28 to $104.72 range). Prices moved up slightly over the course of the week, driven by ongoing market conditions and supply dynamics.",
+   "figure": "104.72",
+   "at": [
+    0,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Brent oil - Price - Chart - Historical Data - Trading Economics",
+     "url": "https://tradingeconomics.com/commodity/brent-crude-oil"
+    },
+    {
+     "n": 2,
+     "title": "Google Finance",
+     "url": "https://www.google.com/finance"
+    }
+   ],
+   "label": "rounded",
+   "reason": ""
+  },
+  {
+   "n": 9,
+   "question_id": "a51",
+   "question": "What is the price of gold per ounce today?",
+   "statement": "The current spot price of gold is approximately $\\$4,193.60$ per troy ounce (with COMEX futures hovering around $[$4, 216.30]$). Because today is Sunday, global spot markets are closed for the weekend, but live tracking via Kitco Charts puts the latest valuation right around that level.",
+   "figure": "216.30",
+   "at": [
+    0,
+    2
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Gold Price Today | Price of Gold Per Ounce | 24 Hour Spot Chart",
+     "url": "https://www.kitco.com/charts/gold"
+    },
+    {
+     "n": 2,
+     "title": "Google Finance",
+     "url": "https://www.google.com/finance"
+    }
+   ],
+   "label": "not_stated",
+   "reason": ""
+  },
+  {
+   "n": 10,
+   "question_id": "a42",
+   "question": "How large is the US national debt right now?",
+   "statement": "Per capita burden: Total gross national debt amounts to roughly $117,279 per person or $297,522 per household.",
+   "figure": "117,279",
+   "at": [
+    3,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Debt Dashboard - U.S. Congress Joint Economic Committee",
+     "url": "https://www.jec.senate.gov/public/index.cfm/republicans/debt-dashboard"
+    }
+   ],
+   "label": "rounded",
+   "reason": ""
+  },
+  {
+   "n": 11,
+   "question_id": "a49",
+   "question": "What is the current US tariff rate on imports from China?",
+   "statement": "The average U.S. tariff rate on imports from China is approximately 47.5%, covering virtually 100% of Chinese goods.",
+   "figure": "47.5%",
+   "at": [
+    0,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "US-China Trade War Tariffs: An Up-to-Date Chart | PIIE",
+     "url": "https://www.piie.com/research/piie-charts/2019/us-china-trade-war-tariffs-date-chart"
+    }
+   ],
+   "label": "not_stated",
+   "reason": ""
+  },
+  {
+   "n": 12,
+   "question_id": "q18",
+   "question": "What is the boiling point of water at the top of Mount Everest?",
+   "statement": "At the summit of Mount Everest (elevation $8,848\\text{ meters}$ or $29,031\\text{ feet}$), the atmospheric pressure is significantly lower than at sea level. Because of this, water boils at a much lower temperature.",
+   "figure": "29,031",
+   "at": [
+    0,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "All About Water and Ice Background",
+     "url": "https://www.lpi.usra.edu/education/explore/ice/background/allAboutWater/"
+    },
+    {
+     "n": 2,
+     "title": "Why does water boil at high altitudes at lower temperatures?",
+     "url": "https://www.youtube.com/watch?v=-nf8w-SeFDM"
+    }
+   ],
+   "label": "not_stated",
+   "reason": ""
+  },
+  {
+   "n": 13,
+   "question_id": "a52",
+   "question": "What is the price of Bitcoin today?",
+   "statement": "The price of Bitcoin (BTC) is approximately $83,062.50 USD today (as of October 11, 2026). Prices fluctuate continuously throughout the day on global cryptocurrency exchanges.",
+   "figure": "October 11, 2026",
+   "at": [
+    0,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "BTC-USD - Google Finance",
+     "url": "https://www.google.com/finance/quote/BTC-USD"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 14,
+   "question_id": "a05",
+   "question": "What is the current US unemployment rate?",
+   "statement": "You can review the full details directly from the U.S. Bureau of Labor Statistics September 2026 Employment Situation Summary.",
+   "figure": "September 2026",
+   "at": [
+    6,
+    0
+   ],
+   "cited": [
+    {
+     "n": 2,
+     "title": "Employment Situation Summary - 2026 M09 Results",
+     "url": "https://www.bls.gov/news.release/empsit.nr0.htm"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 15,
+   "question_id": "q11",
+   "question": "What are the latest studies on microplastics in human blood?",
+   "statement": "High Detection Rates: Landmark analytical studies, such as foundational work utilizing pyrolysis-gas chromatography/mass spectrometry (Py-GC/MS) and vibrational spectroscopy, have detected plastic polymer particles in approximately 77% to 88.9% of healthy human blood donors tested.",
+   "figure": "77%",
+   "at": [
+    2,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Microplastic particles in human blood and their association with coagulation markers | Scientific Reports",
+     "url": "https://www.nature.com/articles/s41598-024-81931-9"
+    },
+    {
+     "n": 2,
+     "title": "Discovery and quantification of plastic particle pollution in human blood - ScienceDirect",
+     "url": "https://www.sciencedirect.com/science/article/pii/S0160412022001258"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 16,
+   "question_id": "q03",
+   "question": "What is the current population of India?",
+   "statement": "As of October 2026, the estimated population of India is approximately 1.48 billion (roughly 1,480,243,044) according to live tracking and UN-based data models on Worldometer.",
+   "figure": "October 2026",
+   "at": [
+    0,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "India Population (2026) - Worldometer",
+     "url": "https://www.worldometers.info/world-population/india-population/"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 17,
+   "question_id": "a43",
+   "question": "What is the income tax rebate limit under India's new tax regime?",
+   "statement": "Marginal Relief: If the total income under the new tax regime slightly exceeds $12,00,000, marginal relief is available to ensure that the tax payable does not exceed the amount by which the total income exceeds $12,00,000.",
+   "figure": "12,00,000",
+   "at": [
+    3,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "What is rebate under section 87A for F.Y 2025-26 and who can claim it?",
+     "url": "https://www.incometaxindia.gov.in/w/what-is-rebate-under-section-87a-for-f.y-2025-26-and-who-can-claim-it-"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 18,
+   "question_id": "a43",
+   "question": "What is the income tax rebate limit under India's new tax regime?",
+   "statement": "Maximum Income Limit: Resident individuals with a total taxable income of up to $12,00,000 (Rs. 12 lakh) are eligible for the tax rebate.",
+   "figure": "12,00,000",
+   "at": [
+    1,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "What is rebate under section 87A for F.Y 2025-26 and who can claim it?",
+     "url": "https://www.incometaxindia.gov.in/w/what-is-rebate-under-section-87a-for-f.y-2025-26-and-who-can-claim-it-"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 19,
+   "question_id": "a05",
+   "question": "What is the current US unemployment rate?",
+   "statement": "Employment-Population Ratio: 59.2%.",
+   "figure": "59.2%",
+   "at": [
+    5,
+    0
+   ],
+   "cited": [
+    {
+     "n": 2,
+     "title": "Employment Situation Summary - 2026 M09 Results",
+     "url": "https://www.bls.gov/news.release/empsit.nr0.htm"
+    },
+    {
+     "n": 3,
+     "title": "Unemployment rate little changed at 4.2 percent in September ...",
+     "url": "https://www.bls.gov/opub/ted/2026/unemployment-rate-little-changed-at-4-2-percent-in-september-2026.htm"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 20,
+   "question_id": "a51",
+   "question": "What is the price of gold per ounce today?",
+   "statement": "The current spot price of gold is approximately $\\$4,193.60$ per troy ounce (with COMEX futures hovering around $[$4, 216.30]$). Because today is Sunday, global spot markets are closed for the weekend, but live tracking via Kitco Charts puts the latest valuation right around that level.",
+   "figure": "4",
+   "at": [
+    0,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Gold Price Today | Price of Gold Per Ounce | 24 Hour Spot Chart",
+     "url": "https://www.kitco.com/charts/gold"
+    },
+    {
+     "n": 2,
+     "title": "Google Finance",
+     "url": "https://www.google.com/finance"
+    }
+   ],
+   "label": "cant_tell",
+   "reason": ""
+  },
+  {
+   "n": 21,
+   "question_id": "a38",
+   "question": "How many measles cases has the United States reported this year?",
+   "statement": "This marks a substantial increase compared to last year, which saw a then-record 2,289 confirmed cases for all of 2025.",
+   "figure": "2,289",
+   "at": [
+    1,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "How many measles cases are there in the US? - USAFacts",
+     "url": "https://usafacts.org/answers/how-many-measles-cases-are-there-in-the-us/country/united-states/"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 22,
+   "question_id": "q14",
+   "question": "What was announced about the Artemis programme this year?",
+   "statement": "Artemis II Lunar Science Data Release: Following the crewed Artemis II lunar flyby mission earlier in the spring of 2026, NASA released comprehensive mission findings in October 2026. This included the Artemis II Preliminary Lunar Science Report, detailing unique observations such as the crew spotting faint impact flashes of rocky fragments hitting the Moon from orbit.",
+   "figure": "October 2026",
+   "at": [
+    2,
+    0
+   ],
+   "cited": [
+    {
+     "n": 3,
+     "title": "NASA Releases Artemis II Lunar Science Data, Images",
+     "url": "https://www.nasa.gov/blogs/missions/2026/10/07/nasa-releases-artemis-ii-lunar-science-data-images/"
+    },
+    {
+     "n": 4,
+     "title": "Artemis II Preliminary Lunar Science Report",
+     "url": "https://science.nasa.gov/feature/artemis-ii-preliminary-lunar-science-report/"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 23,
+   "question_id": "a52",
+   "question": "What is the price of Bitcoin today?",
+   "statement": "The price of Bitcoin (BTC) is approximately $83,062.50 USD today (as of October 11, 2026). Prices fluctuate continuously throughout the day on global cryptocurrency exchanges.",
+   "figure": "83,062.50",
+   "at": [
+    0,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "BTC-USD - Google Finance",
+     "url": "https://www.google.com/finance/quote/BTC-USD"
+    }
+   ],
+   "label": "rounded",
+   "reason": ""
+  },
+  {
+   "n": 24,
+   "question_id": "a04",
+   "question": "What was the latest US CPI inflation rate?",
+   "statement": "Annual Inflation Rate (12-month change): The all-items index increased 3.4% before seasonal adjustment over the 12 months ending in August 2026.",
+   "figure": "3.4%",
+   "at": [
+    1,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Consumer Price Index - August 2026 - Bureau of Labor Statistics",
+     "url": "https://www.bls.gov/news.release/pdf/cpi.pdf"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 25,
+   "question_id": "a16",
+   "question": "What is the latest Kubernetes release?",
+   "statement": "The latest active minor release of Kubernetes is v1.37 (specifically patch version $1.37.1$), which was officially released on August 26, 2026.",
+   "figure": "1.37.1",
+   "at": [
+    0,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Releases | Kubernetes",
+     "url": "https://kubernetes.io/releases/"
+    },
+    {
+     "n": 2,
+     "title": "Kubernetes v1.37: Garhwal",
+     "url": "https://kubernetes.io/blog/2026/08/26/kubernetes-v1-37-release/"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 26,
+   "question_id": "a03",
+   "question": "What did the Bank of Japan decide at its latest policy meeting?",
+   "statement": "Facility Rates Adjustment: Raised the complementary deposit facility rate to 1.25% and the basic loan rate to 1.5%.",
+   "figure": "1.25%",
+   "at": [
+    2,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "1 September 18, 2026 Bank of Japan Change in the Guideline for Money Market Operations 1. At the Monetary Policy Meeting held to",
+     "url": "https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2026/k260918a.pdf"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 27,
+   "question_id": "a42",
+   "question": "How large is the US national debt right now?",
+   "statement": "Per capita burden: Total gross national debt amounts to roughly $117,279 per person or $297,522 per household.",
+   "figure": "297,522",
+   "at": [
+    3,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Debt Dashboard - U.S. Congress Joint Economic Committee",
+     "url": "https://www.jec.senate.gov/public/index.cfm/republicans/debt-dashboard"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 28,
+   "question_id": "a60",
+   "question": "What was the largest IPO of 2026 so far?",
+   "statement": "Listing Details: The blockbuster debut valued Elon Musk's aerospace and satellite company at an initial $1.77 trillion, pricing shares at $135 apiece before surging in early trading.",
+   "figure": "135",
+   "at": [
+    1,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Anthropic's IPO prospectus shows sweeping AI vision, surging ...",
+     "url": "https://www.reuters.com/business/finance/anthropics-ipo-prospectus-shows-sweeping-ai-vision-surging-costs-2026-09-28/"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 29,
+   "question_id": "a55",
+   "question": "What is the current US dollar to Indian rupee exchange rate?",
+   "statement": "The current exchange rate is 1 US Dollar (USD) to approximately 96.78 Indian Rupees (INR).",
+   "figure": "96.78",
+   "at": [
+    0,
+    1
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "USD-INR - Google Finance",
+     "url": "https://www.google.com/finance/quote/USD-INR"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 30,
+   "question_id": "a12",
+   "question": "What is the latest stable Linux kernel release?",
+   "statement": "Longterm Maintenance (LTS) Examples: $6.18.55$, 6.12, 6.6, and 6.1",
+   "figure": "6.18.55",
+   "at": [
+    4,
+    0
+   ],
+   "cited": [
+    {
+     "n": 2,
+     "title": "The Linux Kernel Archives - Releases",
+     "url": "https://www.kernel.org/category/releases.html"
+    },
+    {
+     "n": 3,
+     "title": "Linux 7.3-rc6 Released: Normal For The New \"AI Normal\"",
+     "url": "https://www.phoronix.com/news/Linux-7.3-rc6-Released"
+    }
+   ],
+   "label": "not_stated",
+   "reason": ""
+  },
+  {
+   "n": 31,
+   "question_id": "q18",
+   "question": "What is the boiling point of water at the top of Mount Everest?",
+   "statement": "Summit Conditions: At the top of Everest, atmospheric pressure drops to roughly $0.3\\text{ bars}$, making it much easier for water molecules to escape into the air as gas.",
+   "figure": "0.3",
+   "at": [
+    4,
+    0
+   ],
+   "cited": [
+    {
+     "n": 2,
+     "title": "Why does water boil at high altitudes at lower temperatures?",
+     "url": "https://www.youtube.com/watch?v=-nf8w-SeFDM"
+    },
+    {
+     "n": 5,
+     "title": "Vapour Pressure & Why You can't Boil an Egg on Everest",
+     "url": "https://www.northridgepumps.com/article-2_boil-egg-on-everest"
+    }
+   ],
+   "label": "not_stated",
+   "reason": ""
+  },
+  {
+   "n": 32,
+   "question_id": "q15",
+   "question": "What does peer-reviewed research say about retrieval-augmented generation reducing hallucinations?",
+   "statement": "Quality and Source Dependency: The efficacy of RAG is bounded by the quality of the retrieval phase. Studies demonstrate that using highly curated, authoritative external databases (such as domain-specific knowledge bases or institutional guidelines) drops hallucination rates dramatically (e.g., down to near $0\\%$ to $3\\%$). Conversely, injecting noisy, unstructured, or open web searches can still introduce conflicting information, raising error rates.",
+   "figure": "0",
+   "at": [
+    3,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Retrieval-Augmented Generation and Hallucination in Large Language Models: A Scholarly Overview",
+     "url": "https://www.researchgate.net/publication/392448842_Retrieval-Augmented_Generation_and_Hallucination_in_Large_Language_Models_A_Scholarly_Overview"
+    },
+    {
+     "n": 2,
+     "title": "Reducing Hallucinations and Trade-Offs in Responses in Generative AI Chatbots for Cancer Information: Development and Evaluation Study - PMC",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12425422/"
+    }
+   ],
+   "label": "not_stated",
+   "reason": ""
+  },
+  {
+   "n": 33,
+   "question_id": "q18",
+   "question": "What is the boiling point of water at the top of Mount Everest?",
+   "statement": "Atmospheric Pressure: At sea level, the weight of the atmosphere pushes down with a pressure of about $1\\text{ bar}$ ( $101.3\\text{ kPa}$), requiring water to reach $100^{\\circ }\\text{C}$ ( $212^{\\circ }\\text{F}$) for its vapor pressure to match the surrounding air.",
+   "figure": "212",
+   "at": [
+    3,
+    3
+   ],
+   "cited": [
+    {
+     "n": 2,
+     "title": "Why does water boil at high altitudes at lower temperatures?",
+     "url": "https://www.youtube.com/watch?v=-nf8w-SeFDM"
+    },
+    {
+     "n": 4,
+     "title": "Boiling Water On Mount Everest! | Earth Science",
+     "url": "https://www.youtube.com/watch?v=8lyqFkFsH28&t=116"
+    },
+    {
+     "n": 5,
+     "title": "Vapour Pressure & Why You can't Boil an Egg on Everest",
+     "url": "https://www.northridgepumps.com/article-2_boil-egg-on-everest"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 34,
+   "question_id": "a04",
+   "question": "What was the latest US CPI inflation rate?",
+   "statement": "Core CPI (All items less food & energy): Rose 2.4% over the 12-month period ending in August 2026, and increased 0.3% on a monthly seasonally adjusted basis.",
+   "figure": "0.3%",
+   "at": [
+    3,
+    3
+   ],
+   "cited": [
+    {
+     "n": 2,
+     "title": "Consumer Price Index Summary - 2026 M08 Results",
+     "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 35,
+   "question_id": "q18",
+   "question": "What is the boiling point of water at the top of Mount Everest?",
+   "statement": "Atmospheric Pressure: At sea level, the weight of the atmosphere pushes down with a pressure of about $1\\text{ bar}$ ( $101.3\\text{ kPa}$), requiring water to reach $100^{\\circ }\\text{C}$ ( $212^{\\circ }\\text{F}$) for its vapor pressure to match the surrounding air.",
+   "figure": "101.3",
+   "at": [
+    3,
+    1
+   ],
+   "cited": [
+    {
+     "n": 2,
+     "title": "Why does water boil at high altitudes at lower temperatures?",
+     "url": "https://www.youtube.com/watch?v=-nf8w-SeFDM"
+    },
+    {
+     "n": 4,
+     "title": "Boiling Water On Mount Everest! | Earth Science",
+     "url": "https://www.youtube.com/watch?v=8lyqFkFsH28&t=116"
+    },
+    {
+     "n": 5,
+     "title": "Vapour Pressure & Why You can't Boil an Egg on Everest",
+     "url": "https://www.northridgepumps.com/article-2_boil-egg-on-everest"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 36,
+   "question_id": "a04",
+   "question": "What was the latest US CPI inflation rate?",
+   "statement": "Core CPI (All items less food & energy): Rose 2.4% over the 12-month period ending in August 2026, and increased 0.3% on a monthly seasonally adjusted basis.",
+   "figure": "August 2026",
+   "at": [
+    3,
+    2
+   ],
+   "cited": [
+    {
+     "n": 2,
+     "title": "Consumer Price Index Summary - 2026 M08 Results",
+     "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 37,
+   "question_id": "a53",
+   "question": "What did Apple report in its most recent quarterly earnings?",
+   "statement": "Japan: $6.55 billion",
+   "figure": "6.55 billion",
+   "at": [
+    14,
+    0
+   ],
+   "cited": [
+    {
+     "n": 3,
+     "title": "2026-07-30 Apple reports third quarter results",
+     "url": "https://www.apple.com/newsroom/pdfs/fy2026q3/FY26_Q3_Consolidated_Financial_Statements.pdf"
+    }
+   ],
+   "label": "not_stated",
+   "reason": ""
+  },
+  {
+   "n": 38,
+   "question_id": "q06",
+   "question": "Which company has the largest market capitalisation right now?",
+   "statement": "Right now, NVIDIA Corporation (NVDA) holds the title of the company with the largest market capitalization in the world, sitting at approximately $5.5 to $5.6 trillion.",
+   "figure": "5.5",
+   "at": [
+    0,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Largest Companies by Market Cap in 2026 - AlphaSense",
+     "url": "https://www.alpha-sense.com/largest-companies-by-market-cap/"
+    },
+    {
+     "n": 2,
+     "title": "Google's Finance Data",
+     "url": "https://www.google.com/intl/en_us/googlefinance/disclaimer"
+    },
+    {
+     "n": 3,
+     "title": "Largest Companies by Market Cap in 2026 | The Motley Fool",
+     "url": "https://www.fool.com/research/largest-companies-by-market-cap/"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  },
+  {
+   "n": 39,
+   "question_id": "a04",
+   "question": "What was the latest US CPI inflation rate?",
+   "statement": "Annual Inflation Rate (12-month change): The all-items index increased 3.4% before seasonal adjustment over the 12 months ending in August 2026.",
+   "figure": "12",
+   "at": [
+    1,
+    0
+   ],
+   "cited": [
+    {
+     "n": 1,
+     "title": "Consumer Price Index - August 2026 - Bureau of Labor Statistics",
+     "url": "https://www.bls.gov/news.release/pdf/cpi.pdf"
+    }
+   ],
+   "label": "stated",
+   "reason": ""
+  }
+ ]
+}

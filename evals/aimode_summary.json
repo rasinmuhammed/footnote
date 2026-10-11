@@ -363,5 +363,24 @@
    "numbers_not_in_sources": 88,
    "bad_citations": 0
   }
+ },
+ "hand_check": {
+  "all": {
+   "not_stated": 9,
+   "stated": 26,
+   "rounded": 3,
+   "cant_tell": 1
+  },
+  "every_page_read": {
+   "stated": 11,
+   "not_stated": 5,
+   "rounded": 2,
+   "cant_tell": 1
+  },
+  "a_page_not_read": {
+   "not_stated": 4,
+   "stated": 15,
+   "rounded": 1
+  }
  }
 }

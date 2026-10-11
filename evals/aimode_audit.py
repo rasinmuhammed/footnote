@@ -6,14 +6,18 @@ figures are still reported apart. Every answer is audited twice, from snippets a
 Footnote's own checker also scores every statement against its snippets, unchanged, so AI Mode can be compared with
 the open models Footnote was evaluated with on the same ruler.
 
+Every flag (a cited figure not found in its cited pages) was then checked by hand with evals/label_flags.py.
+
 Usage: python evals/aimode_audit.py [--max-searches 77]   # writes evals/aimode_results.json
        python evals/aimode_audit.py --report               # tables, and aimode_summary.json; no searches, no fetching
+       python evals/aimode_audit.py --causes               # why the checker missed figures the hand check found
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+from datetime import datetime, timezone
 import math
 import os
 import re
@@ -26,7 +30,7 @@ from dotenv import load_dotenv
 
 from footnote import aimode
 from footnote.aimode import FOUND
-from footnote.pages import PageFetcher
+from footnote.pages import USER_AGENT, Page, PageFetcher
 from footnote.search import SerpApiSearcher
 from footnote.sources import Source
 from footnote.verify import Verdict, check
@@ -34,6 +38,7 @@ from run import summarise
 
 HERE = Path(__file__).parent
 OUT, SUMMARY = HERE / "aimode_results.json", HERE / "aimode_summary.json"
+LABELS, CAUSES = HERE / "labels_flags.json", HERE / "flag_causes.json"
 LIVE = {"q06", "q13", "a42", "a51", "a52", "a55", "a56"}  # market caps, prices and totals that move by the hour
 
 
@@ -192,6 +197,60 @@ def statement_flags(rows: list[dict], status_key: str) -> tuple[int, int]:
         len(stmts)
 
 
+def _all_pages_read(audit: dict, statement: dict) -> bool:
+    urls = {r["index"]: r["url"] for r in audit["references"]}
+    return all(not audit["pages"].get(urls.get(i), {"error": "missing"})["error"] for i in statement["refs"])
+
+
+def hand_check(rows: list[dict]) -> dict:
+    """The hand labels of every flag, split by whether the script could read every page the statement cites."""
+    by_id = {r["id"]: r for r in rows}
+    out = {"all": Counter(), "every_page_read": Counter(), "a_page_not_read": Counter()}
+    for f in json.loads(LABELS.read_text())["flags"]:
+        a = by_id[f["question_id"]]["audit"]
+        read = _all_pages_read(a, a["statements"][f["at"][0]])
+        out["all"][f["label"]] += 1
+        out["every_page_read" if read else "a_page_not_read"][f["label"]] += 1
+    return {k: dict(v) for k, v in out.items()}
+
+
+def causes() -> None:
+    """For each flag the hand check found stated: was a cited page unread, was the figure outside the extracted main
+    text, or is it not in the page's HTML at all? Re-reads those pages' full HTML text now, which may have changed."""
+    import trafilatura
+
+    rows = {r["id"]: r for r in json.loads(OUT.read_text())["rows"]}
+    fetcher = PageFetcher()
+    client = httpx.Client(headers={"User-Agent": USER_AGENT}, timeout=30, follow_redirects=True)
+
+    def html_text(url: str) -> str:
+        try:
+            return trafilatura.html2txt(client.get(url).content) or ""
+        except httpx.HTTPError:
+            return ""
+
+    out = []
+    for f in json.loads(LABELS.read_text())["flags"]:
+        if f["label"] != "stated":
+            continue
+        row = rows[f["question_id"]]
+        statement = row["audit"]["statements"][f["at"][0]]
+        cited = [aimode.Reference(**r) for r in row["audit"]["references"] if r["index"] in statement["refs"]]
+        errors = [e for r in cited if (e := fetcher.fetch(r.url).error)]
+        if errors:
+            cause = "page not read"
+        else:
+            pool = [aimode.evidence(r, Page(r.url, html_text(r.url), fetcher.fetch(r.url).date)) for r in cited]
+            m = next(m for m in aimode.check(statement["text"], statement["refs"], pool, row["searched_at"][:10])
+                     if m.written == f["figure"])
+            cause = "outside the extracted main text" if m.status in FOUND else "not in the page's HTML"
+        out.append({"n": f["n"], "question_id": f["question_id"], "figure": f["figure"], "cause": cause,
+                    "errors": errors, "urls": [r.url for r in cited]})
+    CAUSES.write_text(json.dumps({"refetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                                  "causes": out}, indent=1, ensure_ascii=False) + "\n")
+    print(Counter(c["cause"] for c in out))
+
+
 def report() -> None:
     rows = json.loads(OUT.read_text())["rows"]
     groups = {"All": rows, "Footnote's 20": [r for r in rows if r["topic"] == "footnote_eval"],
@@ -199,6 +258,8 @@ def report() -> None:
               "Live figures": [r for r in rows if r["live"]], "Not live": [r for r in rows if not r["live"]]}
     out = {name: stats(rs) for name, rs in groups.items()}
     a = out["All"]
+    if LABELS.exists():
+        out["hand_check"] = hand_check(rows)
     SUMMARY.write_text(json.dumps(out, indent=1) + "\n")
     print(f"\nAnswers: {a['answers']} ({a['errors']} errors). Statements: {a['statements']}, "
           f"{a['with_figures']} with figures, {_pct(a['uncited_with_figures'], a['with_figures'])} of those uncited "
@@ -213,6 +274,8 @@ def report() -> None:
     for name, rs in groups.items():
         print(f"{name}: cited statements with a number missing from cited text, snippets "
               f"{_pct(*statement_flags(rs, 'snippet_status'))}, pages {_pct(*statement_flags(rs, 'status'))}")
+    if "hand_check" in out:
+        print("\nHand check of every flag:", json.dumps(out["hand_check"]))
 
 
 def main() -> None:
@@ -220,8 +283,9 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-searches", type=int, default=77)
     ap.add_argument("--report", action="store_true", help="summarise evals/aimode_results.json; no API calls")
+    ap.add_argument("--causes", action="store_true", help="diagnose flags the hand check found; re-reads pages")
     args = ap.parse_args()
-    report() if args.report else run(args.max_searches)
+    report() if args.report else causes() if args.causes else run(args.max_searches)
 
 
 if __name__ == "__main__":
